@@ -21,4 +21,19 @@
 	"mounts": [
 		"source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,type=bind"
 	],
+	
+	// Use 'postCreateCommand' to run commands after the container is created.
+	// Features does not work on VPN, so use post create to get tools
+ 	"postCreateCommand": "pipx install ruff",
+
+	// VS Code-specific customizations for the development container.
+	"customizations": {
+		"vscode": {
+		  // VS Code extensions to automatically install in the container.
+		  "extensions": [
+			  "ms-python.python",
+			  "charliermarsh.ruff"
+		  ]
+		}
+	  }
 }

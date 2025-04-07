@@ -1,0 +1,11 @@
+[tool.ruff]
+line-length = 120
+exclude = [".git", ".vscode"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "N", "BLE", "B", "A", "ICN", "Q", "PD"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+docstring-code-format = true
