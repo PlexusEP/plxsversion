@@ -7,6 +7,16 @@ from tempfile import mkdtemp
 from version_builder.utils import ChDir
 
 
+class TempDir(object):
+    def __enter__(self):
+        self.path = mkdtemp()
+        return self.path
+
+    def __exit__(self, exc_type, value, tb):
+        shutil.rmtree(self.path)
+
+
+# TODO-KW: consider inheritting temp dir
 class GitDir(object):
     def __enter__(self):
         self.path = mkdtemp()
