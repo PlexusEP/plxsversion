@@ -59,7 +59,7 @@ class _GitGetter(_Getter):
                         git_commits_since_tag=total_num_commits,
                         git_commit_id=commit_id,
                         git_tag_exists=False,
-                        modified_since_commit=utils.Git.cwd_is_not_empty(),
+                        modified_since_commit=utils.Git.get_cwd_is_not_empty(),
                     )
 
     def _is_cwd_modified_since_commit(self):

@@ -3,6 +3,7 @@ import pytest
 from version_builder import getter
 from version_builder.getter import _GitGetter
 from version_builder.version_info import VersionInfo
+from tests.utils import GitDir
 
 
 class TestParseGitVersion:
@@ -59,7 +60,6 @@ class TestParseGitVersion:
             _GitGetter()._parse_git_version("v2.3-20-", False)
 
 
-"""
 class TestGitGetterCompute:
     def test_empty(self):
         with GitDir() as directory:
@@ -292,4 +292,3 @@ class TestGitGetterCompute:
             directory.modify_file(filename)
             version_info = getter.from_git(directory.path)
             assert VersionInfo("mytag", 1, commit_id, True, True) == version_info
-"""
