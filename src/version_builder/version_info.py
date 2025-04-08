@@ -15,23 +15,23 @@ class TagInterpretation(EqualityMixin):
 
 
 class VersionInfo(EqualityMixin):
-    def __init__(self, git_tag_name, git_commits_since_tag, git_commit_id, git_tag_exists, modified_since_commit):
-        assert isinstance(git_tag_name, str)
-        assert isinstance(git_commits_since_tag, int)
-        assert isinstance(git_commit_id, str)
-        assert isinstance(git_tag_exists, bool)
+    def __init__(self, tag_name, commits_since_tag, commit_id, tag_exists, modified_since_commit):
+        assert isinstance(tag_name, str)
+        assert isinstance(commits_since_tag, int)
+        assert isinstance(commit_id, str)
+        assert isinstance(tag_exists, bool)
         assert isinstance(modified_since_commit, bool)
-        self.git_tag_name = git_tag_name
-        self.git_commits_since_tag = git_commits_since_tag
-        self.git_commit_id = git_commit_id
-        self.git_tag_exists = git_tag_exists
+        self.tag_name = tag_name
+        self.commits_since_tag = commits_since_tag
+        self.commit_id = commit_id
+        self.tag_exists = tag_exists
         self.modified_since_commit = modified_since_commit
-        self.is_dev = modified_since_commit or (not git_tag_exists) or (git_commits_since_tag != 0)
+        self.is_dev = modified_since_commit or (not tag_exists) or (commits_since_tag != 0)
 
     def interpret_tag_name(self):
         matched = re.match(
             r"^v?([0-9]+(?:\.[0-9]+)*)?(?:-([A-Za-z0-9\_/]+))?$",
-            self.git_tag_name,
+            self.tag_name,
             re.IGNORECASE,
         )
         if matched:
@@ -46,12 +46,12 @@ class VersionInfo(EqualityMixin):
     @property
     def version_string(self):
         result = ""
-        if self.git_tag_exists:
-            result += self.git_tag_name
-        if self.git_commits_since_tag > 0:
+        if self.tag_exists:
+            result += self.tag_name
+        if self.commits_since_tag > 0:
             if result != "":
                 result += "."
-            result += "dev%d+rev%s" % (self.git_commits_since_tag, self.git_commit_id)
+            result += "dev%d+rev%s" % (self.commits_since_tag, self.commit_id)
         if self.modified_since_commit:
             result += "-modified"
         return result

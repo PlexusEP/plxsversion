@@ -48,9 +48,9 @@ namespace version {
 #endif
 """ % (
             version_data.version_string,
-            version_data.git_tag_name,
-            version_data.git_commits_since_tag,
-            version_data.git_commit_id,
+            version_data.tag_name,
+            version_data.commits_since_tag,
+            version_data.commit_id,
             str(version_data.modified_since_commit).lower(),
             str(version_data.is_dev).lower(),
             other_variables,

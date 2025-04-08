@@ -17,6 +17,10 @@ def from_git(git_directory):
     return _GitGetter().get_version(git_directory)
 
 
+def from_file(file_path):
+    return _FileGetter().get_version(file_path)
+
+
 class _Getter(object):
     def __init__(self):
         pass
@@ -44,10 +48,10 @@ class _GitGetter(_Getter):
                     branch_name = utils.Git.get_cwd_branch_name()
                     commit_id = utils.Git.get_cwd_commit_id()
                     return VersionInfo(
-                        git_tag_name=branch_name,
-                        git_commits_since_tag=total_num_commits,
-                        git_commit_id=commit_id,
-                        git_tag_exists=False,
+                        tag_name=branch_name,
+                        commits_since_tag=total_num_commits,
+                        commit_id=commit_id,
+                        tag_exists=False,
                         modified_since_commit=self._is_cwd_modified_since_commit(),
                     )
                 else:
@@ -55,10 +59,10 @@ class _GitGetter(_Getter):
                     branch_name = "HEAD"
                     commit_id = "0"
                     return VersionInfo(
-                        git_tag_name=branch_name,
-                        git_commits_since_tag=total_num_commits,
-                        git_commit_id=commit_id,
-                        git_tag_exists=False,
+                        tag_name=branch_name,
+                        commits_since_tag=total_num_commits,
+                        commit_id=commit_id,
+                        tag_exists=False,
                         modified_since_commit=utils.Git.get_cwd_is_not_empty(),
                     )
 
@@ -73,11 +77,27 @@ class _GitGetter(_Getter):
             commits_since_tag = int(matched.group(2))
             commit_id = matched.group(3)
             return VersionInfo(
-                git_tag_name=tag,
-                git_commits_since_tag=commits_since_tag,
-                git_commit_id=commit_id,
-                git_tag_exists=True,
+                tag_name=tag,
+                commits_since_tag=commits_since_tag,
+                commit_id=commit_id,
+                tag_exists=True,
                 modified_since_commit=modified_since_commit,
             )
         else:
             raise VersionParseError(git_version_string)
+
+
+class _FileGetter(_Getter):
+    def compute_version(self, file_path):
+        with open(file_path, "r") as input_file:
+            tag = input_file.readline().strip()
+            if tag:
+                return VersionInfo(
+                    tag_name=tag,
+                    commits_since_tag=0,
+                    commit_id="",
+                    tag_exists=True,
+                    modified_since_commit=False,
+                )
+            else:
+                raise VersionParseError("empty file")

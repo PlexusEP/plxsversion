@@ -25,6 +25,23 @@ class TestPublicInterface:
             out_file = out_dir + "/version.hpp"
             assert os.path.exists(out_file)
 
+    def test_get_version_from_file(self):
+        tag = "v1.2.3-test"
+        with TempFile() as input_file:
+            with open(input_file, "w") as version_file:
+                version_file.write(tag)
+            expected = VersionInfo(tag, 0, "", True, False)
+            result = main.get_version_from_file(input_file)
+            assert expected == result
+
+    def test_create_file_from_file_expect_file_with_content(self):
+        with TempFile() as input_file, TempDir() as out_dir:
+            with open(input_file, "w") as version_file:
+                version_file.write("v1.2.3-test")
+            main.create_version_file_from_file(input_file, out_dir, "cpp", False)
+            out_file = out_dir + "/version.hpp"
+            assert os.path.exists(out_file)
+
 
 # These tests ensure the correct version file is created with content for a given lang
 # Tests for language specific formatting is done elsewhere

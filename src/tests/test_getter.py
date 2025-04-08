@@ -3,7 +3,7 @@ import pytest
 from version_builder import getter
 from version_builder.getter import _GitGetter
 from version_builder.version_info import VersionInfo
-from tests.utils import GitDir
+from tests.utils import TempFile, GitDir
 
 
 class TestParseGitVersion:
@@ -60,7 +60,7 @@ class TestParseGitVersion:
             _GitGetter()._parse_git_version("v2.3-20-", False)
 
 
-class TestGitGetterCompute:
+class TestGitGetterComputeVersion:
     def test_empty(self):
         with GitDir() as directory:
             version_info = getter.from_git(directory.path)
@@ -292,3 +292,27 @@ class TestGitGetterCompute:
             directory.modify_file(filename)
             version_info = getter.from_git(directory.path)
             assert VersionInfo("mytag", 1, commit_id, True, True) == version_info
+
+
+class TestFileGetterComputeVersion:
+    def test_simple(self):
+        with TempFile() as input_file:
+            with open(input_file, "w") as version_file:
+                version_file.write("tagname")
+            version_info = getter.from_file(input_file)
+            assert VersionInfo("tagname", 0, "", True, False) == version_info
+
+    def test_empty_file_expect_error(self):
+        with TempFile() as input_file:
+            open(input_file, "w").close()
+            with pytest.raises(getter.VersionParseError):
+                getter.from_file(input_file)
+
+    def test_multiple_lines_expect_first_line_as_tag(self):
+        with TempFile() as input_file:
+            with open(input_file, "w") as version_file:
+                version_file.write("first\n")
+                version_file.write("second\n")
+                version_file.write("third")
+            version_info = getter.from_file(input_file)
+            assert VersionInfo("first", 0, "", True, False) == version_info
