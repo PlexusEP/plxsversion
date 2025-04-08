@@ -15,13 +15,13 @@ class TestPublicInterface:
             commit_id = git.create_git_commit()
             git.create_git_tag(tag)
             expected = VersionInfo(tag, 0, commit_id, True, False)
-            result = main.get_version_from_git(git.path)
+            result = main.get_version("git", git.path)
             assert expected == result
 
     def test_create_file_from_git_expect_file_with_content(self):
         with GitDir() as git, TempDir() as out_dir:
             git.create_git_commit()
-            main.create_version_file_from_git(git.path, out_dir, "cpp", False)
+            main.create_version_file("git", git.path, out_dir, "cpp", False)
             out_file = out_dir + "/version.hpp"
             assert os.path.exists(out_file)
 
@@ -31,14 +31,14 @@ class TestPublicInterface:
             with open(input_file, "w") as version_file:
                 version_file.write(tag)
             expected = VersionInfo(tag, 0, "", True, False)
-            result = main.get_version_from_file(input_file)
+            result = main.get_version("file", input_file)
             assert expected == result
 
     def test_create_file_from_file_expect_file_with_content(self):
         with TempFile() as input_file, TempDir() as out_dir:
             with open(input_file, "w") as version_file:
                 version_file.write("v1.2.3-test")
-            main.create_version_file_from_file(input_file, out_dir, "cpp", False)
+            main.create_version_file("file", input_file, out_dir, "cpp", False)
             out_file = out_dir + "/version.hpp"
             assert os.path.exists(out_file)
 
@@ -49,7 +49,7 @@ class TestLanguages:
     def test_cpp(self):
         with GitDir() as git, TempDir() as out_dir:
             git.create_git_commit()
-            main.create_version_file_from_git(git.path, out_dir, "cpp", False)
+            main.create_version_file("git", git.path, out_dir, "cpp", False)
             out_file = out_dir + "/version.hpp"
             assert os.path.exists(out_file)
             assert os.stat(out_file).st_size != 0
@@ -63,7 +63,18 @@ class TestMainIntegration:
             script_dir = os.getcwd() + "/src"
             with open("/dev/null", "w") as devnull:
                 subprocess.check_call(
-                    [sys.executable, "-m", "version_builder", "--lang", "cpp", "--gitdir", git.path, out_dir],
+                    [
+                        sys.executable,
+                        "-m",
+                        "version_builder",
+                        "--lang",
+                        "cpp",
+                        "--source",
+                        "git",
+                        "--input",
+                        git.path,
+                        out_dir,
+                    ],
                     stdout=devnull,
                     env={"PYTHONPATH": script_dir},
                 )
@@ -77,7 +88,19 @@ class TestMainIntegration:
             script_dir = os.getcwd() + "/src"
             with open(stdout_file, "w") as output:
                 subprocess.check_call(
-                    [sys.executable, "-m", "version_builder", "--lang", "cpp", "--gitdir", git.path, "-p", out_dir],
+                    [
+                        sys.executable,
+                        "-m",
+                        "version_builder",
+                        "--lang",
+                        "cpp",
+                        "--source",
+                        "git",
+                        "--input",
+                        git.path,
+                        "-p",
+                        out_dir,
+                    ],
                     stdout=output,
                     env={"PYTHONPATH": script_dir},
                 )
