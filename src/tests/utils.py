@@ -3,7 +3,7 @@ import subprocess
 import random
 import os
 import string
-from tempfile import mkdtemp
+from tempfile import mkdtemp, NamedTemporaryFile
 from version_builder.utils import ChDir
 
 
@@ -14,6 +14,18 @@ class TempDir(object):
 
     def __exit__(self, exc_type, value, tb):
         shutil.rmtree(self.path)
+
+
+class TempFile(object):
+    def __enter__(self):
+        f = NamedTemporaryFile()
+        f.close()  # This also deletes the file
+        self.filename = f.name
+        return f.name
+
+    def __exit__(self, exc_type, value, tb):
+        if os.path.isfile(self.filename):
+            os.remove(self.filename)
 
 
 # TODO-KW: consider inheritting temp dir
