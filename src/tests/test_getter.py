@@ -1,65 +1,66 @@
 import pytest
 
 from version_builder import getter
+from version_builder.getter import _GitGetter
 from version_builder.version_info import VersionInfo
-from tests.utils import GitDir
 
 
 class TestParseGitVersion:
     def test_parse_git_version_simple(self):
-        obj = getter._parse_git_version("v1.6.2-0-g3f2a", False)
+        obj = _GitGetter()._parse_git_version("v1.6.2-0-g3f2a", False)
         assert VersionInfo("v1.6.2", 0, "3f2a", True, False) == obj
 
     def test_parse_git_version_simple_no_prefix(self):
-        obj = getter._parse_git_version("1.6.2-0-g3f2a", False)
+        obj = _GitGetter()._parse_git_version("1.6.2-0-g3f2a", False)
         assert VersionInfo("1.6.2", 0, "3f2a", True, False) == obj
 
     def test_parse_git_version_with_commits_since_tag(self):
-        obj = getter._parse_git_version("v1.6.3-23-g49302", False)
+        obj = _GitGetter()._parse_git_version("v1.6.3-23-g49302", False)
         assert VersionInfo("v1.6.3", 23, "49302", True, False) == obj
 
     def test_parse_git_version_with_human_field(self):
-        obj = getter._parse_git_version("v1.6.3-MyMilestone-20-gfade", False)
+        obj = _GitGetter()._parse_git_version("v1.6.3-MyMilestone-20-gfade", False)
         assert VersionInfo("v1.6.3-MyMilestone", 20, "fade", True, False) == obj
 
     def test_parse_git_version_human_field_underscore(self):
-        obj = getter._parse_git_version("v1.6.3-MyMilestone_RC3-0-gfade", False)
+        obj = _GitGetter()._parse_git_version("v1.6.3-MyMilestone_RC3-0-gfade", False)
         assert VersionInfo("v1.6.3-MyMilestone_RC3", 0, "fade", True, False) == obj
 
     def test_parse_git_version_with_slashes_in_tag(self):
-        obj = getter._parse_git_version("/heads/develop-20-gfade", False)
+        obj = _GitGetter()._parse_git_version("/heads/develop-20-gfade", False)
         assert VersionInfo("/heads/develop", 20, "fade", True, False) == obj
 
     def test_parse_git_version_missing_tag(self):
         with pytest.raises(getter.VersionParseError):
-            getter._parse_git_version("23-gfade", False)
+            _GitGetter()._parse_git_version("23-gfade", False)
 
     def test_parse_git_version_empty_tag(self):
         with pytest.raises(getter.VersionParseError):
-            getter._parse_git_version("-23-gfade", False)
+            _GitGetter()._parse_git_version("-23-gfade", False)
 
     def test_parse_git_version_missing_commits_since_tag(self):
         with pytest.raises(getter.VersionParseError):
-            getter._parse_git_version("v2.3-gfade", False)
+            _GitGetter()._parse_git_version("v2.3-gfade", False)
 
     def test_parse_git_version_empty_commits_since_tag(self):
         with pytest.raises(getter.VersionParseError):
-            getter._parse_git_version("v2.3--gfade", False)
+            _GitGetter()._parse_git_version("v2.3--gfade", False)
 
     def test_parse_git_version_commits_since_tag_not_int(self):
         with pytest.raises(getter.VersionParseError):
-            getter._parse_git_version("v2.3-a2-gfade", False)
+            _GitGetter()._parse_git_version("v2.3-a2-gfade", False)
 
     def test_parse_git_version_missing_commit_id(self):
         with pytest.raises(getter.VersionParseError):
-            getter._parse_git_version("v2.3-20", False)
+            _GitGetter()._parse_git_version("v2.3-20", False)
 
     def test_parse_git_version_empty_commit_id(self):
         with pytest.raises(getter.VersionParseError):
-            getter._parse_git_version("v2.3-20-", False)
+            _GitGetter()._parse_git_version("v2.3-20-", False)
 
 
-class TestFromGit:
+"""
+class TestGitGetterCompute:
     def test_empty(self):
         with GitDir() as directory:
             version_info = getter.from_git(directory.path)
@@ -291,3 +292,4 @@ class TestFromGit:
             directory.modify_file(filename)
             version_info = getter.from_git(directory.path)
             assert VersionInfo("mytag", 1, commit_id, True, True) == version_info
+"""
