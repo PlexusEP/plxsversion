@@ -30,7 +30,7 @@ class VersionInfo(EqualityMixin):
 
     def interpret_tag_name(self):
         matched = re.match(
-            r"^v?([0-9]+(?:\.[0-9]+)*)?(?:-([A-Za-z0-9\_/]+))?$",
+            r"^v?([0-9]+(?:\.[0-9]+){2})?(?:-([A-Za-z0-9\_/]+))?$",
             self.tag_name,
             re.IGNORECASE,
         )

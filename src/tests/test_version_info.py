@@ -54,22 +54,21 @@ class TestVersionInfo:
         assert not VersionInfo("1.0", 0, "23fa", True, False).is_dev
 
     def test_interpret_valid_tag_name(self):
-        assert TagInterpretation(["1"], "") == VersionInfo("1", 0, "23fa", True, False).interpret_tag_name()
-
-    def test_interpret_valid_tag_name_plain(self):
-        assert TagInterpretation(["1", "0"], "") == VersionInfo("1.0", 0, "23fa", True, False).interpret_tag_name()
+        assert (
+            TagInterpretation(["1", "2", "3"], "") == VersionInfo("1.2.3", 0, "23fa", True, False).interpret_tag_name()
+        )
 
     def test_interpret_valid_tag_name_human_string(self):
         assert (
-            TagInterpretation(["1", "0"], "MyMilestone_RC3")
-            == VersionInfo("1.0-MyMilestone_RC3", 0, "23fa", True, False).interpret_tag_name()
+            TagInterpretation(["1", "0", "3"], "MyMilestone_RC3")
+            == VersionInfo("1.0.3-MyMilestone_RC3", 0, "23fa", True, False).interpret_tag_name()
         )
 
     def test_interpret_invalid_tag_name_human_no_separator(self):
-        assert None is VersionInfo("1.0MyMilestone_RC3", 0, "23fa", True, False).interpret_tag_name()
+        assert None is VersionInfo("1.0.3MyMilestone_RC3", 0, "23fa", True, False).interpret_tag_name()
 
     def test_interpret_invalid_tag_name_human_contains_dash(self):
-        assert None is VersionInfo("1.0-MyMilestone-RC3", 0, "23fa", True, False).interpret_tag_name()
+        assert None is VersionInfo("1.0.3-MyMilestone-RC3", 0, "23fa", True, False).interpret_tag_name()
 
     def test_interpret_invalid_tag_name_human_contains_period(self):
         assert None is VersionInfo("1.2.3-MyMilestone.RC3", 0, "23fa", True, False).interpret_tag_name()
@@ -81,12 +80,14 @@ class TestVersionInfo:
         )
 
     def test_interpret_valid_tag_name_of_dev_version_1(self):
-        assert TagInterpretation(["0", "8"], "") == VersionInfo("0.8", 1, "23fa", True, False).interpret_tag_name()
+        assert (
+            TagInterpretation(["0", "8", "1"], "") == VersionInfo("0.8.1", 1, "23fa", True, False).interpret_tag_name()
+        )
 
     def test_interpret_valid_tag_name_of_dev_version_2(self):
         assert (
-            TagInterpretation(["0", "8"], "MyMilestone_RC3")
-            == VersionInfo("0.8-MyMilestone_RC3", 123, "23fa", True, False).interpret_tag_name()
+            TagInterpretation(["0", "8", "1"], "MyMilestone_RC3")
+            == VersionInfo("0.8.1-MyMilestone_RC3", 123, "23fa", True, False).interpret_tag_name()
         )
 
     def test_interpret_invalid_tag_name(self):
@@ -103,6 +104,9 @@ class TestVersionInfo:
 
     def test_interpret_invalid_tag_name_invalid_human_separator(self):
         assert None is VersionInfo("1.2.-alpha", 0, "23fa", True, False).interpret_tag_name()
+
+    def test_interpret_invalid_component_number(self):
+        assert None is VersionInfo("1.2", 0, "23fa", True, False).interpret_tag_name()
 
 
 # These tests form the base of TestVersionInfo
