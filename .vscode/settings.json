@@ -7,5 +7,10 @@
   "[python]": {
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "charliermarsh.ruff"
-  }
+  },
+  // use ruff for analysis and ignore pylance
+  "python.analysis.ignore": [
+        "*"
+    ],
+    "ruff.nativeServer": "on"
 }
