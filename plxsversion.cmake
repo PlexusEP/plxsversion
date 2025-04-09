@@ -9,8 +9,6 @@ function(_create_version_file LANG)
     set(file_ext "h")
   endif()
 
-  message("file_ext is ${file_ext}")
-
   set(ENV{PYTHONPATH} "${DIR_OF_PLXSVERSION}/src:ENV{PYTHONPATH}")
   execute_process(
     COMMAND /usr/bin/env python -m version_builder --lang ${LANG} --source git --input "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_BINARY_DIR}/plxs/plxsversion/version.${file_ext}"
