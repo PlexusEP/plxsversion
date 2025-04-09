@@ -26,14 +26,9 @@ function(_set_version_cmake_variable OUTPUT_VARIABLE)
   set(${OUTPUT_VARIABLE} "${VERSION_STRING}" CACHE INTERNAL "${OUTPUT_VARIABLE}")
 endfunction(_set_version_cmake_variable)
 
-######################################################
-# Add version information for a target
-# Uses:
-#   target_plxsversion_init(buildtarget)
-# Then, you can use it in your source file:
-#   #include <plxsversion/version.hpp>
-#   cout << plxsversion::VERSION.toString() << endl;
-######################################################
+# This function should be called from the CMakeLists.txt file that defines a target that will include 
+# the generated version file.
+#   TARGET - input, the target to include the version file for
 function(target_plxsversion_init TARGET)
   cmake_parse_arguments(
     VER
