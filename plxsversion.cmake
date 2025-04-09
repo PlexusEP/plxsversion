@@ -1,6 +1,6 @@
 set(DIR_OF_PLXSVERSION "${CMAKE_CURRENT_LIST_DIR}" CACHE INTERNAL "DIR_OF_PLXSVERSION")
 
-function(_create_version_file LANG)
+function(_create_version_file LANG SOURCE INPUT)
   file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/plxs")
   file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/plxs/plxsversion")
 
@@ -11,7 +11,7 @@ function(_create_version_file LANG)
 
   set(ENV{PYTHONPATH} "${DIR_OF_PLXSVERSION}/src:ENV{PYTHONPATH}")
   execute_process(
-    COMMAND /usr/bin/env python -m version_builder --lang ${LANG} --source git --input "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_BINARY_DIR}/plxs/plxsversion/version.${file_ext}"
+    COMMAND /usr/bin/env python -m version_builder --lang ${LANG} --source ${SOURCE} --input "${INPUT}" "${CMAKE_CURRENT_BINARY_DIR}/plxs/plxsversion/version.${file_ext}"
 		  RESULT_VARIABLE result)
   if(NOT ${result} EQUAL 0)
     message(FATAL_ERROR "Error running plxsversion tool. Return code is: ${result}")
@@ -38,7 +38,7 @@ function(target_plxsversion_init TARGET)
   cmake_parse_arguments(
     VER
     ""
-    "LANG"
+    "LANG;SOURCE;INPUT"
     ""
     ${ARGN}
   )
@@ -47,7 +47,23 @@ function(target_plxsversion_init TARGET)
     set(VER_LANG cpp)
   endif()
 
-  _create_version_file(${VER_LANG})
+  if(NOT VER_SOURCE AND VER_INPUT)
+    message(FATAL_ERROR "Error configuring plxsversion tool. Provided INPUT but no SOURCE.")
+  endif()
+
+  if(VER_SOURCE STREQUAL "file" AND NOT VER_INPUT)
+    message(FATAL_ERROR "Error configuring plxsversion tool. Requested version from file, but did not provide INPUT.")
+  endif()
+
+  if(NOT VER_SOURCE)
+    set(VER_SOURCE git)
+  endif()
+
+  if(NOT VER_INPUT)
+    set(VER_INPUT ${CMAKE_CURRENT_SOURCE_DIR})
+  endif()
+
+  _create_version_file(${VER_LANG} ${VER_SOURCE} ${VER_INPUT})
   target_include_directories(${TARGET} PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/plxs")
   _set_version_cmake_variable(PLXS_VERSION_STRING)
 endfunction(target_plxsversion_init)
