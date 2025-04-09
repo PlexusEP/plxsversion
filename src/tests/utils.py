@@ -31,7 +31,6 @@ class TempFile(object):
             os.remove(self.filename)
 
 
-# TODO-KW: consider inheritting temp dir
 class GitDir(object):
     def __enter__(self):
         self.path = mkdtemp()
