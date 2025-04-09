@@ -2,6 +2,7 @@ from version_builder import getter, formatter
 
 
 def get_version(source, source_input):
+    """Obtains version info from a particular data source"""
     match source:
         case "git":
             return getter.from_git(source_input)
@@ -17,6 +18,7 @@ def create_version_file(source, source_input, output_path, lang, print_created_f
 
 
 def _output_version_file(version_info, output_path, lang, print_created_file):
+    """Converts version info into a requested format and outputs to a file"""
     match lang:
         case "cpp":
             output = formatter.to_cpp(version_info)

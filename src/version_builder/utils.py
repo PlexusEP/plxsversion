@@ -1,14 +1,16 @@
 import os
 import subprocess
 
-# Use this like
-# > with ChDir(my_dir):
-# >   do_something()
-# Then, the working directory will be set to my_dir, do_something() will be called,
-# and the working directory will be set back.
-
 
 class ChDir(object):
+    """
+    Execute a block of functionality in a particular directory
+
+    Usage:
+    with ChDir(my_dir):
+        do_something()
+    """
+
     def __init__(self, directory):
         self.directory = directory
 
