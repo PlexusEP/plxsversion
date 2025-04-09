@@ -70,6 +70,7 @@ class _GitGetter(_Getter):
         return utils.Git.get_cwd_contains_modified_files() or utils.Git.get_cwd_contains_untracked_files()
 
     def _parse_git_version(self, git_version_string, modified_since_commit):
+        """Process git describe output to populate VersionInfo class"""
         assert isinstance(git_version_string, str)
         matched = re.match(r"^([a-zA-Z0-9\.\-\_/]+)-([0-9]+)-g([0-9a-f]+)$", git_version_string)
         if matched:
