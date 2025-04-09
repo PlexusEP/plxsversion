@@ -4,9 +4,9 @@ function(_create_version_file)
   file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/plxsversion")
 
   set(ENV{PYTHONPATH} "${DIR_OF_PLXSVERSION}/src:ENV{PYTHONPATH}")
-  execute_process(COMMAND /usr/bin/env python -m version_builder --lang cpp \
-                  --source git --input "${CMAKE_CURRENT_SOURCE_DIR}" \
-                  "${CMAKE_CURRENT_BINARY_DIR}/plxsversion/version.hpp"
+  execute_process(COMMAND "/usr/bin/env python -m version_builder --lang cpp "
+                  "--source git --input \"${CMAKE_CURRENT_SOURCE_DIR}\" "
+                  "\"${CMAKE_CURRENT_BINARY_DIR}/plxsversion/version.hpp\""
 		  RESULT_VARIABLE result)
   if(NOT ${result} EQUAL 0)
     message(FATAL_ERROR "Error running plxsversion tool. Return code is: ${result}")
