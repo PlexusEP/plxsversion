@@ -51,6 +51,13 @@ class TestLanguages:
             assert os.path.exists(out_file)
             assert os.stat(out_file).st_size != 0
 
+    def test_c(self):
+        with GitDir() as git, TempFile(".h") as out_file:
+            git.create_git_commit()
+            main.create_version_file("git", git.path, out_file, "c", False)
+            assert os.path.exists(out_file)
+            assert os.stat(out_file).st_size != 0
+
 
 # These tests ensure invoking this as a module with various parameters is successful
 class TestMainIntegration:

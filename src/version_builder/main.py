@@ -24,8 +24,7 @@ def _output_version_file(version_info, output_file, lang, print_created_file):
             output = formatter.to_cpp(version_info)
             file_extension = ".hpp"
         case "c":
-            # TODO-KW
-            # output = formatter.to_c(version_info)
+            output = formatter.to_c(version_info)
             file_extension = ".h"
         case _:
             raise ValueError("Unknown language")
