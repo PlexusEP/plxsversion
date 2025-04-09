@@ -1,7 +1,7 @@
 import subprocess
 import sys
 import os
-from tests.utils import GitDir, TempDir, TempFile
+from tests.utils import GitDir, TempFile
 from version_builder import main
 from version_builder.getter import VersionInfo
 
@@ -19,10 +19,9 @@ class TestPublicInterface:
             assert expected == result
 
     def test_create_file_from_git_expect_file_with_content(self):
-        with GitDir() as git, TempDir() as out_dir:
+        with GitDir() as git, TempFile(".hpp") as out_file:
             git.create_git_commit()
-            main.create_version_file("git", git.path, out_dir, "cpp", False)
-            out_file = out_dir + "/version.hpp"
+            main.create_version_file("git", git.path, out_file, "cpp", False)
             assert os.path.exists(out_file)
 
     def test_get_version_from_file(self):
@@ -35,11 +34,10 @@ class TestPublicInterface:
             assert expected == result
 
     def test_create_file_from_file_expect_file_with_content(self):
-        with TempFile() as input_file, TempDir() as out_dir:
+        with TempFile() as input_file, TempFile(".hpp") as out_file:
             with open(input_file, "w") as version_file:
                 version_file.write("v1.2.3-test")
-            main.create_version_file("file", input_file, out_dir, "cpp", False)
-            out_file = out_dir + "/version.hpp"
+            main.create_version_file("file", input_file, out_file, "cpp", False)
             assert os.path.exists(out_file)
 
 
@@ -47,10 +45,9 @@ class TestPublicInterface:
 # Tests for language specific formatting is done elsewhere
 class TestLanguages:
     def test_cpp(self):
-        with GitDir() as git, TempDir() as out_dir:
+        with GitDir() as git, TempFile(".hpp") as out_file:
             git.create_git_commit()
-            main.create_version_file("git", git.path, out_dir, "cpp", False)
-            out_file = out_dir + "/version.hpp"
+            main.create_version_file("git", git.path, out_file, "cpp", False)
             assert os.path.exists(out_file)
             assert os.stat(out_file).st_size != 0
 
@@ -58,7 +55,7 @@ class TestLanguages:
 # These tests ensure invoking this as a module with various parameters is successful
 class TestMainIntegration:
     def test_output_created_with_content(self):
-        with GitDir() as git, TempDir() as out_dir:
+        with GitDir() as git, TempFile(".hpp") as out_file:
             git.create_git_commit()
             script_dir = os.getcwd() + "/src"
             with open("/dev/null", "w") as devnull:
@@ -73,17 +70,16 @@ class TestMainIntegration:
                         "git",
                         "--input",
                         git.path,
-                        out_dir,
+                        out_file,
                     ],
                     stdout=devnull,
                     env={"PYTHONPATH": script_dir},
                 )
-            out_file = out_dir + "/version.hpp"
             assert os.path.exists(out_file)
             assert os.stat(out_file).st_size != 0
 
     def test_print_created_output(self):
-        with GitDir() as git, TempDir() as out_dir, TempFile() as stdout_file:
+        with GitDir() as git, TempFile(".hpp") as out_file, TempFile() as stdout_file:
             git.create_git_commit()
             script_dir = os.getcwd() + "/src"
             with open(stdout_file, "w") as output:
@@ -99,7 +95,7 @@ class TestMainIntegration:
                         "--input",
                         git.path,
                         "-p",
-                        out_dir,
+                        out_file,
                     ],
                     stdout=output,
                     env={"PYTHONPATH": script_dir},

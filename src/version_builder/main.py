@@ -12,12 +12,12 @@ def get_version(source, source_input):
             raise ValueError("Unknown source")
 
 
-def create_version_file(source, source_input, output_path, lang, print_created_file):
+def create_version_file(source, source_input, output_file, lang, print_created_file):
     version_info = get_version(source, source_input)
-    _output_version_file(version_info, output_path, lang, print_created_file)
+    _output_version_file(version_info, output_file, lang, print_created_file)
 
 
-def _output_version_file(version_info, output_path, lang, print_created_file):
+def _output_version_file(version_info, output_file, lang, print_created_file):
     """Converts version info into a requested format and outputs to a file"""
     match lang:
         case "cpp":
@@ -30,9 +30,14 @@ def _output_version_file(version_info, output_path, lang, print_created_file):
         case _:
             raise ValueError("Unknown language")
 
-    with open(output_path + "/version" + file_extension, "w") as file:
+    if not output_file.endswith(file_extension):
+        raise ValueError(
+            "Unexpected file ending for lang %s. Expected: *%s. Got: %s" % (lang, file_extension, output_file)
+        )
+
+    with open(output_file, "w") as file:
         file.write(output)
 
     if print_created_file:
-        with open(output_path + "/version" + file_extension, "r") as file:
+        with open(output_file, "r") as file:
             print(file.read())

@@ -8,7 +8,7 @@ if __name__ == "__main__":
     parser.add_argument("--source", "-s", choices=["git", "file"], required=True)
     parser.add_argument("--input", "-i", required=True)
     parser.add_argument("--print", "-p", action=argparse.BooleanOptionalAction)
-    parser.add_argument("path")
+    parser.add_argument("file")
     args = parser.parse_args()
 
     print("Creating version information using %s from %s" % (args.source, args.input))
@@ -16,7 +16,7 @@ if __name__ == "__main__":
     main.create_version_file(
         source=args.source,
         source_input=args.input,
-        output_path=args.path,
+        output_file=args.file,
         lang=args.lang,
         print_created_file=args.print,
     )

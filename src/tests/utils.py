@@ -17,8 +17,11 @@ class TempDir(object):
 
 
 class TempFile(object):
+    def __init__(self, suffix=""):
+        self.suffix = suffix
+
     def __enter__(self):
-        f = NamedTemporaryFile()
+        f = NamedTemporaryFile(suffix=self.suffix)
         f.close()  # This also deletes the file
         self.filename = f.name
         return f.name
