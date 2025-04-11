@@ -68,7 +68,7 @@ Examples of invalid formats:
 plxsversion supports tags from the following interfaces:
 
 - git
-- file
+- file: This expects a single line containing a valid tag per the above section. 
 
 #### Supported Languages
 
