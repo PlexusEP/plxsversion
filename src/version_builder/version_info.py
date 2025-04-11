@@ -1,8 +1,8 @@
-from version_builder.utils import EqualityMixin
+from version_builder.utils import EqualityByValue
 import re
 
 
-class TagInterpretation(EqualityMixin):
+class TagInterpretation(EqualityByValue):
     def __init__(self, version_components, version_tag):
         assert isinstance(version_components, list)
         assert all(isinstance(item, str) for item in version_components)
@@ -14,7 +14,7 @@ class TagInterpretation(EqualityMixin):
         return "%s(%r)" % (self.__class__, self.__dict__)
 
 
-class VersionInfo(EqualityMixin):
+class VersionInfo(EqualityByValue):
     def __init__(self, tag_name, commits_since_tag, commit_id, tag_exists, modified_since_commit):
         assert isinstance(tag_name, str)
         assert isinstance(commits_since_tag, int)

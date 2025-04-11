@@ -22,9 +22,12 @@ class ChDir(object):
         os.chdir(self.old_dir)
 
 
-class EqualityMixin(object):
+class EqualityByValue(object):
+    """Override identity eq with a check of the object's underlying fields"""
     def __eq__(self, other):
-        return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        return False
 
     def __ne__(self, other):
         return not self.__eq__(other)
