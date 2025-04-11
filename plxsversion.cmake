@@ -1,5 +1,7 @@
 set(DIR_OF_PLXSVERSION "${CMAKE_CURRENT_LIST_DIR}" CACHE INTERNAL "DIR_OF_PLXSVERSION")
 
+find_package(Python COMPONENTS Interpreter REQUIRED)
+
 macro(_set_file_extension LANG)
   set(FILE_EXT "hpp")
   if(${LANG} STREQUAL "c")
@@ -21,7 +23,7 @@ function(_create_version_file LANG SOURCE INPUT)
 
   set(ENV{PYTHONPATH} "${DIR_OF_PLXSVERSION}/src:ENV{PYTHONPATH}")
   execute_process(
-    COMMAND /usr/bin/env python -m version_builder --lang ${LANG} --source ${SOURCE} --input ${INPUT} ${CREATE_ADDITIONAL_OPTIONS} "${CMAKE_CURRENT_BINARY_DIR}/plxs/plxsversion/version.${FILE_EXT}"
+    COMMAND /usr/bin/env ${Python_EXECUTABLE} -m version_builder --lang ${LANG} --source ${SOURCE} --input ${INPUT} ${CREATE_ADDITIONAL_OPTIONS} "${CMAKE_CURRENT_BINARY_DIR}/plxs/plxsversion/version.${FILE_EXT}"
 		  RESULT_VARIABLE result)
   if(NOT ${result} EQUAL 0)
     message(FATAL_ERROR "Error running plxsversion tool. Return code is: ${result}")
