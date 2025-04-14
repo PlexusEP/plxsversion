@@ -1,0 +1,77 @@
+import os
+import subprocess
+import re
+from version_builder.version_data import VersionData
+from version_builder import utils
+
+
+def from_git(git_directory):
+    return _Git().get_version(git_directory)
+
+
+def from_file(file_path):
+    return _File().get_version(file_path)
+
+
+class VersionCollectError(Exception):
+    def __init__(self, root_cause):
+        self.root_cause = root_cause
+
+    def __str__(self):
+        return "Could not get version because %s. " % (self.root_cause)
+
+
+class _VersionCollector(object):
+    def __init__(self):
+        pass
+
+    def get_version(self, data_source):
+        return self.compute_version(data_source)
+
+
+class _Git(_VersionCollector):
+    def compute_version(self, repo_path):
+        with utils.change_dir(repo_path):
+            try:
+                repo_description = utils.Git.get_description()
+                match = re.match(r"([a-zA-Z0-9]*)-([0-9]*)-g([a-zA-Z0-9]*)", repo_description)
+                if match:
+                    tag = match.group(1)
+                    commits_since_tag = int(match.group(2))
+                    commit_id = match.group(3)
+                    return VersionData(
+                        tag=tag,
+                        commit_id=commit_id,
+                        is_dirty=utils.Git.get_is_dirty(),
+                        commits_since_tag=commits_since_tag,
+                    )
+                else:
+                    raise VersionCollectError('unexpected git describe output "%s"', repo_description)
+            except subprocess.CalledProcessError:
+                # no tag exists
+                total_number_commits = utils.Git.get_commit_count()
+                if total_number_commits > 0:
+                    # There is no git tag, but there are commits
+                    branch_name = utils.Git.get_branch_name()
+                    return VersionData(
+                        tag=branch_name,
+                        commit_id=commit_id,
+                        is_dirty=utils.Git.get_is_dirty(),
+                        commits_since_tag=total_number_commits,
+                    )
+                else:
+                    VersionCollectError("no commits exist")
+
+
+class _File(_VersionCollector):
+    def compute_version(self, file_path):
+        with open(file_path, "r") as input_file:
+            tag = input_file.readline().strip()
+            with utils.change_dir(os.path.dirname(file_path)):
+                # While the tag comes from a file, we assume all projects use git
+                commit_id = utils.Git.get_commit_id()
+                is_dirty = utils.Git.get_is_dirty()
+                if tag:
+                    return VersionData(tag=tag, commit_id=commit_id, is_dirty=is_dirty)
+                else:
+                    raise VersionCollectError("empty file")
