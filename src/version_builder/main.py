@@ -1,13 +1,13 @@
-from version_builder import getter, formatter
+from version_builder import version_collector, formatter
 
 
 def get_version(source, source_input):
     """Obtains version info from a particular data source"""
     match source:
         case "git":
-            return getter.from_git(source_input)
+            return version_collector.from_git(source_input)
         case "file":
-            return getter.from_file(source_input)
+            return version_collector.from_file(source_input)
         case _:
             raise ValueError("Unknown source")
 
