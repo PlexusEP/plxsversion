@@ -77,6 +77,21 @@ plxsversion creates version files that support these languages:
 - C++ (cpp)
 - C (c): The header produced with this option is compatible with both C and C++. 
 
+### Output Data
+
+The created file contains the following information:
+
+| Variable                | Description |
+| ----------------------- | ----------- |
+| VERSION                 | Complete version including tag and commit specific data |
+| VERSION_COMPONENTS      | The semantic major.minor.patch component of the tag |
+| VERSION_DESCRIPTOR      | The descriptive component of the tag |
+| TAG                     | The raw tag before processing into components |
+| COMMITS_SINCE_TAG       | Number of commits since the last tag or 0 if not using git as version data source |
+| COMMIT_ID               | Commit ID of the git commit used to build |
+| MODIFIED_SINCE_COMMIT   | True if the git repo had uncommitted changes at build time |
+| DEVELOPMENT_BUILD       | True if MODIFIED_SINCE_COMMIT or commits since last tag |
+
 ## Development
 
 This project uses VSCode devcontainers as the development environment. Upon opening the repository in code, re-open it within a devcontainer. This will install the necessary dependencies.
