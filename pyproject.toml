@@ -3,7 +3,9 @@ line-length = 120
 exclude = [".git", ".vscode"]
 
 [tool.ruff.lint]
-select = ["E", "F", "W", "N", "BLE", "B", "A", "ICN", "Q", "PD"]
+# See https://docs.astral.sh/ruff/rules/
+# TODO-KW: comment a why for our config options
+select = ["A", "B", "BLE", "E", "F", "ISC", "ICN", "N", "PD", "RUF", "Q", "UP", "W" ]
 
 [tool.ruff.format]
 quote-style = "double"
