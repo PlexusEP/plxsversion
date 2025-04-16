@@ -11,7 +11,7 @@ if __name__ == "__main__":
     parser.add_argument("file")
     args = parser.parse_args()
 
-    print("Creating version information using %s from %s" % (args.source, args.input))
+    print(f"Creating version information using {args.source:s} from {args.input:s}")
 
     main.create_version_file(
         source=args.source,

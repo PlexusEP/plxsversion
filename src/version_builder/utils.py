@@ -13,7 +13,7 @@ def change_dir(path):
         os.chdir(original_dir)
 
 
-class EqualityByValue(object):
+class EqualityByValue:
     """Override identity eq with a check of the object's underlying fields"""
 
     def __eq__(self, other):
@@ -25,7 +25,7 @@ class EqualityByValue(object):
         return not self.__eq__(other)
 
 
-class Git(object):
+class Git:
     def get_branch_name():
         return subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"]).strip().decode()
 

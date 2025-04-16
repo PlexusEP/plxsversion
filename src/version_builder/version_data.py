@@ -8,7 +8,7 @@ class VersionParseError(Exception):
         self.version_input = version_input
 
     def __str__(self):
-        return "Version not parseable because %s. Input: %s" % (self.root_cause, self.version_input)
+        return f"Version not parseable because {self.root_cause:s}. Input: {self.version_input:s}"
 
 
 class VersionData(EqualityByValue):
@@ -46,7 +46,7 @@ class VersionData(EqualityByValue):
         else:
             computed_version = "UNTAGGED"  # placeholder to flag user that there are not tags
         if self.commits_since_tag > 0:
-            computed_version += ".rev%s+%dcommits" % (self.commit_id, self.commits_since_tag)
+            computed_version += f".rev{self.commit_id:s}+{self.commits_since_tag:d}commits"
         if self.is_dirty:
             computed_version += "-dirty"
         self.qualified_version = computed_version

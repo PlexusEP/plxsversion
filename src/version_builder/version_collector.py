@@ -18,10 +18,10 @@ class VersionCollectError(Exception):
         self.root_cause = root_cause
 
     def __str__(self):
-        return "Could not get version because %s. " % (self.root_cause)
+        return f"Could not get version because {self.root_cause:s}. "
 
 
-class _VersionCollector(object):
+class _VersionCollector:
     def __init__(self):
         pass
 
@@ -65,7 +65,7 @@ class _Git(_VersionCollector):
 
 class _File(_VersionCollector):
     def compute_version(self, file_path):
-        with open(file_path, "r") as input_file:
+        with open(file_path) as input_file:
             tag = input_file.readline().strip()
             with utils.change_dir(os.path.dirname(file_path)):
                 # While the tag comes from a file, we assume all projects use git

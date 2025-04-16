@@ -31,12 +31,12 @@ def _output_version_file(version_info, output_file, lang, print_created_file):
 
     if not output_file.endswith(file_extension):
         raise ValueError(
-            "Unexpected file ending for lang %s. Expected: *%s. Got: %s" % (lang, file_extension, output_file)
+            f"Unexpected file ending for lang {lang:s}. Expected: *{file_extension:s}. Got: {output_file:s}"
         )
 
     with open(output_file, "w") as file:
         file.write(output)
 
     if print_created_file:
-        with open(output_file, "r") as file:
+        with open(output_file) as file:
             print(file.read())
