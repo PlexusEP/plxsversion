@@ -2,7 +2,7 @@ import pytest
 from version_builder.version_data import VersionData, VersionParseError
 
 
-class TestVersionData:
+class TestVersionDataTag:
     # Empty tag testing
     def test_no_tag_not_dirty_default_commits(self):
         expected_qualified_version = "UNTAGGED"
@@ -102,17 +102,15 @@ class TestVersionData:
         with pytest.raises(VersionParseError):
             VersionData(tag="Invalid_TAG", commit_id="abcd1234", is_dirty=False)
 
-    # Descriptor testing
-    # TODO-KW: add descriptor tests
 
-    # valid
-    def test_descriptor_valid_formats(self):
+class TestVersionDataDescriptor:
+    def test_valid_formats(self):
         VersionData(tag="1.2.3-MyDescriptor", commit_id="abcd1234", is_dirty=True, commits_since_tag=5)
         VersionData(tag="1.2.3-MyDescriptor1", commit_id="abcd1234", is_dirty=True, commits_since_tag=5)
         VersionData(tag="1.2.3-My_Descriptor", commit_id="abcd1234", is_dirty=True, commits_since_tag=5)
         VersionData(tag="1.2.3-1My_Descriptor", commit_id="abcd1234", is_dirty=True, commits_since_tag=5)
 
-    def test_descriptor_data_verification(self):
+    def test_data_verification(self):
         expected_components = ["1", "2", "3"]
         expected_descriptor = "1My_Descriptor2"
         expected_qualified_version = "1.2.3-1My_Descriptor2.revabcd1234+5commits-dirty"
@@ -121,7 +119,7 @@ class TestVersionData:
         assert expected_components == data.components
         assert expected_descriptor == data.descriptor
 
-    def test_descriptor_invalid_content(self):
+    def test_invalid_content(self):
         with pytest.raises(VersionParseError):
             VersionData(tag="1.2.3-My-Descriptor", commit_id="abcd1234", is_dirty=False)
         with pytest.raises(VersionParseError):
@@ -129,7 +127,7 @@ class TestVersionData:
         with pytest.raises(VersionParseError):
             VersionData(tag="1.2.3-MyDescriptor!", commit_id="abcd1234", is_dirty=False)
 
-    def test_descriptor_invalid_separator(self):
+    def test_invalid_separator(self):
         with pytest.raises(VersionParseError):
             VersionData(tag="1.2.3MyDescriptor", commit_id="abcd1234", is_dirty=False)
         with pytest.raises(VersionParseError):
@@ -139,7 +137,7 @@ class TestVersionData:
         with pytest.raises(VersionParseError):
             VersionData(tag="1.2.3/MyDescriptor", commit_id="abcd1234", is_dirty=False)
 
-    def test_descriptor_invalid_semantic_version(self):
+    def test_invalid_semantic_version(self):
         with pytest.raises(VersionParseError):
             VersionData(tag="-MyDescriptor", commit_id="abcd1234", is_dirty=False)
         with pytest.raises(VersionParseError):
@@ -147,19 +145,20 @@ class TestVersionData:
         with pytest.raises(VersionParseError):
             VersionData(tag="1.2.3.4-MyDescriptor", commit_id="abcd1234", is_dirty=False)
 
-    # Development build flag testing
-    def test_is_development_not_dirty_no_commits(self):
+
+class TestVersionDataDevelopmentFlag:
+    def test_not_dirty_no_commits(self):
         data = VersionData(tag="1.2.3", commit_id="abcd1234", is_dirty=False, commits_since_tag=0)
         assert not data.is_development_build
 
-    def test_is_development_dirty_no_commits(self):
+    def test_dirty_no_commits(self):
         data = VersionData(tag="1.2.3", commit_id="abcd1234", is_dirty=True, commits_since_tag=0)
         assert data.is_development_build
 
-    def test_is_development_not_dirty_new_commits(self):
+    def test_not_dirty_new_commits(self):
         data = VersionData(tag="1.2.3", commit_id="abcd1234", is_dirty=False, commits_since_tag=1)
         assert data.is_development_build
 
-    def test_is_development_dirty_new_commits(self):
+    def test_dirty_new_commits(self):
         data = VersionData(tag="1.2.3", commit_id="abcd1234", is_dirty=True, commits_since_tag=1)
         assert data.is_development_build
