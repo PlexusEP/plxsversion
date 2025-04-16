@@ -44,6 +44,11 @@ This script should be ran as a python module. To do this:
 
 ### Limitations
 
+#### General
+
+- Tool must always run in a git repo regardless of version data source
+- Git repo the tool runs in must have at least 1 valid commit
+
 #### Tag Format
 
 The general structure of valid tag formats is based on semantic versioning with an additional descriptor field. This ends up looking like `<major>.<minor>.<patch>-<my>_<descriptor>`. The descriptor field expects an alpha-numeric string that can be separated using underscores. 
