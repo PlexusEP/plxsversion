@@ -27,16 +27,17 @@ class VersionData(EqualityByValue):
         self.commit_id = commit_id
         self.is_dirty = is_dirty
         self.components = ""
-        self.human_tag = ""
+        self.descriptor = ""
         self._parse_tag()
         self._set_qualified_version()
+        self.is_development_build = self.is_dirty or (commits_since_tag > 0)
 
     def _parse_tag(self):
         match = re.match(self._version_format_regex, self.tag, re.IGNORECASE)
         if match:
             self.components = match.group(1).split(".")
             if match.group(2) is not None:
-                self.human_tag = match.group(2)
+                self.descriptor = match.group(2)
 
     def _set_qualified_version(self, commits_since_tag):
         if self.tag:

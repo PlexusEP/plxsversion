@@ -40,11 +40,12 @@ class _CppFormatter(_CCppCommon):
 namespace version {
   constexpr const char *VERSION_STRING = "%s";
   constexpr const char *VERSION_COMPONENTS[] = %s;
-  constexpr const char *VERSION_HUMAN_TAG = "%s";
+  constexpr const char *VERSION_DESCRIPTOR = "%s";
   constexpr const char *TAG_NAME = "%s";
   constexpr const unsigned int COMMITS_SINCE_TAG = %d;
   constexpr const char *COMMIT_ID = "%s";
   constexpr bool MODIFIED_SINCE_COMMIT = %s;
+  constexpr bool DEVELOPMENT_BUILD = %s;
 
 }
 
@@ -52,11 +53,12 @@ namespace version {
 """ % (
             version_data.version_string,
             super()._format_version_components(version_data.components),
-            version_data.human_tag,
+            version_data.descriptor,
             version_data.tag_name,
             version_data.commits_since_tag,
             version_data.commit_id,
             str(version_data.modified_since_commit).lower(),
+            str(version_data.is_development_build).lower(),
         )
 
 
@@ -83,11 +85,12 @@ extern "C" {
 
 static const char *VERSION_STRING = "%s";
 static const char *VERSION_COMPONENTS[] = %s;
-static const char *VERSION_TAG = "%s";
+static const const char *VERSION_DESCRIPTOR = "%s";
 static const char *TAG = "%s";
 static const unsigned int COMMITS_SINCE_TAG = %d;
 static const char *COMMIT_ID = "%s";
 static bool MODIFIED_SINCE_COMMIT = %s;
+static bool bool DEVELOPMENT_BUILD = %s;
 
 #ifdef __cplusplus
 } // extern "C"
@@ -97,9 +100,10 @@ static bool MODIFIED_SINCE_COMMIT = %s;
 """ % (
             version_data.version_string,
             super()._format_version_components(version_data.components),
-            version_data.human_tag,
+            version_data.descriptor,
             version_data.tag_name,
             version_data.commits_since_tag,
             version_data.commit_id,
             str(version_data.modified_since_commit).lower(),
+            str(version_data.is_development_build).lower(),
         )
