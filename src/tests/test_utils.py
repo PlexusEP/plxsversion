@@ -3,8 +3,8 @@ from version_builder import utils
 
 
 class TestUtils:
-    def test_chdir(self):
-        curdir = os.getcwd()
-        with utils.ChDir("/"):
+    def test_change_dir(self):
+        current_dir = os.getcwd()
+        with utils.change_dir("/"):
             assert os.getcwd() == "/"
-        assert os.getcwd() == curdir
+        assert os.getcwd() == current_dir

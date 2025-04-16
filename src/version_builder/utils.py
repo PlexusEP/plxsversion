@@ -1,7 +1,9 @@
 import os
 import subprocess
+from contextlib import contextmanager
 
 
+@contextmanager
 def change_dir(path):
     original_dir = os.getcwd()
     try:
