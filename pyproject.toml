@@ -6,6 +6,9 @@ exclude = [".git", ".vscode"]
 # See https://docs.astral.sh/ruff/rules/
 # TODO-KW: comment a why for our config options
 select = ["A", "B", "BLE", "E", "F", "ISC", "ICN", "N", "PD", "RUF", "Q", "UP", "W" ]
+# TODO-KW: many groups recommend enabling all and excluding manually. 
+#select = ["ALL" ]
+#ignore = [  ]
 
 [tool.ruff.format]
 quote-style = "double"
