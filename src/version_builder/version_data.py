@@ -1,5 +1,6 @@
-from version_builder.utils import EqualityByValue
 import re
+
+from version_builder.utils import EqualityByValue
 
 
 class VersionParseError(Exception):
