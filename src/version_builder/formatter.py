@@ -38,7 +38,7 @@ class _CppFormatter(_CCppCommon):
 #define PLXSVERSION_VERSION_HPP
 
 namespace version {
-  constexpr const char *VERSION_STRING = "%s";
+  constexpr const char *VERSION = "%s";
   constexpr const char *VERSION_COMPONENTS[] = %s;
   constexpr const char *VERSION_DESCRIPTOR = "%s";
   constexpr const char *TAG = "%s";
@@ -51,7 +51,7 @@ namespace version {
 
 #endif
 """ % (
-            version_data.version_string,
+            version_data.qualified_version,
             super()._format_version_components(version_data.components),
             version_data.descriptor,
             version_data.tag_name,
@@ -83,7 +83,7 @@ class _CFormatter(_CCppCommon):
 extern "C" {
 #endif
 
-static const char *VERSION_STRING = "%s";
+static const char *VERSION = "%s";
 static const char *VERSION_COMPONENTS[] = %s;
 static const const char *VERSION_DESCRIPTOR = "%s";
 static const char *TAG = "%s";
@@ -98,7 +98,7 @@ static bool bool DEVELOPMENT_BUILD = %s;
 
 #endif
 """ % (
-            version_data.version_string,
+            version_data.qualified_version,
             super()._format_version_components(version_data.components),
             version_data.descriptor,
             version_data.tag_name,
