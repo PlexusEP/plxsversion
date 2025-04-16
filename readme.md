@@ -46,7 +46,7 @@ This script should be ran as a python module. To do this:
 
 #### Tag Format
 
-The general structure of valid tag formats is based on semantic versioning with an additional human-readable field. This ends up looking like `<major>.<minor>.<patch>-<human>_<readable>`. The human-readable field expects an alpha-numeric string that can be separated using underscores. 
+The general structure of valid tag formats is based on semantic versioning with an additional descriptor field. This ends up looking like `<major>.<minor>.<patch>-<my>_<descriptor>`. The descriptor field expects an alpha-numeric string that can be separated using underscores. 
 
 Examples of valid formats:
 
