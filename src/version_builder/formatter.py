@@ -41,7 +41,7 @@ namespace version {
   constexpr const char *VERSION_STRING = "%s";
   constexpr const char *VERSION_COMPONENTS[] = %s;
   constexpr const char *VERSION_DESCRIPTOR = "%s";
-  constexpr const char *TAG_NAME = "%s";
+  constexpr const char *TAG = "%s";
   constexpr const unsigned int COMMITS_SINCE_TAG = %d;
   constexpr const char *COMMIT_ID = "%s";
   constexpr bool MODIFIED_SINCE_COMMIT = %s;
