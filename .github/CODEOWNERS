@@ -1,0 +1,5 @@
+# Used to enforce EP approves any merges to a default branch
+@PlexusEP/ep
+
+# protect this file from modification
+/.github/CODEOWNERS @PlexusEP/ep
