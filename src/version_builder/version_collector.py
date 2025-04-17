@@ -34,7 +34,7 @@ class _Git(_VersionCollector):
         with utils.change_dir(repo_path):
             try:
                 repo_description = utils.Git.get_description()
-                match = re.match(r"([a-zA-Z0-9]*)-([0-9]*)-g([a-zA-Z0-9]*)", repo_description)
+                match = re.match(r"([a-zA-Z0-9\.]*-?[a-zA-Z0-9\_]*)-([0-9]*)-g([a-zA-Z0-9]*)", repo_description)
                 if match:
                     tag = match.group(1)
                     commits_since_tag = int(match.group(2))
@@ -46,13 +46,14 @@ class _Git(_VersionCollector):
                         commits_since_tag=commits_since_tag,
                     )
                 else:
-                    raise VersionCollectError('unexpected git describe output "%s"', repo_description)
-            except subprocess.CalledProcessError:
+                    raise VersionCollectError(f'unexpected git describe output "{repo_description:s}"')
+            except subprocess.CalledProcessError as exc:
                 # no tag exists
                 total_number_commits = utils.Git.get_commit_count()
                 if total_number_commits > 0:
                     # There is no git tag, but there are commits
                     branch_name = utils.Git.get_branch_name()
+                    commit_id = utils.Git.get_commit_id()
                     return VersionData(
                         tag=branch_name,
                         commit_id=commit_id,
@@ -60,7 +61,7 @@ class _Git(_VersionCollector):
                         commits_since_tag=total_number_commits,
                     )
                 else:
-                    VersionCollectError("no commits exist")
+                    raise VersionCollectError("no commits exist") from exc
 
 
 class _File(_VersionCollector):

@@ -1,13 +1,69 @@
 import pytest
 import os
 
-from version_builder.version_collector import from_file, VersionCollectError
+from version_builder.version_collector import from_file, from_git, VersionCollectError
+from version_builder.version_data import VersionParseError
 from tests.utils import GitDir
 
 
 class TestVersionCollectorGit:
-    def test_basic(self):
-        assert True
+    def test_data_validation(self, tmp_path):
+        git_dir = GitDir(tmp_path)
+        git_dir.commit()
+        git_dir.tag("v1.2.3-My_Descriptor_123")
+        git_dir.commit()
+        expected_commit_id = git_dir.commit()
+        version_data = from_git(git_dir.path)
+        assert "v1.2.3-My_Descriptor_123" == version_data.tag
+        assert expected_commit_id == version_data.commit_id
+        assert 2 == version_data.commits_since_tag
+
+    def test_valid_tags(self, tmp_path):
+        git_dir = GitDir(tmp_path)
+        git_dir.commit()
+        git_dir.tag("1.2.3")
+        from_git(git_dir.path)
+        git_dir.commit()
+        git_dir.tag("1.2.3-My_Descriptor_123")
+        from_git(git_dir.path)
+        git_dir.commit()
+        git_dir.tag("v1.2.3")
+        from_git(git_dir.path)
+        git_dir.commit()
+        git_dir.tag("v1.2.3-My_Descriptor_123")
+        from_git(git_dir.path)
+
+    def test_invalid_tag(self, tmp_path):
+        git_dir = GitDir(tmp_path)
+        git_dir.commit()
+        git_dir.tag("1.2.3.4")
+        with pytest.raises(VersionParseError):
+            from_git(git_dir.path)
+
+    # TODO-KW: determine if an exception for no tag is acceptable
+    def test_no_tag(self, tmp_path):
+        git_dir = GitDir(tmp_path)
+        git_dir.commit()
+        with pytest.raises(VersionParseError):
+            from_git(git_dir.path)
+
+    def test_no_repo(self, tmp_path):
+        with pytest.raises(VersionCollectError):
+            from_git(tmp_path)
+
+    def test_no_commits(self, tmp_path):
+        git_dir = GitDir(tmp_path)
+        with pytest.raises(VersionCollectError):
+            from_git(git_dir.path)
+
+    def test_dirty_repo(self, tmp_path):
+        git_dir = GitDir(tmp_path)
+        git_dir.commit()
+        git_dir.tag("1.2.3")
+        file = git_dir.path / "my-file.txt"
+        file.write_text("")
+        version_data = from_git(git_dir.path)
+        assert version_data.is_dirty
 
 
 class TestVersionCollectorFile:
@@ -16,8 +72,10 @@ class TestVersionCollectorFile:
         file = git_dir.path / "version.txt"
         file.write_text("1.2.3-MyDescriptor")
         git_dir.add_all()
-        git_dir.commit()
-        from_file(file)
+        expected_commit_id = git_dir.commit()
+        version_data = from_file(file)
+        assert expected_commit_id == version_data.commit_id
+        assert not version_data.is_dirty
 
     def test_valid_file_outside_repo(self, tmp_path):
         subdir = tmp_path / "my_dir"
@@ -41,3 +99,14 @@ class TestVersionCollectorFile:
         file.write_text("")
         with pytest.raises(VersionCollectError):
             from_file(file)
+
+    def test_dirty_repo(self, tmp_path):
+        git_dir = GitDir(tmp_path)
+        file = git_dir.path / "version.txt"
+        file.write_text("1.2.3-MyDescriptor")
+        git_dir.add_all()
+        git_dir.commit()
+        dirty_file = git_dir.path / "new_file.txt"
+        dirty_file.write_text("")
+        version_data = from_file(file)
+        assert version_data.is_dirty

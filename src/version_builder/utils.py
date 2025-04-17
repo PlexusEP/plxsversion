@@ -34,7 +34,7 @@ class Git:
 
     def get_description():
         """Output format: <tag>-<commits_since_tag>-g<commit_hash_abbrev>"""
-        return subprocess.check_output(["git", "describe", "--tags", "--abbrev=7"]).strip().decode()
+        return subprocess.check_output(["git", "describe", "--tags", "--abbrev=7", "--long"]).strip().decode()
 
     def get_commit_count():
         try:
