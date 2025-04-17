@@ -15,7 +15,7 @@ def change_dir(path: str) -> None:
 
 
 class EqualityByValue:
-    """Override identity eq with a check of the object's underlying fields"""
+    """Override identity eq with a check of the object's underlying fields."""
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, self.__class__):
@@ -36,7 +36,7 @@ class Git:
         return subprocess.check_output(["git", "rev-parse", "--short=7", "HEAD"]).strip().decode()  # noqa: S603
 
     def get_description() -> str:
-        """Output format: <tag>-<commits_since_tag>-g<commit_hash_abbrev>"""
+        """Output format: <tag>-<commits_since_tag>-g<commit_hash_abbrev>."""
         # No user input is passed to subprocess calls
         return subprocess.check_output(["git", "describe", "--tags", "--abbrev=7", "--long"]).strip().decode()  # noqa: S603
 
@@ -49,7 +49,7 @@ class Git:
             return 0
 
     def get_cwd_is_not_empty() -> bool:
-        """Returns true if a directory contains files besides a .git directory"""
+        """Return true if a directory contains files besides a .git directory."""
         # listdir offers a simpler and more readable way to collect all files in a directory
         all_entries = os.listdir(Path.cwd())  # noqa: PTH208
         nongit_entries = [entry for entry in all_entries if entry != ".git"]
