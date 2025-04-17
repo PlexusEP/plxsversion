@@ -40,12 +40,11 @@ class TestVersionCollectorGit:
         with pytest.raises(VersionParseError):
             from_git(git_dir.path)
 
-    # TODO-KW: determine if an exception for no tag is acceptable
     def test_no_tag(self, tmp_path):
         git_dir = GitDir(tmp_path)
         git_dir.commit()
-        with pytest.raises(VersionParseError):
-            from_git(git_dir.path)
+        version_data = from_git(git_dir.path)
+        assert "0.0.0-UNTAGGED" == version_data.tag
 
     def test_no_repo(self, tmp_path):
         with pytest.raises(VersionCollectError):

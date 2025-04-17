@@ -52,10 +52,9 @@ class _Git(_VersionCollector):
                 total_number_commits = utils.Git.get_commit_count()
                 if total_number_commits > 0:
                     # There is no git tag, but there are commits
-                    branch_name = utils.Git.get_branch_name()
                     commit_id = utils.Git.get_commit_id()
                     return VersionData(
-                        tag=branch_name,
+                        tag="0.0.0-UNTAGGED",
                         commit_id=commit_id,
                         is_dirty=utils.Git.get_is_dirty(),
                         commits_since_tag=total_number_commits,
