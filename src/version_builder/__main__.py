@@ -1,6 +1,6 @@
 import argparse
-from version_builder import main
 
+from version_builder import main
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Create a source file containing git version information.")

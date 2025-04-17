@@ -1,5 +1,6 @@
-import subprocess
 import os
+import subprocess
+
 from version_builder.utils import change_dir
 
 

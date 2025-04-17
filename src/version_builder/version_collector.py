@@ -1,8 +1,9 @@
 import os
-import subprocess
 import re
-from version_builder.version_data import VersionData
+import subprocess
+
 from version_builder import utils
+from version_builder.version_data import VersionData
 
 
 def from_git(git_directory):
@@ -45,8 +46,7 @@ class _Git(_VersionCollector):
                         is_dirty=utils.Git.get_is_dirty(),
                         commits_since_tag=commits_since_tag,
                     )
-                else:
-                    raise VersionCollectError(f'unexpected git describe output "{repo_description:s}"')
+                raise VersionCollectError(f'unexpected git describe output "{repo_description:s}"')
             except subprocess.CalledProcessError as exc:
                 # no tag exists
                 total_number_commits = utils.Git.get_commit_count()
@@ -59,8 +59,7 @@ class _Git(_VersionCollector):
                         is_dirty=utils.Git.get_is_dirty(),
                         commits_since_tag=total_number_commits,
                     )
-                else:
-                    raise VersionCollectError("no commits exist") from exc
+                raise VersionCollectError("no commits exist") from exc
 
 
 class _File(_VersionCollector):

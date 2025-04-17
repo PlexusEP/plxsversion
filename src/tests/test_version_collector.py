@@ -1,9 +1,10 @@
-import pytest
 import os
 
-from version_builder.version_collector import from_file, from_git, VersionCollectError
-from version_builder.version_data import VersionParseError
+import pytest
+
 from tests.utils import GitDir
+from version_builder.version_collector import VersionCollectError, from_file, from_git
+from version_builder.version_data import VersionParseError
 
 
 class TestVersionCollectorGit:
@@ -14,9 +15,9 @@ class TestVersionCollectorGit:
         git_dir.commit()
         expected_commit_id = git_dir.commit()
         version_data = from_git(git_dir.path)
-        assert "v1.2.3-My_Descriptor_123" == version_data.tag
+        assert version_data.tag == "v1.2.3-My_Descriptor_123"
         assert expected_commit_id == version_data.commit_id
-        assert 2 == version_data.commits_since_tag
+        assert version_data.commits_since_tag == 2
 
     def test_valid_tags(self, tmp_path):
         git_dir = GitDir(tmp_path)
@@ -44,7 +45,7 @@ class TestVersionCollectorGit:
         git_dir = GitDir(tmp_path)
         git_dir.commit()
         version_data = from_git(git_dir.path)
-        assert "0.0.0-UNTAGGED" == version_data.tag
+        assert version_data.tag == "0.0.0-UNTAGGED"
 
     def test_no_repo(self, tmp_path):
         with pytest.raises(VersionCollectError):

@@ -1,4 +1,5 @@
 import pytest
+
 from version_builder.version_data import VersionData, VersionParseError
 
 

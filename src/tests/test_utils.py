@@ -1,6 +1,7 @@
 import os
-from version_builder import utils
+
 from tests.utils import GitDir
+from version_builder import utils
 
 
 class TestDirectoryManagement:
@@ -18,7 +19,7 @@ class TestGitWrapper:
     def test_commit_count_no_commits(self, tmp_path):
         git_dir = GitDir(tmp_path)
         with utils.change_dir(git_dir.path):
-            assert 0 == utils.Git.get_commit_count()
+            assert utils.Git.get_commit_count() == 0
 
     def test_commit_count(self, tmp_path):
         git_dir = GitDir(tmp_path)

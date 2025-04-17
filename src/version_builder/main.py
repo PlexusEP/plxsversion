@@ -1,6 +1,6 @@
 from pathlib import PosixPath
 
-from version_builder import version_collector, formatter
+from version_builder import formatter, version_collector
 
 
 def create_version_file(source, source_input, output_file, lang, print_created_file):

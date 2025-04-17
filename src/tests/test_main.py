@@ -1,10 +1,11 @@
-import pytest
 import os
 import subprocess
 import sys
 
-from version_builder import main
+import pytest
+
 from tests.utils import GitDir
+from version_builder import main
 
 
 class TestMain:
