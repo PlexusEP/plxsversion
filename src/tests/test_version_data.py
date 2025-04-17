@@ -3,39 +3,9 @@ from version_builder.version_data import VersionData, VersionParseError
 
 
 class TestVersionDataTag:
-    # Empty tag testing
-    def test_no_tag_not_dirty_default_commits(self):
-        expected_qualified_version = "UNTAGGED"
-        data = VersionData(tag="", commit_id="abcd1234", is_dirty=False)
-        assert expected_qualified_version == data.qualified_version
-
-    def test_no_tag_dirty_default_commits(self):
-        expected_qualified_version = "UNTAGGED-dirty"
-        data = VersionData(tag="", commit_id="abcd1234", is_dirty=True)
-        assert expected_qualified_version == data.qualified_version
-
-    def test_no_tag_not_dirty_new_commits(self):
-        expected_qualified_version = "UNTAGGED.revabcd1234+5commits"
-        data = VersionData(tag="", commit_id="abcd1234", is_dirty=False, commits_since_tag=5)
-        assert expected_qualified_version == data.qualified_version
-
-    # (alternative name) test_no_tag_dirty_new_commits
-    def test_no_tag_data_verification(self):
-        expected_tag = ""
-        expected_commit_id = "abcd1234"
-        expected_is_dirty = True
-        expected_components = ""
-        expected_descriptor = ""
-        expected_is_development_build = True
-        expected_qualified_version = "UNTAGGED.revabcd1234+5commits-dirty"
-        data = VersionData(tag="", commit_id="abcd1234", is_dirty=True, commits_since_tag=5)
-        assert expected_qualified_version == data.qualified_version
-        assert expected_tag == data.tag
-        assert expected_commit_id == data.commit_id
-        assert expected_is_dirty == data.is_dirty
-        assert expected_components == data.components
-        assert expected_descriptor == data.descriptor
-        assert expected_is_development_build == data.is_development_build
+    def test_no_tag_not_allowed(self):
+        with pytest.raises(VersionParseError):
+            VersionData(tag="", commit_id="abcd1234", is_dirty=False)
 
     # Semantic version testing
     def test_tag_not_dirty_default_commits(self):

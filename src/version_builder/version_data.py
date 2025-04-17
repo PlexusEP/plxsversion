@@ -20,9 +20,12 @@ class VersionData(EqualityByValue):
         assert isinstance(commit_id, str)
         assert isinstance(is_dirty, bool)
         assert isinstance(commits_since_tag, int)
-        if tag:
-            if not re.match(self._version_format_regex, tag, re.IGNORECASE):
-                raise VersionParseError("invalid format", tag)
+
+        if not tag:
+            raise VersionParseError("empty tag input", tag)
+
+        if not re.match(self._version_format_regex, tag, re.IGNORECASE):
+            raise VersionParseError("invalid format", tag)
 
         self.tag = tag
         self.commit_id = commit_id
@@ -42,10 +45,7 @@ class VersionData(EqualityByValue):
                 self.descriptor = match.group(2)
 
     def _set_qualified_version(self):
-        if self.tag:
-            computed_version = self.tag  # use non-empty tag
-        else:
-            computed_version = "UNTAGGED"  # placeholder to flag user that there are not tags
+        computed_version = self.tag
         if self.commits_since_tag > 0:
             computed_version += f".rev{self.commit_id:s}+{self.commits_since_tag:d}commits"
         if self.is_dirty:
