@@ -66,7 +66,7 @@ class _Git(_VersionCollector):
 
 class _File(_VersionCollector):
     def compute_version(self, file_path: str) -> VersionData:
-        with Path.open(file_path) as input_file:
+        with open(file_path) as input_file:
             tag = input_file.readline().strip()
             if tag:
                 with utils.change_dir(Path(file_path).parent):

@@ -1,4 +1,4 @@
-from pathlib import Path, PosixPath
+from pathlib import PosixPath
 
 from version_builder import formatter, version_collector, version_data
 
@@ -46,10 +46,10 @@ def _output_version_file(
         )
         raise ValueError(msg)
 
-    with Path.open(output_file, "w") as file:
+    with open(output_file, "w") as file:
         file.write(output)
 
     if print_created_file:
-        with Path.open(output_file) as file:
+        with open(output_file) as file:
             # Intentional printing of file contents
             print(file.read())  # noqa: T201

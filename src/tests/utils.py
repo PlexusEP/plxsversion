@@ -26,8 +26,7 @@ class GitDir:
             self._silent_call(["git", "add", "."])
 
     def _silent_call(self, command):
-        # Path.open doesn't seem to work with devnull in Python 3.10
-        with open(os.devnull, "w") as devnull:  # noqa: PTH123
+        with open(os.devnull, "w") as devnull:
             # Private helper to unit testing should not be used outside of trusted context
             return subprocess.check_output(command, stderr=devnull).decode()
 
