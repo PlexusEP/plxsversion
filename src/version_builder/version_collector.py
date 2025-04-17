@@ -67,11 +67,14 @@ class _File(_VersionCollector):
     def compute_version(self, file_path):
         with open(file_path) as input_file:
             tag = input_file.readline().strip()
-            with utils.change_dir(os.path.dirname(file_path)):
-                # While the tag comes from a file, we assume all projects use git
-                commit_id = utils.Git.get_commit_id()
-                is_dirty = utils.Git.get_is_dirty()
-                if tag:
-                    return VersionData(tag=tag, commit_id=commit_id, is_dirty=is_dirty)
-                else:
-                    raise VersionCollectError("empty file")
+            if tag:
+                with utils.change_dir(os.path.dirname(file_path)):
+                    # While the tag comes from a file, we assume all projects use git
+                    try:
+                        commit_id = utils.Git.get_commit_id()
+                        is_dirty = utils.Git.get_is_dirty()
+                        return VersionData(tag=tag, commit_id=commit_id, is_dirty=is_dirty)
+                    except subprocess.CalledProcessError as exc:
+                        raise VersionCollectError("input file not in git repo") from exc
+            else:
+                raise VersionCollectError("empty file")
