@@ -1,6 +1,5 @@
 import os
 import subprocess
-from pathlib import Path
 
 from version_builder.utils import change_dir
 
@@ -27,7 +26,8 @@ class GitDir:
             self._silent_call(["git", "add", "."])
 
     def _silent_call(self, command):
-        with Path.open(os.devnull, "w") as devnull:
+        # Path.open doesn't seem to work with devnull in Python 3.10
+        with open(os.devnull, "w") as devnull:  # noqa: PTH123
             # Private helper to unit testing should not be used outside of trusted context
             return subprocess.check_output(command, stderr=devnull).decode()
 

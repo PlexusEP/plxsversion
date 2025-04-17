@@ -13,9 +13,6 @@ class TestDirectoryManagement:
 
 
 class TestGitWrapper:
-    def test_basic(self):
-        assert True
-
     def test_commit_count_no_commits(self, tmp_path):
         git_dir = GitDir(tmp_path)
         with utils.change_dir(git_dir.path):
