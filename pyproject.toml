@@ -12,7 +12,6 @@ ignore = [
     "S607",     # accept use of tools on path (such as git)
 
 
-    "ANN", # TODO-KW: temp
     "D", # TODO-KW: temp
 
 ]
@@ -22,6 +21,7 @@ ignore = [
     "S101",     # pytest uses asserts for testing
     "S603",     # unit tests should always control input to subprocesses
     "PLR2004",  # magic values for testing equality in unit testing is acceptable
+    "ANN",   # No need to annotate test functions
 ]
 
 [tool.ruff.format]

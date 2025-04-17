@@ -1,15 +1,19 @@
 from pathlib import Path, PosixPath
 
-from version_builder import formatter, version_collector
+from version_builder import formatter, version_collector, version_data
 
 
-def create_version_file(source, source_input, output_file, lang, print_created_file):
+def create_version_file(
+    source: str, source_input: str, output_file: str, lang: str, *, print_created_file: bool
+) -> None:
     version_info = _get_version(source, source_input)
-    _output_version_file(version_info, PosixPath(output_file), lang, print_created_file)
+    _output_version_file(
+        version_info=version_info, output_file=PosixPath(output_file), lang=lang, print_created_file=print_created_file
+    )
 
 
-def _get_version(source, source_input):
-    """Obtains version info from a particular data source"""
+def _get_version(source: str, source_input: str) -> version_data.VersionData:
+    """Obtains version data from a particular data source"""
     match source:
         case "git":
             return version_collector.from_git(source_input)
@@ -20,7 +24,9 @@ def _get_version(source, source_input):
             raise ValueError(msg)
 
 
-def _output_version_file(version_info, output_file, lang, print_created_file):
+def _output_version_file(
+    version_info: version_data.VersionData, output_file: str, lang: str, *, print_created_file: bool
+) -> None:
     """Converts version info into a requested format and outputs to a file"""
     match lang:
         case "cpp":

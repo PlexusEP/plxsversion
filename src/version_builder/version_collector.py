@@ -6,32 +6,32 @@ from version_builder import utils
 from version_builder.version_data import VersionData
 
 
-def from_git(git_directory):
+def from_git(git_directory: str) -> VersionData:
     return _Git().get_version(git_directory)
 
 
-def from_file(file_path):
+def from_file(file_path: str) -> VersionData:
     return _File().get_version(file_path)
 
 
 class VersionCollectError(Exception):
-    def __init__(self, root_cause):
+    def __init__(self, root_cause: str) -> None:
         self.root_cause = root_cause
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"Could not get version because {self.root_cause:s}. "
 
 
 class _VersionCollector:
-    def __init__(self):
+    def __init__(self) -> None:
         pass
 
-    def get_version(self, data_source):
+    def get_version(self, data_source: str) -> VersionData:
         return self.compute_version(data_source)
 
 
 class _Git(_VersionCollector):
-    def compute_version(self, repo_path):
+    def compute_version(self, repo_path: str) -> VersionData:
         with utils.change_dir(repo_path):
             try:
                 repo_description = utils.Git.get_description()
@@ -65,7 +65,7 @@ class _Git(_VersionCollector):
 
 
 class _File(_VersionCollector):
-    def compute_version(self, file_path):
+    def compute_version(self, file_path: str) -> VersionData:
         with Path.open(file_path) as input_file:
             tag = input_file.readline().strip()
             if tag:
