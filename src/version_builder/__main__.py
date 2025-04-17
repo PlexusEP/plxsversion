@@ -11,7 +11,8 @@ if __name__ == "__main__":
     parser.add_argument("file")
     args = parser.parse_args()
 
-    print(f"Creating version information using {args.source:s} from {args.input:s}")
+    # Intentional print for user status notification
+    print(f"Creating version information using {args.source:s} from {args.input:s}")  # noqa: T201
 
     main.create_version_file(
         source=args.source,

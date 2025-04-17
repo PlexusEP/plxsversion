@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 
 from tests.utils import GitDir
 from version_builder import utils
@@ -6,10 +6,10 @@ from version_builder import utils
 
 class TestDirectoryManagement:
     def test_change_dir(self):
-        current_dir = os.getcwd()
+        current_dir = Path.cwd()
         with utils.change_dir("/"):
-            assert os.getcwd() == "/"
-        assert os.getcwd() == current_dir
+            assert Path.cwd() == Path("/")
+        assert Path.cwd() == current_dir
 
 
 class TestGitWrapper:

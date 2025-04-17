@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 
 import pytest
 
@@ -79,7 +79,7 @@ class TestVersionCollectorFile:
 
     def test_valid_file_outside_repo(self, tmp_path):
         subdir = tmp_path / "my_dir"
-        os.mkdir(subdir)
+        Path.mkdir(subdir)
         git_dir = GitDir(subdir)
         file = tmp_path / "version.txt"
         file.write_text("1.2.3-MyDescriptor")

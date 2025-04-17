@@ -16,16 +16,26 @@ class VersionData(EqualityByValue):
     def __init__(self, tag, commit_id, is_dirty, commits_since_tag=0):
         self._version_format_regex = r"^v?([0-9]+(?:\.[0-9]+){2}){1}(?:-([A-Za-z0-9\_/]+))?$"
 
-        assert isinstance(tag, str)
-        assert isinstance(commit_id, str)
-        assert isinstance(is_dirty, bool)
-        assert isinstance(commits_since_tag, int)
+        if not isinstance(tag, str):
+            msg = "tag is not str type"
+            raise TypeError(msg)
+        if not isinstance(commit_id, str):
+            msg = "commit_id is not str type"
+            raise TypeError(msg)
+        if not isinstance(is_dirty, bool):
+            msg = "is_dirty is not bool type"
+            raise TypeError(msg)
+        if not isinstance(commits_since_tag, int):
+            msg = "commits_since_tag is not int type"
+            raise TypeError(msg)
 
         if not tag:
-            raise VersionParseError("empty tag input", tag)
+            msg = "empty tag input"
+            raise VersionParseError(msg, tag)
 
         if not re.match(self._version_format_regex, tag, re.IGNORECASE):
-            raise VersionParseError("invalid format", tag)
+            msg = "invalid format"
+            raise VersionParseError(msg, tag)
 
         self.tag = tag
         self.commit_id = commit_id

@@ -1,4 +1,4 @@
-from pathlib import PosixPath
+from pathlib import Path, PosixPath
 
 from version_builder import formatter, version_collector
 
@@ -16,7 +16,8 @@ def _get_version(source, source_input):
         case "file":
             return version_collector.from_file(source_input)
         case _:
-            raise ValueError("Unknown source")
+            msg = "Unknown source"
+            raise ValueError(msg)
 
 
 def _output_version_file(version_info, output_file, lang, print_created_file):
@@ -29,16 +30,20 @@ def _output_version_file(version_info, output_file, lang, print_created_file):
             output = formatter.to_c(version_info)
             expected_file_extension = ".h"
         case _:
-            raise ValueError("Unknown language")
+            msg = "Unknown language"
+            raise ValueError(msg)
 
     if output_file.suffix != expected_file_extension:
-        raise ValueError(
-            f"Unexpected file ending for lang {lang:s}. Expected: *{expected_file_extension:s}. Got: {output_file.name:s}"
+        msg = (
+            f"Unexpected file ending for lang {lang:s}. Expected: *{expected_file_extension:s}. "
+            "Got: {output_file.name:s}"
         )
+        raise ValueError(msg)
 
-    with open(output_file, "w") as file:
+    with Path.open(output_file, "w") as file:
         file.write(output)
 
     if print_created_file:
-        with open(output_file) as file:
-            print(file.read())
+        with Path.open(output_file) as file:
+            # Intentional printing of file contents
+            print(file.read())  # noqa: T201

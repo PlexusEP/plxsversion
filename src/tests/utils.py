@@ -1,5 +1,6 @@
 import os
 import subprocess
+from pathlib import Path
 
 from version_builder.utils import change_dir
 
@@ -19,15 +20,15 @@ class GitDir:
         self.add_all()
         with change_dir(self.path):
             self._silent_call(["git", "commit", "--allow-empty", "-m", "message"])
-            commit_id = self._silent_call(["git", "rev-parse", "--short", "HEAD"]).strip()
-            return commit_id
+            return self._silent_call(["git", "rev-parse", "--short", "HEAD"]).strip()
 
     def add_all(self):
         with change_dir(self.path):
             self._silent_call(["git", "add", "."])
 
     def _silent_call(self, command):
-        with open(os.devnull, "w") as devnull:
+        with Path.open(os.devnull, "w") as devnull:
+            # Private helper to unit testing should not be used outside of trusted context
             return subprocess.check_output(command, stderr=devnull).decode()
 
     def create_branch(self, branch_name):

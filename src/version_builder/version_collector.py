@@ -1,6 +1,6 @@
-import os
 import re
 import subprocess
+from pathlib import Path
 
 from version_builder import utils
 from version_builder.version_data import VersionData
@@ -46,7 +46,8 @@ class _Git(_VersionCollector):
                         is_dirty=utils.Git.get_is_dirty(),
                         commits_since_tag=commits_since_tag,
                     )
-                raise VersionCollectError(f'unexpected git describe output "{repo_description:s}"')
+                msg = f'unexpected git describe output "{repo_description:s}"'
+                raise VersionCollectError(msg)
             except subprocess.CalledProcessError as exc:
                 # no tag exists
                 total_number_commits = utils.Git.get_commit_count()
@@ -59,21 +60,24 @@ class _Git(_VersionCollector):
                         is_dirty=utils.Git.get_is_dirty(),
                         commits_since_tag=total_number_commits,
                     )
-                raise VersionCollectError("no commits exist") from exc
+                msg = "no commits exist"
+                raise VersionCollectError(msg) from exc
 
 
 class _File(_VersionCollector):
     def compute_version(self, file_path):
-        with open(file_path) as input_file:
+        with Path.open(file_path) as input_file:
             tag = input_file.readline().strip()
             if tag:
-                with utils.change_dir(os.path.dirname(file_path)):
+                with utils.change_dir(Path(file_path).parent):
                     # While the tag comes from a file, we assume all projects use git
                     try:
                         commit_id = utils.Git.get_commit_id()
                         is_dirty = utils.Git.get_is_dirty()
                         return VersionData(tag=tag, commit_id=commit_id, is_dirty=is_dirty)
                     except subprocess.CalledProcessError as exc:
-                        raise VersionCollectError("input file not in git repo") from exc
+                        msg = "input file not in git repo"
+                        raise VersionCollectError(msg) from exc
             else:
-                raise VersionCollectError("empty file")
+                msg = "empty file"
+                raise VersionCollectError(msg)
