@@ -19,7 +19,7 @@ class _Formatter:
 # ----------------------------------------
 class _CCppCommon(_Formatter):
     def _format_version_components(self, version_components):
-        return '{"' + '", "'.join(version_components) + '"}'
+        return '{ "' + '", "'.join(version_components) + '" }'
 
 
 # ----------------------------------------
@@ -33,23 +33,23 @@ class _CppFormatter(_CCppCommon):
 // DO NOT MODIFY!
 // ---------------------------------------------------
 
-#pragma once
 #ifndef PLXSVERSION_VERSION_HPP
 #define PLXSVERSION_VERSION_HPP
 
 namespace version {{
-  constexpr const char *VERSION = "{version_data.qualified_version:s}";
-  constexpr const char *VERSION_COMPONENTS[] = {super()._format_version_components(version_data.components):s};
-  constexpr const char *VERSION_DESCRIPTOR = "{version_data.descriptor:s}";
-  constexpr const char *TAG = "{version_data.tag_name:s}";
-  constexpr const unsigned int COMMITS_SINCE_TAG = {version_data.commits_since_tag:d};
-  constexpr const char *COMMIT_ID = "{version_data.commit_id:s}";
-  constexpr bool MODIFIED_SINCE_COMMIT = {str(version_data.modified_since_commit).lower():s};
-  constexpr bool DEVELOPMENT_BUILD = {str(version_data.is_development_build).lower():s};
 
-}}
+constexpr const char *VERSION = "{version_data.qualified_version:s}";
+constexpr const char *VERSION_COMPONENTS[] = {super()._format_version_components(version_data.components):s};
+constexpr const char *VERSION_DESCRIPTOR = "{version_data.descriptor:s}";
+constexpr const char *TAG = "{version_data.tag:s}";
+constexpr const unsigned int COMMITS_SINCE_TAG = {version_data.commits_since_tag:d};
+constexpr const char *COMMIT_ID = "{version_data.commit_id:s}";
+constexpr bool DIRTY_BUILD = {str(version_data.is_dirty).lower():s};
+constexpr bool DEVELOPMENT_BUILD = {str(version_data.is_development_build).lower():s};
 
-#endif
+}} // namespace version
+
+#endif // PLXSVERSION_VERSION_HPP
 """
 
 
@@ -64,7 +64,6 @@ class _CFormatter(_CCppCommon):
 // DO NOT MODIFY!
 // ---------------------------------------------------
 
-#pragma once
 #ifndef PLXSVERSION_VERSION_H
 #define PLXSVERSION_VERSION_H
 
@@ -76,16 +75,16 @@ extern "C" {{
 
 static const char *VERSION = "{version_data.qualified_version:s}";
 static const char *VERSION_COMPONENTS[] = {super()._format_version_components(version_data.components):s};
-static const const char *VERSION_DESCRIPTOR = "{version_data.descriptor:s}";
-static const char *TAG = "{version_data.tag_name:s}";
+static const char *VERSION_DESCRIPTOR = "{version_data.descriptor:s}";
+static const char *TAG = "{version_data.tag:s}";
 static const unsigned int COMMITS_SINCE_TAG = {version_data.commits_since_tag:d};
 static const char *COMMIT_ID = "{version_data.commit_id:s}";
-static bool MODIFIED_SINCE_COMMIT = {str(version_data.modified_since_commit).lower():s};
-static bool bool DEVELOPMENT_BUILD = {str(version_data.is_development_build).lower():s};
+static bool DIRTY_BUILD = {str(version_data.is_dirty).lower():s};
+static bool DEVELOPMENT_BUILD = {str(version_data.is_development_build).lower():s};
 
 #ifdef __cplusplus
 }} // extern "C"
 #endif
 
-#endif
+#endif // PLXSVERSION_VERSION_H
 """
