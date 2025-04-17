@@ -52,5 +52,5 @@ class Git:
     def get_is_dirty():
         staged_changes = subprocess.call(["git", "diff", "--quiet", "--cached", "--exit-code", "HEAD"]) != 0
         unstaged_changes = subprocess.call(["git", "diff", "--quiet", "--exit-code", "HEAD"]) != 0
-        untracked_files = subprocess.call(["git", "ls-files", "--exclude-standard", "--others"]) != ""
+        untracked_files = subprocess.check_output(["git", "ls-files", "--exclude-standard", "--others"]).decode() != ""
         return staged_changes or unstaged_changes or untracked_files
