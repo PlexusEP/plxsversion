@@ -49,7 +49,9 @@ target_plxsversion_init(my_app
 This script should be ran as a python module. To do this:
 
 1. Navigate to this repository's `src` directory or add this directory to the `PYTHONPATH` environment variable
-2. Invoke the tool: ```python -m version_builder --gitdir <repo_dir> --lang <output_language> <output_dir>```
+2. Invoke the tool: ```python -m version_builder --lang <output_language> --input <git_dir> <output_file>```
+
+Other parameters can be found in the public interface for the module. 
 
 ### Limitations
 

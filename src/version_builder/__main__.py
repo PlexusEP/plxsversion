@@ -4,10 +4,23 @@ from version_builder import main
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Create a source file containing git version information.")
-    parser.add_argument("--lang", "-l", choices=["cpp", "c"], required=True)
-    parser.add_argument("--source", "-s", choices=["git", "file"], required=True)
-    parser.add_argument("--input", "-i", required=True)
-    parser.add_argument("--print", "-p", action=argparse.BooleanOptionalAction)
+    parser.add_argument(
+        "--lang", "-l", choices=["cpp", "c"], required=True, help="language supported by the file output"
+    )
+    parser.add_argument(
+        "--source",
+        "-s",
+        choices=["git", "file"],
+        required=True,
+        help="type of source used for generating the version information",
+    )
+    parser.add_argument("--input", "-i", required=True, help="path to source of version information")
+    parser.add_argument(
+        "--print",
+        "-p",
+        action=argparse.BooleanOptionalAction,
+        help="print the contents of the generated file after creation",
+    )
     parser.add_argument("file")
     args = parser.parse_args()
 
