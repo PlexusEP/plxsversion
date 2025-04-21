@@ -1,12 +1,12 @@
 # plxsversion
 
-This is a simple python tool that can be leveraged to create a version file to be leveraged by a codebase.
+This is a simple python tool that can be used to create a version file that can be leveraged by a codebase to report consistent versioning. 
 
 ## Usage
 
 ### CMake Integration
 
-It is recommended to add this package using CPM and register CMake targets to have version information generated. 
+For C/C++ projects is recommended to add this package using CPM and register CMake targets to have version information generated. 
 
 Example CMake to get the package:
 ```
@@ -20,7 +20,7 @@ CPMAddPackage(
 include(${plxsversion_SOURCE_DIR}/plxsversion.cmake)
 ```
 
-Example CMake to generate version for a target:
+Example CMake to generate version for a C++ target:
 ```
 target_plxsversion_init(my_app)
 ```
@@ -32,6 +32,15 @@ target_plxsversion_init(<TARGET>
   [LANG <output_language>]        select the language supported by the version file
   [SOURCE <version_source>]       choose if version comes from git or file
   [INPUT <version_input_path>]    path to git repo or file to process version from
+)
+```
+
+Consider a C application that you wish to use the file `./apps/my_app/version.txt` for the versioning information:
+```
+target_plxsversion_init(my_app
+  LANG c
+  SOURCE file
+  INPUT ${CMAKE_CURRENT_SOURCE_DIR}/apps/my_app/version.txt
 )
 ```
 
