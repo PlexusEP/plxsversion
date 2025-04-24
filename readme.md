@@ -105,7 +105,7 @@ The created file contains the following information:
 | TAG                     | The raw tag before processing into components |
 | COMMITS_SINCE_TAG       | Number of commits since the last tag or 0 if not using git as version data source |
 | COMMIT_ID               | Commit ID of the git commit used to build |
-| MODIFIED_SINCE_COMMIT   | True if the git repo had uncommitted changes at build time |
+| DIRTY_BUILD             | True if the git repo had uncommitted changes at build time |
 | DEVELOPMENT_BUILD       | True if MODIFIED_SINCE_COMMIT or commits since last tag |
 
 ## Development
