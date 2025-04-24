@@ -17,13 +17,14 @@ class TestCFormatter:
 #define PLXSVERSION_VERSION_H
 
 #include <stdbool.h>
+#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 static const char *VERSION = "v1.2.3-MyDescriptor1.revabcd1234+2commits";
-static const char *VERSION_COMPONENTS[] = { "1", "2", "3" };
+static const uint32_t *VERSION_COMPONENTS[] = { 1, 2, 3 };
 static const char *VERSION_DESCRIPTOR = "MyDescriptor1";
 static const char *TAG = "v1.2.3-MyDescriptor1";
 static const unsigned int COMMITS_SINCE_TAG = 2;
@@ -52,10 +53,12 @@ class TestCppFormatter:
 #ifndef PLXSVERSION_VERSION_HPP
 #define PLXSVERSION_VERSION_HPP
 
+#include <cstdint>
+
 namespace version {
 
 constexpr const char *VERSION = "v1.2.3-MyDescriptor1.revabcd1234+2commits-dirty";
-constexpr const char *VERSION_COMPONENTS[] = { "1", "2", "3" };
+constexpr const uint32_t *VERSION_COMPONENTS[] = { 1, 2, 3 };
 constexpr const char *VERSION_DESCRIPTOR = "MyDescriptor1";
 constexpr const char *TAG = "v1.2.3-MyDescriptor1";
 constexpr const unsigned int COMMITS_SINCE_TAG = 2;

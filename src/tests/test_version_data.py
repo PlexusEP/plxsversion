@@ -29,7 +29,7 @@ class TestVersionDataTag:
         expected_tag = "1.2.3"
         expected_commit_id = "abcd1234"
         expected_is_dirty = True
-        expected_components = ["1", "2", "3"]
+        expected_components = [1, 2, 3]
         expected_descriptor = ""
         expected_is_development_build = True
         expected_qualified_version = "1.2.3.revabcd1234+5commits-dirty"
@@ -44,7 +44,7 @@ class TestVersionDataTag:
 
     def test_tag_leading_char(self):
         expected_tag = "v1.2.3"
-        expected_components = ["1", "2", "3"]
+        expected_components = [1, 2, 3]
         expected_qualified_version = "v1.2.3"
         data = VersionData(tag="v1.2.3", commit_id="abcd1234", is_dirty=False)
         assert expected_qualified_version == data.qualified_version
@@ -82,7 +82,7 @@ class TestVersionDataDescriptor:
         VersionData(tag="1.2.3-1My_Descriptor", commit_id="abcd1234", is_dirty=True, commits_since_tag=5)
 
     def test_data_verification(self):
-        expected_components = ["1", "2", "3"]
+        expected_components = [1, 2, 3]
         expected_descriptor = "1My_Descriptor2"
         expected_qualified_version = "1.2.3-1My_Descriptor2.revabcd1234+5commits-dirty"
         data = VersionData(tag="1.2.3-1My_Descriptor2", commit_id="abcd1234", is_dirty=True, commits_since_tag=5)

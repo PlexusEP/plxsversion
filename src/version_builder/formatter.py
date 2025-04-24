@@ -21,8 +21,9 @@ class _Formatter:
 # C/C++ Common
 # ----------------------------------------
 class _CCppCommon(_Formatter):
-    def _format_version_components(self, version_components: list[str]) -> str:
-        return '{ "' + '", "'.join(version_components) + '" }'
+    def _format_version_components(self, version_components: list[int]) -> str:
+        string_components = map(str, version_components)
+        return "{ " + ", ".join(string_components) + " }"
 
 
 # ----------------------------------------
@@ -39,10 +40,12 @@ class _CppFormatter(_CCppCommon):
 #ifndef PLXSVERSION_VERSION_HPP
 #define PLXSVERSION_VERSION_HPP
 
+#include <cstdint>
+
 namespace version {{
 
 constexpr const char *VERSION = "{version_data.qualified_version:s}";
-constexpr const char *VERSION_COMPONENTS[] = {super()._format_version_components(version_data.components):s};
+constexpr const uint32_t *VERSION_COMPONENTS[] = {super()._format_version_components(version_data.components):s};
 constexpr const char *VERSION_DESCRIPTOR = "{version_data.descriptor:s}";
 constexpr const char *TAG = "{version_data.tag:s}";
 constexpr const unsigned int COMMITS_SINCE_TAG = {version_data.commits_since_tag:d};
@@ -71,13 +74,14 @@ class _CFormatter(_CCppCommon):
 #define PLXSVERSION_VERSION_H
 
 #include <stdbool.h>
+#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {{
 #endif
 
 static const char *VERSION = "{version_data.qualified_version:s}";
-static const char *VERSION_COMPONENTS[] = {super()._format_version_components(version_data.components):s};
+static const uint32_t *VERSION_COMPONENTS[] = {super()._format_version_components(version_data.components):s};
 static const char *VERSION_DESCRIPTOR = "{version_data.descriptor:s}";
 static const char *TAG = "{version_data.tag:s}";
 static const unsigned int COMMITS_SINCE_TAG = {version_data.commits_since_tag:d};
