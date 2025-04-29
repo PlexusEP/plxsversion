@@ -90,8 +90,9 @@ plxsversion supports tags from the following interfaces:
 
 plxsversion creates version files that support these languages:
 
-- C++ (cpp)
-- C (c): The header produced with this option is compatible with both C and C++. 
+- C++ (cpp): The header produced requires C++17 or newer. No dynamic allocation is used. 
+- C++11 (cpp11): The header produced requires C++11 or newer. No dynamic allocation is used. 
+- C (c): The header produced with this option is compatible with both C and C++. No dynamic allocation is used. 
 
 ### Output Data
 
@@ -121,14 +122,14 @@ Here is an example output version.hpp file for a C++ application tagged `v10.3.4
 
 namespace version {
 
-constexpr const char *VERSION = "v10.3.4-Milestone";
-constexpr const char *VERSION_COMPONENTS[] = { "10", "3", "4" };
-constexpr const char *VERSION_DESCRIPTOR = "Milestone";
-constexpr const char *TAG = "v10.3.4-Milestone";
-constexpr const unsigned int COMMITS_SINCE_TAG = 0;
-constexpr const char *COMMIT_ID = "a1516d0";
-constexpr bool DIRTY_BUILD = false;
-constexpr bool DEVELOPMENT_BUILD = false;
+constexpr std::string_view VERSION { "v10.3.4-Milestone" };
+constexpr std::array<unsigned int,3> VERSION_COMPONENTS { 10, 3, 4 };
+constexpr std::string_view VERSION_DESCRIPTOR { "Milestone" };
+constexpr std::string_view TAG { "v10.3.4-Milestone" };
+constexpr unsigned int COMMITS_SINCE_TAG { 0 };
+constexpr std::string_view COMMIT_ID { "a1516d0" };
+constexpr bool DIRTY_BUILD { false };
+constexpr bool DEVELOPMENT_BUILD { false };
 
 } // namespace version
 
