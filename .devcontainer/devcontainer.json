@@ -1,0 +1,42 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/python
+{
+	"name": "Python 3",
+	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+	"image": "mcr.microsoft.com/devcontainers/python:1-3.10-bullseye",
+	"runArgs": [
+		 "--cap-add=SYS_PTRACE",
+		 "--security-opt",
+		 "seccomp=unconfined"
+	],
+
+	// Comment out this line to run as root instead.
+	"remoteUser": "vscode",
+	"containerUser": "vscode",
+	"privileged": true,
+
+	// rather than having VS Code "probe", be explicit about setting PATH within container (to ensure that we use the same PATH even when not running in VS Code)
+	"userEnvProbe": "none",
+
+	"mounts": [
+		"source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,type=bind"
+	],
+	
+	// Features does not work on VPN, so use post create to install modules.
+	//
+	// The docker image comes with pytest, but it is globally installed. VSCode does not support
+	// use of globally installed pytest, so install it for the user via pip 
+	// (https://github.com/microsoft/vscode-python/discussions/19702)
+ 	"postCreateCommand": "pipx install ruff && pip install --user --no-warn-script-location pytest",
+
+	// VS Code-specific customizations for the development container.
+	"customizations": {
+		"vscode": {
+		  // VS Code extensions to automatically install in the container.
+		  "extensions": [
+			  "ms-python.python",
+			  "charliermarsh.ruff"
+		  ]
+		}
+	  }
+}

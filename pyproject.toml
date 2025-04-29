@@ -1,0 +1,36 @@
+[tool.ruff]
+line-length = 120
+exclude = [".git", ".vscode"]
+
+[tool.ruff.lint]
+# See https://docs.astral.sh/ruff/rules/
+select = ["ALL" ]
+ignore = [ 
+    "D203",     # prefer no blankline between class and docstring
+    "D212",     # prefer summary on line after docstring opens
+    "COM812",   # avoid unexpected behavior per ruff docs
+    "S607",     # accept use of tools on path (such as git)
+    "PTH123",   # Use of Path.open causes issues in cpp devcontainer
+
+    "D100",     # do not enforce public module documentation
+    "D101",     # do not enforce public class documentation
+    "D102",     # do not enforce public method documentation
+    "D103",     # do not enforce public function documentation
+    "D104",     # do not enforce public package documentation
+    "D105",     # magic methods are typically self explanatory for their purpose
+    "D107",     # init logic should be straight-forward with comments only as needed
+]
+
+[tool.ruff.lint.per-file-ignores]
+"*/tests/*" = [ 
+    "S101",     # pytest uses asserts for testing
+    "S603",     # unit tests should always control input to subprocesses
+    "PLR2004",  # magic values for testing equality in unit testing is acceptable
+    "ANN",      # No need to annotate test functions
+    "D",        # No need to document test functions
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+docstring-code-format = true
