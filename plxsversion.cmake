@@ -40,7 +40,7 @@ endfunction(_set_version_cmake_variable)
 
 # This function should be called from the CMakeLists.txt file that defines a library target that will include 
 # the generated version file.
-function(plxsversion_init)
+function(plxsversion_create_target)
   cmake_parse_arguments(
     VER
     "PRINT"
@@ -89,4 +89,4 @@ function(plxsversion_init)
 
   set_property(TARGET ${VERSION_LIBRARY} APPEND PROPERTY ADDITIONAL_CLEAN_FILES "${CMAKE_CURRENT_BINARY_DIR}/${REL_OUT_PATH}")
   _set_version_cmake_variable(PLXSVERSION_STRING)
-endfunction(plxsversion_init)
+endfunction(plxsversion_create_target)
