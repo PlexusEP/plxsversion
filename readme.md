@@ -20,16 +20,16 @@ CPMAddPackage(
 include(${plxsversion_SOURCE_DIR}/plxsversion.cmake)
 ```
 
-Example CMake to generate version for a C++ target and link to it:
+Example CMake to generate version for a C++ project and link to it:
 ```
-target_plxsversion_init(my_app)
+plxsversion_init()
 
 target_link_libraries(my_app PRIVATE plxsversion)
 ```
 
-The full signature of `target_plxsversion_init` is:
+The full signature of `plxsversion_init` is:
 ```
-target_plxsversion_init(<TARGET>
+plxsversion_init(<TARGET>
   [PRINT]                         produced version file will be printed to stdout
   [LANG <output_language>]        select the language supported by the version file
   [TARGET_SUFFIX <suffix>]        suffix to append to `plxsversion-` if generating multiple version libraries in a single build
@@ -40,7 +40,7 @@ target_plxsversion_init(<TARGET>
 
 Consider a C application that you wish to use the file `./apps/my_app/version.txt` for the versioning information and for `my_app`:
 ```
-target_plxsversion_init(my_app
+plxsversion_init(
   LANG c
   TARGET_SUFFIX my_app
   SOURCE file

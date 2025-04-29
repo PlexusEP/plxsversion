@@ -38,10 +38,9 @@ function(_set_version_cmake_variable OUTPUT_VARIABLE)
   set(${OUTPUT_VARIABLE} "${VERSION}" CACHE INTERNAL "${OUTPUT_VARIABLE}")
 endfunction(_set_version_cmake_variable)
 
-# This function should be called from the CMakeLists.txt file that defines a target that will include 
+# This function should be called from the CMakeLists.txt file that defines a library target that will include 
 # the generated version file.
-#   TARGET - input, the target to include the version file for
-function(target_plxsversion_init TARGET)
+function(plxsversion_init)
   cmake_parse_arguments(
     VER
     "PRINT"
@@ -83,9 +82,11 @@ function(target_plxsversion_init TARGET)
 
   _set_relative_out_file_path(${VER_LANG})
   _create_version_file(${VER_LANG} ${VER_SOURCE} ${VER_INPUT} ADDITIONAL_OPTIONS ${OPTIONS})
+
   add_library(${VERSION_LIBRARY} INTERFACE)
   target_include_directories(${VERSION_LIBRARY} INTERFACE "${CMAKE_CURRENT_BINARY_DIR}/plxs")
-  message(${VERSION_LIBRARY})
-  set_property(TARGET ${TARGET} APPEND PROPERTY ADDITIONAL_CLEAN_FILES "${CMAKE_CURRENT_BINARY_DIR}/${REL_OUT_PATH}")
+  message(STATUS "${VERSION_LIBRARY} created.")
+
+  set_property(TARGET ${VERSION_LIBRARY} APPEND PROPERTY ADDITIONAL_CLEAN_FILES "${CMAKE_CURRENT_BINARY_DIR}/${REL_OUT_PATH}")
   _set_version_cmake_variable(PLXSVERSION_STRING)
-endfunction(target_plxsversion_init)
+endfunction(plxsversion_init)
