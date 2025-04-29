@@ -45,7 +45,7 @@ function(target_plxsversion_init TARGET)
   cmake_parse_arguments(
     VER
     "PRINT"
-    "LANG;SOURCE;INPUT"
+    "LANG;SOURCE;INPUT;TARGET_SUFFIX"
     ""
     ${ARGN}
   )
@@ -75,9 +75,17 @@ function(target_plxsversion_init TARGET)
     set(VER_INPUT ${CMAKE_CURRENT_SOURCE_DIR})
   endif()
 
+  if(NOT VER_TARGET_SUFFIX)
+    set(VERSION_LIBRARY plxsversion)
+  else()
+    set(VERSION_LIBRARY "plxsversion-${VER_TARGET_SUFFIX}")
+  endif()
+
   _set_relative_out_file_path(${VER_LANG})
   _create_version_file(${VER_LANG} ${VER_SOURCE} ${VER_INPUT} ADDITIONAL_OPTIONS ${OPTIONS})
-  target_include_directories(${TARGET} PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/plxs")
+  add_library(${VERSION_LIBRARY} INTERFACE)
+  target_include_directories(${VERSION_LIBRARY} INTERFACE "${CMAKE_CURRENT_BINARY_DIR}/plxs")
+  message(${VERSION_LIBRARY})
   set_property(TARGET ${TARGET} APPEND PROPERTY ADDITIONAL_CLEAN_FILES "${CMAKE_CURRENT_BINARY_DIR}/${REL_OUT_PATH}")
   _set_version_cmake_variable(PLXSVERSION_STRING)
 endfunction(target_plxsversion_init)

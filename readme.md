@@ -6,7 +6,7 @@ This is a simple python tool that can be used to create a version file that can 
 
 ### CMake Integration
 
-For C/C++ projects is recommended to add this package using CPM and register CMake targets to have version information generated. 
+For C/C++ projects is recommended to add this package using CPM and register CMake targets to have version information generated. The version information is exposed as a CMake interface library, that can be linked to by multiple targets. 
 
 Example CMake to get the package:
 ```
@@ -20,9 +20,11 @@ CPMAddPackage(
 include(${plxsversion_SOURCE_DIR}/plxsversion.cmake)
 ```
 
-Example CMake to generate version for a C++ target:
+Example CMake to generate version for a C++ target and link to it:
 ```
 target_plxsversion_init(my_app)
+
+target_link_libraries(my_app PRIVATE plxsversion)
 ```
 
 The full signature of `target_plxsversion_init` is:
@@ -30,18 +32,22 @@ The full signature of `target_plxsversion_init` is:
 target_plxsversion_init(<TARGET>
   [PRINT]                         produced version file will be printed to stdout
   [LANG <output_language>]        select the language supported by the version file
+  [TARGET_SUFFIX <suffix>]        suffix to append to `plxsversion-` if generating multiple version libraries in a single build
   [SOURCE <version_source>]       choose if version comes from git or file
   [INPUT <version_input_path>]    path to git repo or file to process version from
 )
 ```
 
-Consider a C application that you wish to use the file `./apps/my_app/version.txt` for the versioning information:
+Consider a C application that you wish to use the file `./apps/my_app/version.txt` for the versioning information and for `my_app`:
 ```
 target_plxsversion_init(my_app
   LANG c
+  TARGET_SUFFIX my_app
   SOURCE file
   INPUT ${CMAKE_CURRENT_SOURCE_DIR}/apps/my_app/version.txt
 )
+
+target_link_libraries(my_app PRIVATE plxsversion-my_app)
 ```
 
 ### Manual Usage
