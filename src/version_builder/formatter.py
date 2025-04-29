@@ -50,14 +50,14 @@ class _CppFormatter(_CCppCommon):
 
 namespace version {{
 
-constexpr std::string_view VERSION {{ "{version_data.qualified_version:s}" }};
-constexpr std::array<unsigned int,3> VERSION_COMPONENTS {super()._format_version_components(version_data.components):s};
-constexpr std::string_view VERSION_DESCRIPTOR {{ "{version_data.descriptor:s}" }};
-constexpr std::string_view TAG {{ "{version_data.tag:s}" }};
-constexpr unsigned int COMMITS_SINCE_TAG {{ {version_data.commits_since_tag:d} }};
-constexpr std::string_view COMMIT_ID {{ "{version_data.commit_id:s}" }};
-constexpr bool DIRTY_BUILD {{ {str(version_data.is_dirty).lower():s} }};
-constexpr bool DEVELOPMENT_BUILD {{ {str(version_data.is_development_build).lower():s} }};
+inline constexpr std::string_view VERSION {{ "{version_data.qualified_version:s}" }};
+inline constexpr std::array<unsigned int,3> VERSION_COMPONENTS {super()._format_version_components(version_data.components):s};
+inline constexpr std::string_view VERSION_DESCRIPTOR {{ "{version_data.descriptor:s}" }};
+inline constexpr std::string_view TAG {{ "{version_data.tag:s}" }};
+inline constexpr unsigned int COMMITS_SINCE_TAG {{ {version_data.commits_since_tag:d} }};
+inline constexpr std::string_view COMMIT_ID {{ "{version_data.commit_id:s}" }};
+inline constexpr bool DIRTY_BUILD {{ {str(version_data.is_dirty).lower():s} }};
+inline constexpr bool DEVELOPMENT_BUILD {{ {str(version_data.is_development_build).lower():s} }};
 
 }} // namespace version
 

@@ -92,14 +92,14 @@ class TestCppFormatter:
 
 namespace version {
 
-constexpr std::string_view VERSION { "v1.2.3-MyDescriptor1.revabcd1234+2commits-dirty" };
-constexpr std::array<unsigned int,3> VERSION_COMPONENTS { 1, 2, 3 };
-constexpr std::string_view VERSION_DESCRIPTOR { "MyDescriptor1" };
-constexpr std::string_view TAG { "v1.2.3-MyDescriptor1" };
-constexpr unsigned int COMMITS_SINCE_TAG { 2 };
-constexpr std::string_view COMMIT_ID { "abcd1234" };
-constexpr bool DIRTY_BUILD { true };
-constexpr bool DEVELOPMENT_BUILD { true };
+inline constexpr std::string_view VERSION { "v1.2.3-MyDescriptor1.revabcd1234+2commits-dirty" };
+inline constexpr std::array<unsigned int,3> VERSION_COMPONENTS { 1, 2, 3 };
+inline constexpr std::string_view VERSION_DESCRIPTOR { "MyDescriptor1" };
+inline constexpr std::string_view TAG { "v1.2.3-MyDescriptor1" };
+inline constexpr unsigned int COMMITS_SINCE_TAG { 2 };
+inline constexpr std::string_view COMMIT_ID { "abcd1234" };
+inline constexpr bool DIRTY_BUILD { true };
+inline constexpr bool DEVELOPMENT_BUILD { true };
 
 } // namespace version
 
