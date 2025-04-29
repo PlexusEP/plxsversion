@@ -56,7 +56,7 @@ class TestCpp11Formatter:
 #include <array>
 #include <cstdint>
 
-namespace version {
+namespace plxsversion {
 
 constexpr const char *VERSION { "v1.2.3-MyDescriptor1.revabcd1234+2commits-dirty" };
 constexpr std::array<unsigned int,3> VERSION_COMPONENTS { 1, 2, 3 };
@@ -67,7 +67,7 @@ constexpr const char *COMMIT_ID { "abcd1234" };
 constexpr bool DIRTY_BUILD { true };
 constexpr bool DEVELOPMENT_BUILD { true };
 
-} // namespace version
+} // namespace plxsversion
 
 #endif // PLXSVERSION_VERSION_HPP
 """
@@ -90,7 +90,7 @@ class TestCppFormatter:
 #include <cstdint>
 #include <string_view>
 
-namespace version {
+namespace plxsversion {
 
 inline constexpr std::string_view VERSION { "v1.2.3-MyDescriptor1.revabcd1234+2commits-dirty" };
 inline constexpr std::array<unsigned int,3> VERSION_COMPONENTS { 1, 2, 3 };
@@ -101,7 +101,7 @@ inline constexpr std::string_view COMMIT_ID { "abcd1234" };
 inline constexpr bool DIRTY_BUILD { true };
 inline constexpr bool DEVELOPMENT_BUILD { true };
 
-} // namespace version
+} // namespace plxsversion
 
 #endif // PLXSVERSION_VERSION_HPP
 """

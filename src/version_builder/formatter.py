@@ -48,7 +48,7 @@ class _CppFormatter(_CCppCommon):
 #include <cstdint>
 #include <string_view>
 
-namespace version {{
+namespace plxsversion {{
 
 inline constexpr std::string_view VERSION {{ "{version_data.qualified_version:s}" }};
 inline constexpr std::array<unsigned int,3> VERSION_COMPONENTS {super()._format_version_components(version_data.components):s};
@@ -59,7 +59,7 @@ inline constexpr std::string_view COMMIT_ID {{ "{version_data.commit_id:s}" }};
 inline constexpr bool DIRTY_BUILD {{ {str(version_data.is_dirty).lower():s} }};
 inline constexpr bool DEVELOPMENT_BUILD {{ {str(version_data.is_development_build).lower():s} }};
 
-}} // namespace version
+}} // namespace plxsversion
 
 #endif // PLXSVERSION_VERSION_HPP
 """
@@ -82,7 +82,7 @@ class _Cpp11Formatter(_CCppCommon):
 #include <array>
 #include <cstdint>
 
-namespace version {{
+namespace plxsversion {{
 
 constexpr const char *VERSION {{ "{version_data.qualified_version:s}" }};
 constexpr std::array<unsigned int,3> VERSION_COMPONENTS {super()._format_version_components(version_data.components):s};
@@ -93,7 +93,7 @@ constexpr const char *COMMIT_ID {{ "{version_data.commit_id:s}" }};
 constexpr bool DIRTY_BUILD {{ {str(version_data.is_dirty).lower():s} }};
 constexpr bool DEVELOPMENT_BUILD {{ {str(version_data.is_development_build).lower():s} }};
 
-}} // namespace version
+}} // namespace plxsversion
 
 #endif // PLXSVERSION_VERSION_HPP
 """
