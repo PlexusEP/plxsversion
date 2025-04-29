@@ -33,7 +33,7 @@ endfunction(_create_version_file)
 # Load version string and write it to a cmake variable so it can be accessed from cmake.
 function(_set_version_cmake_variable OUTPUT_VARIABLE)
   file(READ "${CMAKE_CURRENT_BINARY_DIR}/${REL_OUT_PATH}" VERSION_FILE_CONTENT)
-  string(REGEX REPLACE ".*VERSION = \"([^\"]*)\".*" "\\1" VERSION "${VERSION_FILE_CONTENT}")
+  string(REGEX REPLACE ".*VERSION [{=] \"([^\"]*)\".*" "\\1" VERSION "${VERSION_FILE_CONTENT}")
   message(STATUS "Version from plxsversion: ${VERSION}")
   set(${OUTPUT_VARIABLE} "${VERSION}" CACHE INTERNAL "${OUTPUT_VARIABLE}")
 endfunction(_set_version_cmake_variable)
