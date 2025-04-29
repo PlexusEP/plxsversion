@@ -32,6 +32,9 @@ def _output_version_file(
         case "cpp":
             output = formatter.to_cpp(version_info)
             expected_file_extension = ".hpp"
+        case "cpp11":
+            output = formatter.to_cpp11(version_info)
+            expected_file_extension = ".hpp"
         case "c":
             output = formatter.to_c(version_info)
             expected_file_extension = ".h"

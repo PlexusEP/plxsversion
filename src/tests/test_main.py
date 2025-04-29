@@ -91,6 +91,29 @@ class TestMain:
         assert (git_dir.path / "version.h").exists()
         assert Path.stat(git_dir.path / "version.h").st_size != 0
 
+    def test_cpp11(self, tmp_path):
+        git_dir = GitDir(tmp_path)
+        git_dir.commit()
+        git_dir.tag("v1.2.3-My_Descriptor_123")
+        with pytest.raises(ValueError, match="Unexpected file ending for lang"):
+            # incorrect version file extension
+            main.create_version_file(
+                source="git",
+                source_input=git_dir.path,
+                output_file=git_dir.path / "version.h",
+                lang="cpp11",
+                print_created_file=False,
+            )
+        main.create_version_file(
+            source="git",
+            source_input=git_dir.path,
+            output_file=git_dir.path / "version.hpp",
+            lang="cpp11",
+            print_created_file=False,
+        )
+        assert (git_dir.path / "version.hpp").exists()
+        assert Path.stat(git_dir.path / "version.hpp").st_size != 0
+
 
 class TestModuleInterface:
     def test_module_call(self, tmp_path):
