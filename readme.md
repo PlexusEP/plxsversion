@@ -113,7 +113,7 @@ The created file contains the following information:
 | COMMITS_SINCE_TAG       | Number of commits since the last tag or 0 if not using git as version data source |
 | COMMIT_ID               | Commit ID of the git commit used to build |
 | DIRTY_BUILD             | True if the git repo had uncommitted changes at build time |
-| DEVELOPMENT_BUILD       | True if MODIFIED_SINCE_COMMIT or commits since last tag |
+| DEVELOPMENT_BUILD       | True if DIRTY_BUILD or commits since last tag |
 
 Here is an example output version.hpp file for a C++ application tagged `v10.3.4-Milestone`
 
