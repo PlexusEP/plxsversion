@@ -121,7 +121,7 @@ extern "C" {{
 #endif
 
 static const char *VERSION = "{version_data.qualified_version:s}";
-static const uint32_t *VERSION_COMPONENTS[] = {super()._format_version_components(version_data.components):s};
+static const unsigned int VERSION_COMPONENTS[] = {super()._format_version_components(version_data.components):s};
 static const char *VERSION_DESCRIPTOR = "{version_data.descriptor:s}";
 static const char *TAG = "{version_data.tag:s}";
 static const unsigned int COMMITS_SINCE_TAG = {version_data.commits_since_tag:d};

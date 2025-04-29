@@ -24,7 +24,7 @@ extern "C" {
 #endif
 
 static const char *VERSION = "v1.2.3-MyDescriptor1.revabcd1234+2commits";
-static const uint32_t *VERSION_COMPONENTS[] = { 1, 2, 3 };
+static const unsigned int VERSION_COMPONENTS[] = { 1, 2, 3 };
 static const char *VERSION_DESCRIPTOR = "MyDescriptor1";
 static const char *TAG = "v1.2.3-MyDescriptor1";
 static const unsigned int COMMITS_SINCE_TAG = 2;
