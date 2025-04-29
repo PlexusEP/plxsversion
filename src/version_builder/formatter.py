@@ -84,12 +84,12 @@ class _Cpp11Formatter(_CCppCommon):
 
 namespace version {{
 
-constexpr char *VERSION {{ "{version_data.qualified_version:s}" }};
+constexpr const char *VERSION {{ "{version_data.qualified_version:s}" }};
 constexpr std::array<unsigned int,3> VERSION_COMPONENTS {super()._format_version_components(version_data.components):s};
-constexpr char *VERSION_DESCRIPTOR {{ "{version_data.descriptor:s}" }};
-constexpr char *TAG {{ "{version_data.tag:s}" }};
+constexpr const char *VERSION_DESCRIPTOR {{ "{version_data.descriptor:s}" }};
+constexpr const char *TAG {{ "{version_data.tag:s}" }};
 constexpr unsigned int COMMITS_SINCE_TAG {{ {version_data.commits_since_tag:d} }};
-constexpr char *COMMIT_ID {{ "{version_data.commit_id:s}" }};
+constexpr const char *COMMIT_ID {{ "{version_data.commit_id:s}" }};
 constexpr bool DIRTY_BUILD {{ {str(version_data.is_dirty).lower():s} }};
 constexpr bool DEVELOPMENT_BUILD {{ {str(version_data.is_development_build).lower():s} }};
 

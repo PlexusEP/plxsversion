@@ -58,12 +58,12 @@ class TestCpp11Formatter:
 
 namespace version {
 
-constexpr char *VERSION { "v1.2.3-MyDescriptor1.revabcd1234+2commits-dirty" };
+constexpr const char *VERSION { "v1.2.3-MyDescriptor1.revabcd1234+2commits-dirty" };
 constexpr std::array<unsigned int,3> VERSION_COMPONENTS { 1, 2, 3 };
-constexpr char *VERSION_DESCRIPTOR { "MyDescriptor1" };
-constexpr char *TAG { "v1.2.3-MyDescriptor1" };
+constexpr const char *VERSION_DESCRIPTOR { "MyDescriptor1" };
+constexpr const char *TAG { "v1.2.3-MyDescriptor1" };
 constexpr unsigned int COMMITS_SINCE_TAG { 2 };
-constexpr char *COMMIT_ID { "abcd1234" };
+constexpr const char *COMMIT_ID { "abcd1234" };
 constexpr bool DIRTY_BUILD { true };
 constexpr bool DEVELOPMENT_BUILD { true };
 
