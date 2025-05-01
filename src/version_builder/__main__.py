@@ -21,6 +21,12 @@ if __name__ == "__main__":
         action=argparse.BooleanOptionalAction,
         help="print the contents of the generated file after creation",
     )
+    parser.add_argument(
+        "--time",
+        "-t",
+        action=argparse.BooleanOptionalAction,
+        help="include time data in the version infomation",
+    )
     parser.add_argument("file")
     args = parser.parse_args()
 
@@ -32,5 +38,5 @@ if __name__ == "__main__":
         source_input=args.input,
         output_file=args.file,
         lang=args.lang,
-        print_created_file=args.print,
+        optional_config=main.OptionalConfiguration(print_created_file=args.print, include_time=args.time),
     )

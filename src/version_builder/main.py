@@ -3,12 +3,27 @@ from pathlib import PosixPath
 from version_builder import formatter, version_collector, version_data
 
 
+class OptionalConfiguration:
+    def __init__(self, *, print_created_file: bool = False, include_time: bool = False) -> None:
+        self.print_created_file = print_created_file
+        self.include_time = include_time
+
+
 def create_version_file(
-    source: str, source_input: str, output_file: str, lang: str, *, print_created_file: bool
+    source: str, source_input: str, output_file: str, lang: str, *, optional_config: OptionalConfiguration = None
 ) -> None:
+    if optional_config is None:
+        optional_config = OptionalConfiguration()
+
     version_info = _get_version(source, source_input)
+    if optional_config.include_time:
+        version_info.set_time()
+
     _output_version_file(
-        version_info=version_info, output_file=PosixPath(output_file), lang=lang, print_created_file=print_created_file
+        version_info=version_info,
+        output_file=PosixPath(output_file),
+        lang=lang,
+        print_created_file=optional_config.print_created_file,
     )
 
 

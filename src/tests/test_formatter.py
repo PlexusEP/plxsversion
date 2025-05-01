@@ -1,3 +1,5 @@
+import re
+
 from version_builder.formatter import to_c, to_cpp, to_cpp11
 from version_builder.version_data import VersionData
 
@@ -47,6 +49,18 @@ static bool DEVELOPMENT_BUILD = true;
 """
         assert expected_output == to_c(version_data)
 
+    def test_time(self):
+        version_data = VersionData(
+            tag="v1.2.3-MyDescriptor1",
+            commit_id="abcd1234",
+            branch_name="test/branch",
+            is_dirty=True,
+            commits_since_tag=2,
+        )
+        version_data.set_time()
+        expected_pattern = r"static const char \*TIME = \"[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}\";"
+        assert re.search(expected_pattern, to_c(version_data))
+
 
 class TestCpp11Formatter:
     def test_output(self):
@@ -87,6 +101,18 @@ constexpr bool DEVELOPMENT_BUILD { true };
 #endif // PLXSVERSION_VERSION_HPP
 """
         assert expected_output == to_cpp11(version_data)
+
+    def test_time(self):
+        version_data = VersionData(
+            tag="v1.2.3-MyDescriptor1",
+            commit_id="abcd1234",
+            branch_name="test/branch",
+            is_dirty=True,
+            commits_since_tag=2,
+        )
+        version_data.set_time()
+        expected_pattern = r"constexpr const char \*TIME \{ \"[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}\" \};"
+        assert re.search(expected_pattern, to_cpp11(version_data))
 
 
 class TestCppFormatter:
@@ -129,3 +155,17 @@ inline constexpr bool DEVELOPMENT_BUILD { true };
 #endif // PLXSVERSION_VERSION_HPP
 """
         assert expected_output == to_cpp(version_data)
+
+    def test_time(self):
+        version_data = VersionData(
+            tag="v1.2.3-MyDescriptor1",
+            commit_id="abcd1234",
+            branch_name="test/branch",
+            is_dirty=True,
+            commits_since_tag=2,
+        )
+        version_data.set_time()
+        expected_pattern = (
+            r"inline constexpr std::string_view TIME \{ \"[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}\" \};"
+        )
+        assert re.search(expected_pattern, to_cpp(version_data))

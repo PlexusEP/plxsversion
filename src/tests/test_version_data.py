@@ -161,3 +161,18 @@ class TestVersionDataDevelopmentFlag:
             tag="1.2.3", commit_id="abcd1234", branch_name="myBranch", is_dirty=True, commits_since_tag=1
         )
         assert data.is_development_build
+
+
+class TestVersionDataTime:
+    def test_never_set(self):
+        data = VersionData(
+            tag="1.2.3", commit_id="abcd1234", branch_name="myBranch", is_dirty=False, commits_since_tag=0
+        )
+        assert data.time == ""
+
+    def test_set_called(self):
+        data = VersionData(
+            tag="1.2.3", commit_id="abcd1234", branch_name="myBranch", is_dirty=False, commits_since_tag=0
+        )
+        data.set_time()
+        assert data.time != ""

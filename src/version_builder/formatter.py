@@ -51,11 +51,17 @@ inline constexpr std::string_view COMMIT_ID {{ "{version_data.commit_id:s}" }};
 inline constexpr std::string_view BRANCH {{ "{version_data.branch_name:s}" }};
 inline constexpr bool DIRTY_BUILD {{ {str(version_data.is_dirty).lower():s} }};
 inline constexpr bool DEVELOPMENT_BUILD {{ {str(version_data.is_development_build).lower():s} }};
-
+{self._optional_output(version_data):s}
 }} // namespace plxsversion
 
 #endif // PLXSVERSION_VERSION_HPP
 """
+
+    def _optional_output(self, version_data: VersionData) -> str:
+        optional_output = ""
+        if version_data.time:
+            optional_output += f"""inline constexpr std::string_view TIME {{ "{version_data.time:s}" }};\n"""
+        return optional_output
 
 
 # ----------------------------------------
@@ -87,11 +93,17 @@ constexpr const char *COMMIT_ID {{ "{version_data.commit_id:s}" }};
 constexpr const char *BRANCH {{ "{version_data.branch_name:s}" }};
 constexpr bool DIRTY_BUILD {{ {str(version_data.is_dirty).lower():s} }};
 constexpr bool DEVELOPMENT_BUILD {{ {str(version_data.is_development_build).lower():s} }};
-
+{self._optional_output(version_data):s}
 }} // namespace plxsversion
 
 #endif // PLXSVERSION_VERSION_HPP
 """
+
+    def _optional_output(self, version_data: VersionData) -> str:
+        optional_output = ""
+        if version_data.time:
+            optional_output += f"""constexpr const char *TIME {{ "{version_data.time:s}" }};\n"""
+        return optional_output
 
 
 # ----------------------------------------
@@ -126,10 +138,16 @@ static const char *COMMIT_ID = "{version_data.commit_id:s}";
 static const char *BRANCH = "{version_data.branch_name:s}";
 static bool DIRTY_BUILD = {str(version_data.is_dirty).lower():s};
 static bool DEVELOPMENT_BUILD = {str(version_data.is_development_build).lower():s};
-
+{self._optional_output(version_data):s}
 #ifdef __cplusplus
 }} // extern "C"
 #endif
 
 #endif // PLXSVERSION_VERSION_H
 """
+
+    def _optional_output(self, version_data: VersionData) -> str:
+        optional_output = ""
+        if version_data.time:
+            optional_output += f"""static const char *TIME = "{version_data.time:s}";\n"""
+        return optional_output

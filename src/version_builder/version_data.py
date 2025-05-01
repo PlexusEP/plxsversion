@@ -1,4 +1,5 @@
 import re
+from datetime import datetime, timezone
 
 from version_builder.utils import EqualityByValue
 
@@ -49,9 +50,13 @@ class VersionData(EqualityByValue):
         self.commits_since_tag = commits_since_tag
         self.components = []
         self.descriptor = ""
+        self.time = ""
         self._parse_tag()
         self._set_qualified_version()
         self.is_development_build = self.is_dirty or (commits_since_tag > 0)
+
+    def set_time(self) -> None:
+        self.time = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M")
 
     def _parse_tag(self) -> None:
         match = re.match(self._version_format_regex, self.tag, re.IGNORECASE)
