@@ -28,7 +28,9 @@ extern "C" {
 #endif
 
 static const char *VERSION = "v1.2.3-MyDescriptor1.revabcd1234+2commits";
-static const unsigned int VERSION_COMPONENTS[] = { 1, 2, 3 };
+static const unsigned int MAJOR = 1;
+static const unsigned int MINOR = 2;
+static const unsigned int PATCH = 3;
 static const char *VERSION_DESCRIPTOR = "MyDescriptor1";
 static const char *TAG = "v1.2.3-MyDescriptor1";
 static const unsigned int COMMITS_SINCE_TAG = 2;
@@ -64,13 +66,14 @@ class TestCpp11Formatter:
 #ifndef PLXSVERSION_VERSION_HPP
 #define PLXSVERSION_VERSION_HPP
 
-#include <array>
 #include <cstdint>
 
 namespace plxsversion {
 
 constexpr const char *VERSION { "v1.2.3-MyDescriptor1.revabcd1234+2commits-dirty" };
-constexpr std::array<unsigned int,3> VERSION_COMPONENTS { 1, 2, 3 };
+constexpr unsigned int MAJOR { 1 };
+constexpr unsigned int MINOR { 2 };
+constexpr unsigned int PATCH { 3 };
 constexpr const char *VERSION_DESCRIPTOR { "MyDescriptor1" };
 constexpr const char *TAG { "v1.2.3-MyDescriptor1" };
 constexpr unsigned int COMMITS_SINCE_TAG { 2 };
@@ -104,14 +107,15 @@ class TestCppFormatter:
 #ifndef PLXSVERSION_VERSION_HPP
 #define PLXSVERSION_VERSION_HPP
 
-#include <array>
 #include <cstdint>
 #include <string_view>
 
 namespace plxsversion {
 
 inline constexpr std::string_view VERSION { "v1.2.3-MyDescriptor1.revabcd1234+2commits-dirty" };
-inline constexpr std::array<unsigned int,3> VERSION_COMPONENTS { 1, 2, 3 };
+inline constexpr unsigned int MAJOR { 1 };
+inline constexpr unsigned int MINOR { 2 };
+inline constexpr unsigned int PATCH { 3 };
 inline constexpr std::string_view VERSION_DESCRIPTOR { "MyDescriptor1" };
 inline constexpr std::string_view TAG { "v1.2.3-MyDescriptor1" };
 inline constexpr unsigned int COMMITS_SINCE_TAG { 2 };

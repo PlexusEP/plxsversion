@@ -22,18 +22,9 @@ class _Formatter:
 
 
 # ----------------------------------------
-# C/C++ Common
-# ----------------------------------------
-class _CCppCommon(_Formatter):
-    def _format_version_components(self, version_components: list[int]) -> str:
-        string_components = map(str, version_components)
-        return "{ " + ", ".join(string_components) + " }"
-
-
-# ----------------------------------------
 # C++ Formatter
 # ----------------------------------------
-class _CppFormatter(_CCppCommon):
+class _CppFormatter(_Formatter):
     def main_formatter(self, version_data: VersionData) -> str:
         return f"""
 // ---------------------------------------------------
@@ -44,14 +35,15 @@ class _CppFormatter(_CCppCommon):
 #ifndef PLXSVERSION_VERSION_HPP
 #define PLXSVERSION_VERSION_HPP
 
-#include <array>
 #include <cstdint>
 #include <string_view>
 
 namespace plxsversion {{
 
 inline constexpr std::string_view VERSION {{ "{version_data.qualified_version:s}" }};
-inline constexpr std::array<unsigned int,3> VERSION_COMPONENTS {super()._format_version_components(version_data.components):s};
+inline constexpr unsigned int MAJOR {{ {version_data.components[0]:d} }};
+inline constexpr unsigned int MINOR {{ {version_data.components[1]:d} }};
+inline constexpr unsigned int PATCH {{ {version_data.components[2]:d} }};
 inline constexpr std::string_view VERSION_DESCRIPTOR {{ "{version_data.descriptor:s}" }};
 inline constexpr std::string_view TAG {{ "{version_data.tag:s}" }};
 inline constexpr unsigned int COMMITS_SINCE_TAG {{ {version_data.commits_since_tag:d} }};
@@ -69,7 +61,7 @@ inline constexpr bool DEVELOPMENT_BUILD {{ {str(version_data.is_development_buil
 # ----------------------------------------
 # C++11 Formatter
 # ----------------------------------------
-class _Cpp11Formatter(_CCppCommon):
+class _Cpp11Formatter(_Formatter):
     def main_formatter(self, version_data: VersionData) -> str:
         return f"""
 // ---------------------------------------------------
@@ -80,13 +72,14 @@ class _Cpp11Formatter(_CCppCommon):
 #ifndef PLXSVERSION_VERSION_HPP
 #define PLXSVERSION_VERSION_HPP
 
-#include <array>
 #include <cstdint>
 
 namespace plxsversion {{
 
 constexpr const char *VERSION {{ "{version_data.qualified_version:s}" }};
-constexpr std::array<unsigned int,3> VERSION_COMPONENTS {super()._format_version_components(version_data.components):s};
+constexpr unsigned int MAJOR {{ {version_data.components[0]:d} }};
+constexpr unsigned int MINOR {{ {version_data.components[1]:d} }};
+constexpr unsigned int PATCH {{ {version_data.components[2]:d} }};
 constexpr const char *VERSION_DESCRIPTOR {{ "{version_data.descriptor:s}" }};
 constexpr const char *TAG {{ "{version_data.tag:s}" }};
 constexpr unsigned int COMMITS_SINCE_TAG {{ {version_data.commits_since_tag:d} }};
@@ -104,7 +97,7 @@ constexpr bool DEVELOPMENT_BUILD {{ {str(version_data.is_development_build).lowe
 # ----------------------------------------
 # C Formatter
 # ----------------------------------------
-class _CFormatter(_CCppCommon):
+class _CFormatter(_Formatter):
     def main_formatter(self, version_data: VersionData) -> str:
         return f"""
 // ---------------------------------------------------
@@ -123,7 +116,9 @@ extern "C" {{
 #endif
 
 static const char *VERSION = "{version_data.qualified_version:s}";
-static const unsigned int VERSION_COMPONENTS[] = {super()._format_version_components(version_data.components):s};
+static const unsigned int MAJOR = {version_data.components[0]:d};
+static const unsigned int MINOR = {version_data.components[1]:d};
+static const unsigned int PATCH = {version_data.components[2]:d};
 static const char *VERSION_DESCRIPTOR = "{version_data.descriptor:s}";
 static const char *TAG = "{version_data.tag:s}";
 static const unsigned int COMMITS_SINCE_TAG = {version_data.commits_since_tag:d};
