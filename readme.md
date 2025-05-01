@@ -174,9 +174,43 @@ There is no automated testing for CMake at this time. A developer should do manu
 - C++17 or newer project can leverage `lang=cpp`, `lang=cpp11`, and `lang=c`
 - C++11 or newer project can leverage `lang=cpp11` and `lang=c`
 - C project can leverage `lang=c`
-- `lang=cpp` and `lang=cpp11` only accept `.hpp` file ext
-- `lang=c` only accepts `.h` file ext
 - Generate version from git
 - Generate version from file
+- Library with suffix
 - `PRINT` causes created file to print
 - `TIME` causes time data in the version file
+
+Here is a sample of CMake implementation that can help test the above cases:
+
+```
+# C++17 and up
+# plxsversion_create_target(LANG cpp)
+
+# C++11 and up
+# plxsversion_create_target(LANG cpp11)
+
+# C
+# plxsversion_create_target(LANG c)
+
+# version from git
+# plxsversion_create_target(SOURCE git VER_INPUT ${CMAKE_CURRENT_SOURCE_DIR})
+
+# version from file
+# plxsversion_create_target(SOURCE file INPUT ${CMAKE_CURRENT_SOURCE_DIR}/version.txt)
+
+# library with suffix
+# plxsversion_create_target(TARGET_SUFFIX app_name)
+# if(TARGET plxsversion-app_name)
+#   # Target exists
+#   message(STATUS "Custom target exists.")
+# endif()
+# if(TARGET plxsversion)
+#   message(STATUS "Default target still exists.")
+# endif()
+
+# test PRINT
+# plxsversion_create_target(PRINT)
+
+# test TIME
+# plxsversion_create_target(TIME)
+```
