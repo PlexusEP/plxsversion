@@ -117,7 +117,7 @@ The created file contains the following information:
 | COMMIT_ID               | Commit ID of the git commit used to build |
 | BRANCH                  | Branch of the source used to build |
 | DIRTY_BUILD             | True if the git repo had uncommitted changes at build time |
-| DEVELOPMENT_BUILD       | True if DIRTY_BUILD or commits since last tag |
+| DEVELOPMENT_BUILD       | True if DIRTY_BUILD or commits since last tag > 0 |
 | TIME                    | Time of the latest CMake configuration in "YYYY-MM-DD HH:MM" format |
 
 Here is an example output version.hpp file for a C++ application tagged `2.1.0` in a dirty checkout
