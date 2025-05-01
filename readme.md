@@ -31,6 +31,7 @@ The full signature of `plxsversion_create_target` is:
 ```
 plxsversion_create_target(<TARGET>
   [PRINT]                         produced version file will be printed to stdout
+  [TIME]                          produced version file will contain time data
   [LANG <output_language>]        select the language supported by the version file
   [TARGET_SUFFIX <suffix>]        suffix to append to `plxsversion-` if generating multiple version libraries in a single build
   [SOURCE <version_source>]       choose if version comes from git or file
@@ -154,3 +155,17 @@ We use `ruff` to enforce formatting and execute lint of the code base. Formattin
 ### Unit testing
 
 This project uses `pytest` for unit testing. Simply run `pytest` or the VSCode task to execute UTs. Unit tests can be debugged from the "Testing" tab in VSCode. 
+
+#### CMake Interface testing
+
+There is no automated testing for CMake at this time. A developer should do manual testing of the following:
+
+- C++17 or newer project can leverage `lang=cpp`, `lang=cpp11`, and `lang=c`
+- C++11 or newer project can leverage `lang=cpp11` and `lang=c`
+- C project can leverage `lang=c`
+- `lang=cpp` and `lang=cpp11` only accept `.hpp` file ext
+- `lang=c` only accepts `.h` file ext
+- Generate version from git
+- Generate version from file
+- `PRINT` causes created file to print
+- `TIME` causes time data in the version file
