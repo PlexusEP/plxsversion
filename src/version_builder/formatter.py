@@ -56,6 +56,7 @@ inline constexpr std::string_view VERSION_DESCRIPTOR {{ "{version_data.descripto
 inline constexpr std::string_view TAG {{ "{version_data.tag:s}" }};
 inline constexpr unsigned int COMMITS_SINCE_TAG {{ {version_data.commits_since_tag:d} }};
 inline constexpr std::string_view COMMIT_ID {{ "{version_data.commit_id:s}" }};
+inline constexpr std::string_view BRANCH {{ "{version_data.branch_name:s}" }};
 inline constexpr bool DIRTY_BUILD {{ {str(version_data.is_dirty).lower():s} }};
 inline constexpr bool DEVELOPMENT_BUILD {{ {str(version_data.is_development_build).lower():s} }};
 
@@ -90,6 +91,7 @@ constexpr const char *VERSION_DESCRIPTOR {{ "{version_data.descriptor:s}" }};
 constexpr const char *TAG {{ "{version_data.tag:s}" }};
 constexpr unsigned int COMMITS_SINCE_TAG {{ {version_data.commits_since_tag:d} }};
 constexpr const char *COMMIT_ID {{ "{version_data.commit_id:s}" }};
+constexpr const char *BRANCH {{ "{version_data.branch_name:s}" }};
 constexpr bool DIRTY_BUILD {{ {str(version_data.is_dirty).lower():s} }};
 constexpr bool DEVELOPMENT_BUILD {{ {str(version_data.is_development_build).lower():s} }};
 
@@ -126,6 +128,7 @@ static const char *VERSION_DESCRIPTOR = "{version_data.descriptor:s}";
 static const char *TAG = "{version_data.tag:s}";
 static const unsigned int COMMITS_SINCE_TAG = {version_data.commits_since_tag:d};
 static const char *COMMIT_ID = "{version_data.commit_id:s}";
+static const char *BRANCH = "{version_data.branch_name:s}";
 static bool DIRTY_BUILD = {str(version_data.is_dirty).lower():s};
 static bool DEVELOPMENT_BUILD = {str(version_data.is_development_build).lower():s};
 
