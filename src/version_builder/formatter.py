@@ -60,7 +60,7 @@ inline constexpr bool DEVELOPMENT_BUILD {{ {str(version_data.is_development_buil
     def _optional_output(self, version_data: VersionData) -> str:
         optional_output = ""
         if version_data.time:
-            optional_output += f"""inline constexpr std::string_view TIME {{ "{version_data.time:s}" }};\n"""
+            optional_output += f"""inline constexpr std::string_view UTC_TIME {{ "{version_data.time:s}" }};\n"""
         return optional_output
 
 
@@ -102,7 +102,7 @@ constexpr bool DEVELOPMENT_BUILD {{ {str(version_data.is_development_build).lowe
     def _optional_output(self, version_data: VersionData) -> str:
         optional_output = ""
         if version_data.time:
-            optional_output += f"""constexpr const char *TIME {{ "{version_data.time:s}" }};\n"""
+            optional_output += f"""constexpr const char *UTC_TIME {{ "{version_data.time:s}" }};\n"""
         return optional_output
 
 
@@ -149,5 +149,5 @@ static bool DEVELOPMENT_BUILD = {str(version_data.is_development_build).lower():
     def _optional_output(self, version_data: VersionData) -> str:
         optional_output = ""
         if version_data.time:
-            optional_output += f"""static const char *TIME = "{version_data.time:s}";\n"""
+            optional_output += f"""static const char *UTC_TIME = "{version_data.time:s}";\n"""
         return optional_output

@@ -58,7 +58,7 @@ static bool DEVELOPMENT_BUILD = true;
             commits_since_tag=2,
         )
         version_data.set_time()
-        expected_pattern = r"static const char \*TIME = \"[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}\";"
+        expected_pattern = r"static const char \*UTC_TIME = \"[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}\";"
         assert re.search(expected_pattern, to_c(version_data))
 
 
@@ -111,7 +111,7 @@ constexpr bool DEVELOPMENT_BUILD { true };
             commits_since_tag=2,
         )
         version_data.set_time()
-        expected_pattern = r"constexpr const char \*TIME \{ \"[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}\" \};"
+        expected_pattern = r"constexpr const char \*UTC_TIME \{ \"[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}\" \};"
         assert re.search(expected_pattern, to_cpp11(version_data))
 
 
@@ -166,6 +166,6 @@ inline constexpr bool DEVELOPMENT_BUILD { true };
         )
         version_data.set_time()
         expected_pattern = (
-            r"inline constexpr std::string_view TIME \{ \"[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}\" \};"
+            r"inline constexpr std::string_view UTC_TIME \{ \"[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}\" \};"
         )
         assert re.search(expected_pattern, to_cpp(version_data))
