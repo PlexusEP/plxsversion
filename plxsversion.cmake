@@ -43,7 +43,7 @@ endfunction(_set_version_cmake_variable)
 function(plxsversion_create_target)
   cmake_parse_arguments(
     VER
-    "PRINT"
+    "PRINT;TIME"
     "LANG;SOURCE;INPUT;TARGET_SUFFIX"
     ""
     ${ARGN}
@@ -51,7 +51,11 @@ function(plxsversion_create_target)
 
   set(OPTIONS "")
   if(VER_PRINT)
-    list(APPEND OPTIONS "-p")
+    list(APPEND OPTIONS "--print")
+  endif()
+
+  if(VER_TIME)
+    list(APPEND OPTIONS "--time")
   endif()
 
   if(NOT VER_LANG)
