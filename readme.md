@@ -118,7 +118,7 @@ The created file contains the following information:
 | BRANCH                  | Branch of the source used to build |
 | DIRTY_BUILD             | True if the git repo had uncommitted changes at build time |
 | DEVELOPMENT_BUILD       | True if DIRTY_BUILD or commits since last tag > 0 |
-| TIME                    | Time of the latest CMake configuration in "YYYY-MM-DD HH:MM" format |
+| UTC_TIME                | UTC time of the latest CMake configuration in "YYYY-MM-DD HH:MM" format |
 
 Here is an example output version.hpp file for a C++ application tagged `2.1.0` in a dirty checkout
 
@@ -147,12 +147,15 @@ inline constexpr std::string_view COMMIT_ID { "dd4c559" };
 inline constexpr std::string_view BRANCH { "master" };
 inline constexpr bool DIRTY_BUILD { true };
 inline constexpr bool DEVELOPMENT_BUILD { true };
-inline constexpr std::string_view TIME { "2025-05-01 18:21" };
+inline constexpr std::string_view UTC_TIME { "2025-05-01 18:21" };
 
 } // namespace plxsversion
 
 #endif // PLXSVERSION_VERSION_HPP
 ```
+
+> [!WARNING]  
+> Including time data will cause CMake targets relying on the version target to be re-build ANY time a CMake configure happens, even if your code doesn't change. 
 
 
 ## Development
