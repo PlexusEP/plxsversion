@@ -30,6 +30,7 @@ class GitDir:
             # Private helper to unit testing should not be used outside of trusted context
             return subprocess.check_output(command, stderr=devnull).decode()
 
+    # This performs a checkout of the new branch as well
     def create_branch(self, branch_name):
         with change_dir(self.path):
             self._silent_call(["git", "checkout", "-b", branch_name])

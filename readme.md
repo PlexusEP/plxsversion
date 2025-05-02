@@ -31,6 +31,7 @@ The full signature of `plxsversion_create_target` is:
 ```
 plxsversion_create_target(<TARGET>
   [PRINT]                         produced version file will be printed to stdout
+  [TIME]                          produced version file will contain time data
   [LANG <output_language>]        select the language supported by the version file
   [TARGET_SUFFIX <suffix>]        suffix to append to `plxsversion-` if generating multiple version libraries in a single build
   [SOURCE <version_source>]       choose if version comes from git or file
@@ -107,15 +108,22 @@ The created file contains the following information:
 | Variable                | Description |
 | ----------------------- | ----------- |
 | VERSION                 | Complete version including tag and commit specific data |
-| VERSION_COMPONENTS      | The semantic major.minor.patch component of the tag |
+| MAJOR                   | The semantic major component of the tag |
+| MINOR                   | The semantic minor component of the tag |
+| PATCH                   | The semantic patch component of the tag |
 | VERSION_DESCRIPTOR      | The descriptive component of the tag |
-| TAG                     | The raw tag before processing into components |
-| COMMITS_SINCE_TAG       | Number of commits since the last tag or 0 if not using git as version data source |
+| TAG                     | The raw tag before processing |
+| COMMITS_SINCE_TAG       | Number of commits since the last tag (defaults to 0 if using file for semantic version) |
 | COMMIT_ID               | Commit ID of the git commit used to build |
+| BRANCH                  | Branch of the source used to build |
 | DIRTY_BUILD             | True if the git repo had uncommitted changes at build time |
-| DEVELOPMENT_BUILD       | True if DIRTY_BUILD or commits since last tag |
+| DEVELOPMENT_BUILD       | True if DIRTY_BUILD or commits since last tag > 0 |
+| UTC_TIME                | UTC time of the latest CMake configuration in "YYYY-MM-DD HH:MM" format |
 
-Here is an example output version.hpp file for a C++ application tagged `v10.3.4-Milestone`
+> [!WARNING]  
+> Including time data will cause CMake targets relying on the version target to be re-build ANY time a CMake configure happens, even if your code doesn't change. 
+
+Here is an example output version.hpp file for a C++ application tagged `2.1.0` in a dirty checkout
 
 ```
 // ---------------------------------------------------
@@ -126,18 +134,25 @@ Here is an example output version.hpp file for a C++ application tagged `v10.3.4
 #ifndef PLXSVERSION_VERSION_HPP
 #define PLXSVERSION_VERSION_HPP
 
-namespace version {
+#include <cstdint>
+#include <string_view>
 
-constexpr std::string_view VERSION { "v10.3.4-Milestone" };
-constexpr std::array<unsigned int,3> VERSION_COMPONENTS { 10, 3, 4 };
-constexpr std::string_view VERSION_DESCRIPTOR { "Milestone" };
-constexpr std::string_view TAG { "v10.3.4-Milestone" };
-constexpr unsigned int COMMITS_SINCE_TAG { 0 };
-constexpr std::string_view COMMIT_ID { "a1516d0" };
-constexpr bool DIRTY_BUILD { false };
-constexpr bool DEVELOPMENT_BUILD { false };
+namespace plxsversion {
 
-} // namespace version
+inline constexpr std::string_view VERSION { "2.1.0-dirty" };
+inline constexpr unsigned int MAJOR { 2 };
+inline constexpr unsigned int MINOR { 1 };
+inline constexpr unsigned int PATCH { 0 };
+inline constexpr std::string_view VERSION_DESCRIPTOR { "" };
+inline constexpr std::string_view TAG { "2.1.0" };
+inline constexpr unsigned int COMMITS_SINCE_TAG { 0 };
+inline constexpr std::string_view COMMIT_ID { "dd4c559" };
+inline constexpr std::string_view BRANCH { "master" };
+inline constexpr bool DIRTY_BUILD { true };
+inline constexpr bool DEVELOPMENT_BUILD { true };
+inline constexpr std::string_view UTC_TIME { "2025-05-01 18:21" };
+
+} // namespace plxsversion
 
 #endif // PLXSVERSION_VERSION_HPP
 ```
@@ -154,3 +169,51 @@ We use `ruff` to enforce formatting and execute lint of the code base. Formattin
 ### Unit testing
 
 This project uses `pytest` for unit testing. Simply run `pytest` or the VSCode task to execute UTs. Unit tests can be debugged from the "Testing" tab in VSCode. 
+
+#### CMake Interface testing
+
+There is no automated testing for CMake at this time. A developer should do manual testing of the following:
+
+- C++17 or newer project can leverage `lang=cpp`, `lang=cpp11`, and `lang=c`
+- C++11 or newer project can leverage `lang=cpp11` and `lang=c`
+- C project can leverage `lang=c`
+- Generate version from git
+- Generate version from file
+- Library with suffix
+- `PRINT` causes created file to print
+- `TIME` causes time data in the version file
+
+Here is a sample of CMake implementation that can help test the above cases:
+
+```
+# C++17 and up
+# plxsversion_create_target(LANG cpp)
+
+# C++11 and up
+# plxsversion_create_target(LANG cpp11)
+
+# C
+# plxsversion_create_target(LANG c)
+
+# version from git
+# plxsversion_create_target(SOURCE git VER_INPUT ${CMAKE_CURRENT_SOURCE_DIR})
+
+# version from file
+# plxsversion_create_target(SOURCE file INPUT ${CMAKE_CURRENT_SOURCE_DIR}/version.txt)
+
+# library with suffix
+# plxsversion_create_target(TARGET_SUFFIX app_name)
+# if(TARGET plxsversion-app_name)
+#   # Target exists
+#   message(STATUS "Custom target exists.")
+# endif()
+# if(TARGET plxsversion)
+#   message(STATUS "Default target still exists.")
+# endif()
+
+# test PRINT
+# plxsversion_create_target(PRINT)
+
+# test TIME
+# plxsversion_create_target(TIME)
+```

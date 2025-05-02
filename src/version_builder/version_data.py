@@ -1,4 +1,5 @@
 import re
+from datetime import datetime, timezone
 
 from version_builder.utils import EqualityByValue
 
@@ -13,7 +14,9 @@ class VersionParseError(Exception):
 
 
 class VersionData(EqualityByValue):
-    def __init__(self, tag: str, commit_id: str, *, is_dirty: bool = False, commits_since_tag: int = 0) -> None:
+    def __init__(
+        self, tag: str, commit_id: str, branch_name: str, *, is_dirty: bool = False, commits_since_tag: int = 0
+    ) -> None:
         self._version_format_regex = r"^v?([0-9]+(?:\.[0-9]+){2}){1}(?:-([A-Za-z0-9\_/]+))?$"
 
         if not isinstance(tag, str):
@@ -21,6 +24,9 @@ class VersionData(EqualityByValue):
             raise TypeError(msg)
         if not isinstance(commit_id, str):
             msg = "commit_id is not str type"
+            raise TypeError(msg)
+        if not isinstance(branch_name, str):
+            msg = "branch_name is not str type"
             raise TypeError(msg)
         if not isinstance(is_dirty, bool):
             msg = "is_dirty is not bool type"
@@ -39,13 +45,18 @@ class VersionData(EqualityByValue):
 
         self.tag = tag
         self.commit_id = commit_id
+        self.branch_name = branch_name
         self.is_dirty = is_dirty
         self.commits_since_tag = commits_since_tag
         self.components = []
         self.descriptor = ""
+        self.time = ""
         self._parse_tag()
         self._set_qualified_version()
         self.is_development_build = self.is_dirty or (commits_since_tag > 0)
+
+    def set_time(self) -> None:
+        self.time = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M")
 
     def _parse_tag(self) -> None:
         match = re.match(self._version_format_regex, self.tag, re.IGNORECASE)

@@ -43,6 +43,7 @@ class _Git(_VersionCollector):
                     return VersionData(
                         tag=tag,
                         commit_id=commit_id,
+                        branch_name=utils.Git.get_branch_name(),
                         is_dirty=utils.Git.get_is_dirty(),
                         commits_since_tag=commits_since_tag,
                     )
@@ -57,6 +58,7 @@ class _Git(_VersionCollector):
                     return VersionData(
                         tag="0.0.0-UNTAGGED",
                         commit_id=commit_id,
+                        branch_name=utils.Git.get_branch_name(),
                         is_dirty=utils.Git.get_is_dirty(),
                         commits_since_tag=total_number_commits,
                     )
@@ -72,9 +74,12 @@ class _File(_VersionCollector):
                 with utils.change_dir(Path(file_path).parent):
                     # While the tag comes from a file, we assume all projects use git
                     try:
-                        commit_id = utils.Git.get_commit_id()
-                        is_dirty = utils.Git.get_is_dirty()
-                        return VersionData(tag=tag, commit_id=commit_id, is_dirty=is_dirty)
+                        return VersionData(
+                            tag=tag,
+                            commit_id=utils.Git.get_commit_id(),
+                            branch_name=utils.Git.get_branch_name(),
+                            is_dirty=utils.Git.get_is_dirty(),
+                        )
                     except subprocess.CalledProcessError as exc:
                         msg = "input file not in git repo"
                         raise VersionCollectError(msg) from exc
