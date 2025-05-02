@@ -120,6 +120,9 @@ The created file contains the following information:
 | DEVELOPMENT_BUILD       | True if DIRTY_BUILD or commits since last tag > 0 |
 | UTC_TIME                | UTC time of the latest CMake configuration in "YYYY-MM-DD HH:MM" format |
 
+> [!WARNING]  
+> Including time data will cause CMake targets relying on the version target to be re-build ANY time a CMake configure happens, even if your code doesn't change. 
+
 Here is an example output version.hpp file for a C++ application tagged `2.1.0` in a dirty checkout
 
 ```
@@ -153,9 +156,6 @@ inline constexpr std::string_view UTC_TIME { "2025-05-01 18:21" };
 
 #endif // PLXSVERSION_VERSION_HPP
 ```
-
-> [!WARNING]  
-> Including time data will cause CMake targets relying on the version target to be re-build ANY time a CMake configure happens, even if your code doesn't change. 
 
 
 ## Development
