@@ -27,7 +27,7 @@
 	// The docker image comes with pytest, but it is globally installed. VSCode does not support
 	// use of globally installed pytest, so install it for the user via pip 
 	// (https://github.com/microsoft/vscode-python/discussions/19702)
- 	"postCreateCommand": "pipx install ruff && pip install --user --no-warn-script-location pytest",
+ 	"postCreateCommand": "pipx install ruff build && pip install --user --no-warn-script-location pytest",
 
 	// VS Code-specific customizations for the development container.
 	"customizations": {
