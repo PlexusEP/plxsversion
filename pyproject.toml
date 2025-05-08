@@ -7,6 +7,9 @@ license = { file = "LICENSE" }
 [project.scripts]
 plxs-version = "versionbuilder.__main__:execute"
 
+[tool.setuptools.packages.find]
+where = ["src"]
+
 [build-system]
 requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
