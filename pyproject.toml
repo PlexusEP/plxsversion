@@ -5,7 +5,7 @@ requires-python = ">=3.10"
 license = "MIT"
 
 [project.scripts]
-plxsverion = "versionbuilder.__main__:execute"
+plxs-version = "versionbuilder.__main__:execute"
 
 [build-system]
 requires = ["setuptools"]
