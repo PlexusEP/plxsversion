@@ -4,6 +4,9 @@ version = "1.2.0"
 requires-python = ">=3.10"
 license = "MIT"
 
+[project.scripts]
+plxsverion = "versionbuilder.__main__:execute"
+
 [build-system]
 requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
