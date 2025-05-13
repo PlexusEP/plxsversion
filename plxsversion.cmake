@@ -94,27 +94,6 @@ function(plxsversion_create_target)
       $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/plxs>)
   message(STATUS "${VERSION_LIBRARY} created.")
 
-  # Install header files
-  # install(DIRECTORY plxsversion
-  #   DESTINATION "${CMAKE_INSTALL_PREFIX}/include/plxsversion"
-  #   FILES_MATCHING 
-  #   PATTERN "*.h"
-  #   PATTERN "*.hpp")
-  # Export the interface library target
-  install(TARGETS ${VERSION_LIBRARY}
-    EXPORT "${VERSION_LIBRARY}Targets")
-  # Create the export file
-  install(EXPORT "${VERSION_LIBRARY}Targets"
-    FILE ${VERSION_LIBRARY}Config.cmake
-    DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/cmake/${VERSION_LIBRARY}")
-  # Configure and install the find_package configuration file
-  configure_file(
-    "${DIR_OF_PLXSVERSION}/plxsversionConfig.cmake.in"
-    "${CMAKE_BINARY_DIR}/${VERSION_LIBRARY}Config.cmake"
-    COPYONLY)
-  install(FILES "${CMAKE_BINARY_DIR}/${VERSION_LIBRARY}Config.cmake"
-    DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/cmake/${VERSION_LIBRARY}")
-
   set_property(TARGET ${VERSION_LIBRARY} APPEND PROPERTY ADDITIONAL_CLEAN_FILES "${CMAKE_CURRENT_BINARY_DIR}/${REL_OUT_PATH}")
   _set_version_cmake_variable(PLXSVERSION_STRING)
 endfunction(plxsversion_create_target)
