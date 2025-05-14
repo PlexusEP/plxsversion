@@ -2,7 +2,8 @@ import argparse
 
 from version_builder import main
 
-if __name__ == "__main__":
+
+def execute() -> None:
     parser = argparse.ArgumentParser(description="Create a source file containing git version information.")
     parser.add_argument(
         "--lang", "-l", choices=["cpp", "cpp11", "c"], required=True, help="language supported by the file output"
@@ -40,3 +41,7 @@ if __name__ == "__main__":
         lang=args.lang,
         optional_config=main.OptionalConfiguration(print_created_file=args.print, include_time=args.time),
     )
+
+
+if __name__ == "__main__":
+    execute()

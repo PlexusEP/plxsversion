@@ -23,7 +23,10 @@ include(${plxsversion_SOURCE_DIR}/plxsversion.cmake)
 Example CMake to generate version for a C++ project and link to it:
 ```
 plxsversion_create_target()
+```
 
+In CMakeLists.txt for `my_app`:
+```
 target_link_libraries(my_app PRIVATE plxsversion)
 ```
 
@@ -47,7 +50,10 @@ plxsversion_create_target(
   SOURCE file
   INPUT ${CMAKE_CURRENT_SOURCE_DIR}/apps/my_app/version.txt
 )
+```
 
+In CMakeLists.txt for `my_app`:
+```
 target_link_libraries(my_app PRIVATE plxsversion-my_app)
 ```
 

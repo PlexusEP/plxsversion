@@ -88,7 +88,10 @@ function(plxsversion_create_target)
   _create_version_file(${VER_LANG} ${VER_SOURCE} ${VER_INPUT} ADDITIONAL_OPTIONS ${OPTIONS})
 
   add_library(${VERSION_LIBRARY} INTERFACE)
-  target_include_directories(${VERSION_LIBRARY} INTERFACE "${CMAKE_CURRENT_BINARY_DIR}/plxs")
+  target_include_directories(${VERSION_LIBRARY} 
+    INTERFACE 
+      $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/plxs>
+      $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/plxs>)
   message(STATUS "${VERSION_LIBRARY} created.")
 
   set_property(TARGET ${VERSION_LIBRARY} APPEND PROPERTY ADDITIONAL_CLEAN_FILES "${CMAKE_CURRENT_BINARY_DIR}/${REL_OUT_PATH}")

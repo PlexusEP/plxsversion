@@ -1,3 +1,16 @@
+[project]
+name = "plxsversion"
+version = "1.2.0"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+
+[project.scripts]
+plxs-version = "version_builder.__main__:execute"
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
 [tool.ruff]
 line-length = 120
 exclude = [".git", ".vscode"]
