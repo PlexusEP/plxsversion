@@ -32,7 +32,7 @@ target_link_libraries(my_app PRIVATE plxsversion)
 
 The full signature of `plxsversion_create_target` is:
 ```
-plxsversion_create_target(<TARGET>
+plxsversion_create_target(
   [PRINT]                         produced version file will be printed to stdout
   [TIME]                          produced version file will contain time data
   [LANG <output_language>]        select the language supported by the version file
