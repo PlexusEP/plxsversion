@@ -83,8 +83,9 @@ class TestVersionDataSemVerParsing:
         assert data.qualified_version == "0.0.1+exp.sha.5114f85.sha.abcd1234.dirty"
         assert data.full_build_metadata == "exp.sha.5114f85.sha.abcd1234.dirty"
 
-    def test_invalid_semver_tags(self):
-        invalid_tags = [
+    @pytest.mark.parametrize(
+        "invalid_tag",
+        [
             "v1.2.3",  # 'v' prefix is handled by collector, not VersionData directly
             "a1.2.3",  # Invalid char at start
             "1.2",  # Missing patch component
@@ -97,13 +98,15 @@ class TestVersionDataSemVerParsing:
             "1.2.3+build..meta",  # Empty build metadata identifier
             "1.2.3+",  # Empty build metadata
             "1.2.3-",  # Empty prerelease
+            "1.2.3+sha.abcd1234-alpha.1",  # Build data ahead of pre-release
             "Invalid-TAG",
             "1.2.3 MyDescriptor",
             "1.2.3MyDescriptor",
-        ]
-        for invalid_tag in invalid_tags:
-            with pytest.raises(VersionParseError, match="invalid SemVer 2.0.0 format"):
-                VersionData(tag=invalid_tag, commit_id="id", branch_name="b")
+        ],
+    )
+    def test_invalid_semver_tags(self, invalid_tag):
+        with pytest.raises(VersionParseError, match="invalid SemVer 2.0.0 format"):
+            VersionData(tag=invalid_tag, commit_id="abcd1234", branch_name="test-branch")
 
 
 class TestVersionDataDevelopmentFlag:
