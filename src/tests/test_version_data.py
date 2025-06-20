@@ -98,7 +98,6 @@ class TestVersionDataSemVerParsing:
             "1.2.3+build..meta",  # Empty build metadata identifier
             "1.2.3+",  # Empty build metadata
             "1.2.3-",  # Empty prerelease
-            "1.2.3+sha.abcd1234-alpha.1",  # Build data ahead of pre-release
             "Invalid-TAG",
             "1.2.3 MyDescriptor",
             "1.2.3MyDescriptor",
