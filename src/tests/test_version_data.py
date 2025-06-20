@@ -10,25 +10,25 @@ class TestVersionDataSemVerParsing:
 
     def test_tag_not_dirty_default_commits(self):
         data = VersionData(tag="1.2.3", commit_id="abcd1234", branch_name="myBranch", is_dirty=False)
-        assert data.qualified_version == "1.2.3+abcd1234"
+        assert data.qualified_version == "1.2.3+sha.abcd1234"
         assert data.major == 1
         assert data.minor == 2
         assert data.patch == 3
         assert data.prerelease == ""
         assert data.buildmetadata_from_tag == ""
-        assert data.full_build_metadata == "abcd1234"
+        assert data.full_build_metadata == "sha.abcd1234"
 
     def test_tag_dirty_default_commits(self):
         data = VersionData(tag="1.2.3", commit_id="abcd1234", branch_name="myBranch", is_dirty=True)
-        assert data.qualified_version == "1.2.3+abcd1234.dirty"
-        assert data.full_build_metadata == "abcd1234.dirty"
+        assert data.qualified_version == "1.2.3+sha.abcd1234.dirty"
+        assert data.full_build_metadata == "sha.abcd1234.dirty"
 
     def test_tag_not_dirty_new_commits(self):
         data = VersionData(
             tag="1.2.3", commit_id="abcd1234", branch_name="myBranch", is_dirty=False, commits_since_tag=5
         )
-        assert data.qualified_version == "1.2.3+dev.5.abcd1234"
-        assert data.full_build_metadata == "dev.5.abcd1234"
+        assert data.qualified_version == "1.2.3+dev.5.sha.abcd1234"
+        assert data.full_build_metadata == "dev.5.sha.abcd1234"
 
     def test_full_semver_tag_data_verification(self):
         input_tag = "1.0.0-alpha.1+build.original"
@@ -42,7 +42,7 @@ class TestVersionDataSemVerParsing:
         expected_prerelease = "alpha.1"
         expected_buildmetadata_from_tag = "build.original"
         expected_is_development_build = True
-        expected_full_build_metadata = "build.original.dev.5.abcd1234.dirty"
+        expected_full_build_metadata = "build.original.dev.5.sha.abcd1234.dirty"
         expected_qualified_version = f"1.0.0-alpha.1+{expected_full_build_metadata}"
 
         data = VersionData(
@@ -70,8 +70,8 @@ class TestVersionDataSemVerParsing:
         assert data.patch == 1
         assert data.prerelease == "beta.2"
         assert data.buildmetadata_from_tag == ""
-        assert data.qualified_version == "2.0.1-beta.2+abcd1234"
-        assert data.full_build_metadata == "abcd1234"
+        assert data.qualified_version == "2.0.1-beta.2+sha.abcd1234"
+        assert data.full_build_metadata == "sha.abcd1234"
 
     def test_tag_with_build_metadata_only(self):
         data = VersionData(tag="0.0.1+exp.sha.5114f85", commit_id="abcd1234", branch_name="b", is_dirty=True)
@@ -80,8 +80,8 @@ class TestVersionDataSemVerParsing:
         assert data.patch == 1
         assert data.prerelease == ""
         assert data.buildmetadata_from_tag == "exp.sha.5114f85"
-        assert data.qualified_version == "0.0.1+exp.sha.5114f85.abcd1234.dirty"
-        assert data.full_build_metadata == "exp.sha.5114f85.abcd1234.dirty"
+        assert data.qualified_version == "0.0.1+exp.sha.5114f85.sha.abcd1234.dirty"
+        assert data.full_build_metadata == "exp.sha.5114f85.sha.abcd1234.dirty"
 
     def test_invalid_semver_tags(self):
         invalid_tags = [

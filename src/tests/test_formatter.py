@@ -30,7 +30,7 @@ class TestBasicOutput(_CommonVersionData):
 
 namespace plxsversion {
 
-inline constexpr std::string_view VERSION { "1.2.3-rc.2+dev.3.abcd1234" };
+inline constexpr std::string_view VERSION { "1.2.3-rc.2+dev.3.sha.abcd1234" };
 inline constexpr unsigned int MAJOR { 1 };
 inline constexpr unsigned int MINOR { 2 };
 inline constexpr unsigned int PATCH { 3 };
@@ -41,7 +41,7 @@ inline constexpr std::string_view COMMIT_ID { "abcd1234" };
 inline constexpr std::string_view BRANCH { "test-branch" };
 inline constexpr bool DIRTY_BUILD { false };
 inline constexpr bool DEVELOPMENT_BUILD { true };
-inline constexpr std::string_view BUILD_METADATA { "dev.3.abcd1234" };
+inline constexpr std::string_view BUILD_METADATA { "dev.3.sha.abcd1234" };
 
 } // namespace plxsversion
 
@@ -63,7 +63,7 @@ inline constexpr std::string_view BUILD_METADATA { "dev.3.abcd1234" };
 
 namespace plxsversion {
 
-constexpr const char *VERSION { "1.2.3-rc.2+dev.3.abcd1234" };
+constexpr const char *VERSION { "1.2.3-rc.2+dev.3.sha.abcd1234" };
 constexpr unsigned int MAJOR { 1 };
 constexpr unsigned int MINOR { 2 };
 constexpr unsigned int PATCH { 3 };
@@ -74,7 +74,7 @@ constexpr const char *COMMIT_ID { "abcd1234" };
 constexpr const char *BRANCH { "test-branch" };
 constexpr bool DIRTY_BUILD { false };
 constexpr bool DEVELOPMENT_BUILD { true };
-constexpr const char *BUILD_METADATA { "dev.3.abcd1234" };
+constexpr const char *BUILD_METADATA { "dev.3.sha.abcd1234" };
 
 } // namespace plxsversion
 
@@ -99,7 +99,7 @@ constexpr const char *BUILD_METADATA { "dev.3.abcd1234" };
 extern "C" {
 #endif
 
-static const char *VERSION = "1.2.3-rc.2+dev.3.abcd1234";
+static const char *VERSION = "1.2.3-rc.2+dev.3.sha.abcd1234";
 static const unsigned int MAJOR = 1;
 static const unsigned int MINOR = 2;
 static const unsigned int PATCH = 3;
@@ -110,7 +110,7 @@ static const char *COMMIT_ID = "abcd1234";
 static const char *BRANCH = "test-branch";
 static bool DIRTY_BUILD = false;
 static bool DEVELOPMENT_BUILD = true;
-static const char *BUILD_METADATA = "dev.3.abcd1234";
+static const char *BUILD_METADATA = "dev.3.sha.abcd1234";
 
 #ifdef __cplusplus
 } // extern "C"

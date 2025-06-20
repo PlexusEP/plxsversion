@@ -82,10 +82,10 @@ class VersionData(EqualityByValue):
         if self.commits_since_tag > 0:
             # SemVer build metadata identifiers are alphanumeric and hyphens.
             # Git short hash (commit_id) is typically hex, which is fine.
-            build_time_metadata_sub_elements.append(f"dev.{self.commits_since_tag}.{self.commit_id}")
+            build_time_metadata_sub_elements.append(f"dev.{self.commits_since_tag}.sha.{self.commit_id}")
         else:
             # If on a tag (commits_since_tag is 0), include just the commit hash.
-            build_time_metadata_sub_elements.append(self.commit_id)
+            build_time_metadata_sub_elements.append(f"sha.{self.commit_id}")
         if self.is_dirty:
             build_time_metadata_sub_elements.append("dirty")
 
