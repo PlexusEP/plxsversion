@@ -67,34 +67,28 @@ class VersionData(EqualityByValue):
 
     def _set_qualified_version(self) -> None:
         core_version = f"{self.major}.{self.minor}.{self.patch}"
-
-        qualified_version_str = core_version
+        version_parts = [core_version]
         if self.prerelease:
-            qualified_version_str += f"-{self.prerelease}"
+            version_parts.append(f"-{self.prerelease}")
 
         # Construct build metadata
-        # Starts with metadata from the tag, then appends build-time information.
-        build_metadata_elements = []
+        # Build metadata is a series of dot-separated identifiers.
+        # We collect all identifiers in a list and then join them.
+        metadata_identifiers = []
         if self.buildmetadata_from_tag:
-            build_metadata_elements.append(self.buildmetadata_from_tag)
+            metadata_identifiers.extend(self.buildmetadata_from_tag.split("."))
 
-        build_time_metadata_sub_elements = []
         if self.commits_since_tag > 0:
-            # SemVer build metadata identifiers are alphanumeric and hyphens.
-            # Git short hash (commit_id) is typically hex, which is fine.
-            build_time_metadata_sub_elements.append(f"dev.{self.commits_since_tag}.sha.{self.commit_id}")
+            metadata_identifiers.extend(["dev", str(self.commits_since_tag), "sha", self.commit_id])
         else:
-            # If on a tag (commits_since_tag is 0), include just the commit hash.
-            build_time_metadata_sub_elements.append(f"sha.{self.commit_id}")
+            metadata_identifiers.extend(["sha", self.commit_id])
+
         if self.is_dirty:
-            build_time_metadata_sub_elements.append("dirty")
+            metadata_identifiers.append("dirty")
 
-        if build_time_metadata_sub_elements:
-            build_metadata_elements.append(".".join(build_time_metadata_sub_elements))
-
-        self.full_build_metadata = ".".join(build_metadata_elements)
+        self.full_build_metadata = ".".join(metadata_identifiers)
 
         if self.full_build_metadata:
-            qualified_version_str += f"+{self.full_build_metadata}"
+            version_parts.append(f"+{self.full_build_metadata}")
 
-        self.qualified_version = qualified_version_str
+        self.qualified_version = "".join(version_parts)
