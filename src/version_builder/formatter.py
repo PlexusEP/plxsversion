@@ -41,16 +41,17 @@ class _CppFormatter(_Formatter):
 namespace plxsversion {{
 
 inline constexpr std::string_view VERSION {{ "{version_data.qualified_version:s}" }};
-inline constexpr unsigned int MAJOR {{ {version_data.components[0]:d} }};
-inline constexpr unsigned int MINOR {{ {version_data.components[1]:d} }};
-inline constexpr unsigned int PATCH {{ {version_data.components[2]:d} }};
-inline constexpr std::string_view VERSION_DESCRIPTOR {{ "{version_data.descriptor:s}" }};
+inline constexpr unsigned int MAJOR {{ {version_data.major:d} }};
+inline constexpr unsigned int MINOR {{ {version_data.minor:d} }};
+inline constexpr unsigned int PATCH {{ {version_data.patch:d} }};
+inline constexpr std::string_view PRE_RELEASE {{ "{version_data.prerelease:s}" }};
 inline constexpr std::string_view TAG {{ "{version_data.tag:s}" }};
 inline constexpr unsigned int COMMITS_SINCE_TAG {{ {version_data.commits_since_tag:d} }};
 inline constexpr std::string_view COMMIT_ID {{ "{version_data.commit_id:s}" }};
 inline constexpr std::string_view BRANCH {{ "{version_data.branch_name:s}" }};
 inline constexpr bool DIRTY_BUILD {{ {str(version_data.is_dirty).lower():s} }};
 inline constexpr bool DEVELOPMENT_BUILD {{ {str(version_data.is_development_build).lower():s} }};
+inline constexpr std::string_view BUILD_METADATA {{ "{version_data.full_build_metadata:s}" }};
 {self._optional_output(version_data):s}
 }} // namespace plxsversion
 
@@ -83,16 +84,17 @@ class _Cpp11Formatter(_Formatter):
 namespace plxsversion {{
 
 constexpr const char *VERSION {{ "{version_data.qualified_version:s}" }};
-constexpr unsigned int MAJOR {{ {version_data.components[0]:d} }};
-constexpr unsigned int MINOR {{ {version_data.components[1]:d} }};
-constexpr unsigned int PATCH {{ {version_data.components[2]:d} }};
-constexpr const char *VERSION_DESCRIPTOR {{ "{version_data.descriptor:s}" }};
+constexpr unsigned int MAJOR {{ {version_data.major:d} }};
+constexpr unsigned int MINOR {{ {version_data.minor:d} }};
+constexpr unsigned int PATCH {{ {version_data.patch:d} }};
+constexpr const char *PRE_RELEASE {{ "{version_data.prerelease:s}" }};
 constexpr const char *TAG {{ "{version_data.tag:s}" }};
 constexpr unsigned int COMMITS_SINCE_TAG {{ {version_data.commits_since_tag:d} }};
 constexpr const char *COMMIT_ID {{ "{version_data.commit_id:s}" }};
 constexpr const char *BRANCH {{ "{version_data.branch_name:s}" }};
 constexpr bool DIRTY_BUILD {{ {str(version_data.is_dirty).lower():s} }};
 constexpr bool DEVELOPMENT_BUILD {{ {str(version_data.is_development_build).lower():s} }};
+constexpr const char *BUILD_METADATA {{ "{version_data.full_build_metadata:s}" }};
 {self._optional_output(version_data):s}
 }} // namespace plxsversion
 
@@ -128,16 +130,17 @@ extern "C" {{
 #endif
 
 static const char *VERSION = "{version_data.qualified_version:s}";
-static const unsigned int MAJOR = {version_data.components[0]:d};
-static const unsigned int MINOR = {version_data.components[1]:d};
-static const unsigned int PATCH = {version_data.components[2]:d};
-static const char *VERSION_DESCRIPTOR = "{version_data.descriptor:s}";
+static const unsigned int MAJOR = {version_data.major:d};
+static const unsigned int MINOR = {version_data.minor:d};
+static const unsigned int PATCH = {version_data.patch:d};
+static const char *PRE_RELEASE = "{version_data.prerelease:s}";
 static const char *TAG = "{version_data.tag:s}";
 static const unsigned int COMMITS_SINCE_TAG = {version_data.commits_since_tag:d};
 static const char *COMMIT_ID = "{version_data.commit_id:s}";
 static const char *BRANCH = "{version_data.branch_name:s}";
 static bool DIRTY_BUILD = {str(version_data.is_dirty).lower():s};
 static bool DEVELOPMENT_BUILD = {str(version_data.is_development_build).lower():s};
+static const char *BUILD_METADATA = "{version_data.full_build_metadata:s}";
 {self._optional_output(version_data):s}
 #ifdef __cplusplus
 }} // extern "C"

@@ -74,23 +74,28 @@ Other parameters can be found in the public interface for the module.
 - Git repo the tool runs in must have at least 1 valid commit
 
 #### Tag Format
+This tool expects git tags to follow Semantic Versioning 2.0.0 (SemVer).
+The version string itself should be of the form `X.Y.Z[-PRERELEASE][+BUILD_METADATA]`.
+A leading `v` (e.g., `v1.2.3`) in the git tag is permitted and will be stripped by the tool before parsing the SemVer string.
 
-The general structure of valid tag formats is based on semantic versioning with an additional descriptor field. This ends up looking like `<major>.<minor>.<patch>-<my>_<descriptor>`. The descriptor field expects an alpha-numeric string that can be separated using underscores. 
+- **PRERELEASE**: A series of dot-separated identifiers. Identifiers are composed of ASCII alphanumerics and hyphens. Numeric identifiers MUST NOT have leading zeros (e.g., `1.0.0-alpha.1`, `1.0.0-rc.2`).
+- **BUILD_METADATA**: A series of dot-separated identifiers. Identifiers are composed of ASCII alphanumerics and hyphens (e.g., `1.0.0+build.123`, `1.0.0-alpha+007.exp`).
 
 Examples of valid formats:
 
 - 1.2.3
 - v1.2.3
-- 1.2.3-MyMilestone
-- v1.2.3-MyMilestone_RC3
+- 1.0.0-alpha
+- v1.0.0-alpha.1
+- 1.0.0-beta+build.123.abc
+- 0.0.1-SNAPSHOT.12
 
 Examples of invalid formats:
 
 - v1.2
-- 1.2-MyMilestone
-- v1.2.3MyMilestone
-- 1.2.3-MyMilestone-RC2
-- 1.2.3-MyMilestone.RC2
+- 1.2.3-My_Milestone (underscores are not allowed in pre-release or build metadata identifiers)
+- 1.2.3-alpha..beta (empty pre-release identifier)
+- 1.0.0-01 (leading zero in numeric pre-release identifier)
 
 #### Supported Tag Sources
 
@@ -117,7 +122,8 @@ The created file contains the following information:
 | MAJOR                   | The semantic major component of the tag |
 | MINOR                   | The semantic minor component of the tag |
 | PATCH                   | The semantic patch component of the tag |
-| VERSION_DESCRIPTOR      | The descriptive component of the tag |
+| PRE_RELEASE             | The pre-release component of the tag |
+| BUILD_METADATA          | The metadata component of the tag |
 | TAG                     | The raw tag before processing |
 | COMMITS_SINCE_TAG       | Number of commits since the last tag (defaults to 0 if using file for semantic version) |
 | COMMIT_ID               | Commit ID of the git commit used to build |
@@ -145,11 +151,12 @@ Here is an example output version.hpp file for a C++ application tagged `2.1.0` 
 
 namespace plxsversion {
 
-inline constexpr std::string_view VERSION { "2.1.0-dirty" };
+inline constexpr std::string_view VERSION { "2.1.0+dd4c559.dirty" };
 inline constexpr unsigned int MAJOR { 2 };
 inline constexpr unsigned int MINOR { 1 };
 inline constexpr unsigned int PATCH { 0 };
-inline constexpr std::string_view VERSION_DESCRIPTOR { "" };
+inline constexpr std::string_view PRE_RELEASE { "" };
+inline constexpr std::string_view BUILD_METADATA { "" };
 inline constexpr std::string_view TAG { "2.1.0" };
 inline constexpr unsigned int COMMITS_SINCE_TAG { 0 };
 inline constexpr std::string_view COMMIT_ID { "dd4c559" };
