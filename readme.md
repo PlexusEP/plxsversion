@@ -76,9 +76,9 @@ Other parameters can be found in the public interface for the module.
 #### Tag Format
 This tool expects git tags to follow Semantic Versioning 2.0.0 (SemVer).
 The version string itself should be of the form `X.Y.Z[-PRERELEASE][+BUILD_METADATA]`.
-A leading `v` (e.g., `v1.2.3`) in the git tag is permitted and will be stripped by the tool before parsing the SemVer string.
+A leading `v` (e.g., `v1.2.3`) in the git tag is permitted and will be stripped by the tool before parsing the SemVer string. PRERLEASE and BUILD_METADATA are optional for a tag. They can be used to provide addtional contextual data about a build which would be incorporated into a version string. 
 
-- **PRERELEASE**: A series of dot-separated identifiers. Identifiers are composed of ASCII alphanumerics and hyphens. Numeric identifiers MUST NOT have leading zeros (e.g., `1.0.0-alpha.1`, `1.0.0-rc.2`).
+- **PRERELEASE**: A series of dot-separated identifiers. Identifiers are composed of ASCII alphanumerics and hyphens. Numeric identifiers MUST NOT have leading zeros (e.g., `1.0.0-alpha.1`, `1.0.0-rc.2`, `1.0.0-MyMilestone`).
 - **BUILD_METADATA**: A series of dot-separated identifiers. Identifiers are composed of ASCII alphanumerics and hyphens (e.g., `1.0.0+build.123`, `1.0.0-alpha+007.exp`).
 
 Examples of valid formats:
