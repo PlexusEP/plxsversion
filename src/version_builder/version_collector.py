@@ -29,23 +29,23 @@ class _VersionCollector:
     def get_version(self, data_source: str) -> VersionData:
         return self.compute_version(data_source)
 
+    def _process_tag(self, raw_tag: str) -> str:
+        # Strip leading 'v' if present, as SemVer itself doesn't include it.
+        # Ensure it's a 'v' followed by a digit to avoid stripping 'v' from non-version tags.
+        if raw_tag.startswith("v") and len(raw_tag) > 1 and raw_tag[1].isdigit():
+            return raw_tag[1:]
+        return raw_tag
+
 
 class _Git(_VersionCollector):
     def compute_version(self, repo_path: str) -> VersionData:
-        def _process_git_tag(raw_tag: str) -> str:
-            # Strip leading 'v' if present, as SemVer itself doesn't include it.
-            # Ensure it's a 'v' followed by a digit to avoid stripping 'v' from non-version tags.
-            if raw_tag.startswith("v") and len(raw_tag) > 1 and raw_tag[1].isdigit():
-                return raw_tag[1:]
-            return raw_tag
-
         with utils.change_dir(repo_path):
             try:
                 repo_description = utils.Git.get_description()
                 # Example git describe output: "v1.2.3-alpha-2-g1234567" or "my-custom-tag-0-gabcdef0"
                 match = re.match(r"^(.*)-(\d+)-g([0-9a-fA-F]{7,})$", repo_description)
                 if match:  # The regex should match standard git describe --long output if a tag exists
-                    tag = _process_git_tag(match.group(1))  # group(1) is the tag name part
+                    tag = self._process_tag(match.group(1))  # group(1) is the tag name part
                     commits_since_tag = int(match.group(2))
                     commit_id = match.group(3)
                     return VersionData(
@@ -76,14 +76,8 @@ class _Git(_VersionCollector):
 
 class _File(_VersionCollector):
     def compute_version(self, file_path: str) -> VersionData:
-        def _process_file_tag(raw_tag: str) -> str:
-            # Strip leading 'v' if present, ensuring it's a 'v' followed by a digit.
-            if raw_tag.startswith("v") and len(raw_tag) > 1 and raw_tag[1].isdigit():
-                return raw_tag[1:]
-            return raw_tag
-
         with open(file_path) as input_file:
-            tag = _process_file_tag(input_file.readline().strip())
+            tag = self._process_tag(input_file.readline().strip())
             if tag:
                 with utils.change_dir(Path(file_path).parent):
                     # While the tag comes from a file, we assume all projects use git
