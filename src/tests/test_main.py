@@ -12,7 +12,7 @@ class TestMain:
     def test_cpp_source_git(self, tmp_path):
         git_dir = GitDir(tmp_path)
         git_dir.commit()
-        git_dir.tag("v1.2.3-My_Descriptor_123")
+        git_dir.tag("v1.0.0-alpha.1")
         main.create_version_file(
             source="git",
             source_input=git_dir.path,
@@ -25,10 +25,10 @@ class TestMain:
     def test_cpp_source_file(self, tmp_path):
         git_dir = GitDir(tmp_path)
         file = git_dir.path / "version.txt"
-        file.write_text("1.2.3")
+        file.write_text("1.1.0-beta.2+build.meta")  # More complex SemVer from file
         git_dir.add_all()
         git_dir.commit()
-        git_dir.tag("v1.2.3-My_Descriptor_123")
+        # The git tag is mostly for git context here, version comes from file
         main.create_version_file(
             source="file",
             source_input=file,
@@ -41,7 +41,7 @@ class TestMain:
     def test_print_file(self, tmp_path, capsys):
         git_dir = GitDir(tmp_path)
         git_dir.commit()
-        git_dir.tag("v1.2.3-My_Descriptor_123")
+        git_dir.tag("v0.1.0-rc.1")
         optional_config = main.OptionalConfiguration(print_created_file=True)
         main.create_version_file(
             source="git",
@@ -56,7 +56,7 @@ class TestMain:
     def test_cpp(self, tmp_path):
         git_dir = GitDir(tmp_path)
         git_dir.commit()
-        git_dir.tag("v1.2.3-My_Descriptor_123")
+        git_dir.tag("v1.0.0")
         with pytest.raises(ValueError, match="Unexpected file ending for lang"):
             # incorrect version file extension
             main.create_version_file(
@@ -69,7 +69,7 @@ class TestMain:
     def test_c(self, tmp_path):
         git_dir = GitDir(tmp_path)
         git_dir.commit()
-        git_dir.tag("v1.2.3-My_Descriptor_123")
+        git_dir.tag("v1.0.0")
         with pytest.raises(ValueError, match="Unexpected file ending for lang"):
             # incorrect version file extension
             main.create_version_file(
@@ -90,7 +90,7 @@ class TestMain:
     def test_cpp11(self, tmp_path):
         git_dir = GitDir(tmp_path)
         git_dir.commit()
-        git_dir.tag("v1.2.3-My_Descriptor_123")
+        git_dir.tag("v1.0.0")
         with pytest.raises(ValueError, match="Unexpected file ending for lang"):
             # incorrect version file extension
             main.create_version_file(
@@ -113,7 +113,7 @@ class TestModuleInterface:
     def test_module_call(self, tmp_path):
         git_dir = GitDir(tmp_path)
         git_dir.commit()
-        git_dir.tag("v1.2.3-My_Descriptor_123")
+        git_dir.tag("v2.0.0-final+build.123")
         subprocess.check_call(
             [
                 sys.executable,
