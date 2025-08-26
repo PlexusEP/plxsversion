@@ -59,12 +59,40 @@ target_link_libraries(my_app PRIVATE plxsversion-my_app)
 
 ### Manual Usage
 
-This script should be ran as a python module. To do this:
+This script can be run as a Python module. To do this:
 
-1. Navigate to this repository's `src` directory or add this directory to the `PYTHONPATH` environment variable
-2. Invoke the tool: ```python -m version_builder --lang <output_language> --input <git_dir> <output_file>```
+1. Navigate to this repository's `src` directory or add this directory to your `PYTHONPATH` environment variable.
+2. Invoke the tool using the following command structure:
+   ```bash
+   python -m version_builder --source <source_type> --lang <language> --input <path_to_source> <output_file>
+   ```
 
-Other parameters can be found in the public interface for the module. 
+Here are the available arguments:
+
+| Argument | Short | Description | Required |
+|---|---|---|---|
+| `--source` | `-s` | Type of source for version info (`git` or `file`). | Yes |
+| `--lang` | `-l` | Language for the output file (`cpp`, `cpp11`, `c`). | Yes |
+| `--input` | `-i` | Path to the source of version information. | Yes |
+| `file` | | Path for the generated output file. | Yes |
+| `--print` | `-p` | Print the generated file's contents after creation. | No |
+| `--time` | `-t` | Include timestamp data in the version information. | No |
+
+**Example using `git` as a source:**
+
+This command generates a C++ header file (`version.hpp`) from the git history of the current directory (`.`) and prints its contents.
+
+```bash
+python -m version_builder --source git --lang cpp --input . --print version.hpp
+```
+
+**Example using `file` as a source:**
+
+This command generates a C header file (`version.h`) using a version tag from `./version.txt`.
+
+```bash
+python -m version_builder --source file --lang c --input ./version.txt version.h
+```
 
 ### Limitations
 
