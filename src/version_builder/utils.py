@@ -27,11 +27,13 @@ class EqualityByValue:
 
 
 class Git:
+    @staticmethod
     def get_branch_name() -> str:
         # No user input is passed to subprocess calls
         return subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"]).strip().decode()  # noqa: S603
 
-    def get_commit_id(short: bool = True) -> str:
+    @staticmethod
+    def get_commit_id(*, short: bool = True) -> str:
         # No user input is passed to subprocess calls
         command = ["git", "rev-parse"]
         if short:
@@ -39,11 +41,13 @@ class Git:
         command.append("HEAD")
         return subprocess.check_output(command).strip().decode()  # noqa: S603
 
+    @staticmethod
     def get_description() -> str:
         """Output format: <tag>-<commits_since_tag>-g<commit_hash_abbrev>."""
         # No user input is passed to subprocess calls
         return subprocess.check_output(["git", "describe", "--tags", "--abbrev=7", "--long"]).strip().decode()  # noqa: S603
 
+    @staticmethod
     def get_commit_count() -> int:
         try:
             # No user input is passed to subprocess calls
@@ -52,6 +56,7 @@ class Git:
             # HEAD likely does not exist, meaning no commits
             return 0
 
+    @staticmethod
     def get_cwd_is_not_empty() -> bool:
         """Return true if a directory contains files besides a .git directory."""
         # listdir offers a simpler and more readable way to collect all files in a directory
@@ -59,6 +64,7 @@ class Git:
         nongit_entries = [entry for entry in all_entries if entry != ".git"]
         return len(nongit_entries) != 0
 
+    @staticmethod
     def get_is_dirty() -> bool:
         # No user input is passed to subprocess calls
         staged_changes = subprocess.call(["git", "diff", "--quiet", "--cached", "--exit-code", "HEAD"]) != 0  # noqa: S603
