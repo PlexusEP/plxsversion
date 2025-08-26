@@ -9,7 +9,7 @@ macro(_set_relative_out_file_path LANG)
   endif()
 endmacro(_set_relative_out_file_path)
 
-function(_create_version_file LANG SOURCE INPUT)
+function(_create_version_file LANG SOURCE INPUT OUT_FILE)
   cmake_parse_arguments(
     CREATE
     ""
@@ -18,21 +18,22 @@ function(_create_version_file LANG SOURCE INPUT)
     ${ARGN}
   )
 
-  file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/plxs")
-  file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/plxs/plxsversion")
+  get_filename_component(OUT_DIR "${OUT_FILE}" DIRECTORY)
+  file(MAKE_DIRECTORY "${OUT_DIR}")
 
   set(ENV{PYTHONPATH} "${DIR_OF_PLXSVERSION}/src:ENV{PYTHONPATH}")
   execute_process(
-    COMMAND /usr/bin/env ${Python_EXECUTABLE} -m version_builder --lang ${LANG} --source ${SOURCE} --input ${INPUT} ${CREATE_ADDITIONAL_OPTIONS} "${CMAKE_CURRENT_BINARY_DIR}/${REL_OUT_PATH}"
+    COMMAND /usr/bin/env ${Python_EXECUTABLE} -m version_builder --lang ${LANG} --source ${SOURCE} --input ${INPUT} ${CREATE_ADDITIONAL_OPTIONS} "${OUT_FILE}"
 		  RESULT_VARIABLE result)
   if(NOT ${result} EQUAL 0)
+    file(REMOVE "${OUT_FILE}")
     message(FATAL_ERROR "Error running plxsversion tool. Return code is: ${result}")
   endif()
 endfunction(_create_version_file)
 
 # Load version string and write it to a cmake variable so it can be accessed from cmake.
-function(_set_version_cmake_variable OUTPUT_VARIABLE)
-  file(READ "${CMAKE_CURRENT_BINARY_DIR}/${REL_OUT_PATH}" VERSION_FILE_CONTENT)
+function(_set_version_cmake_variable OUTPUT_VARIABLE IN_FILE)
+  file(READ "${IN_FILE}" VERSION_FILE_CONTENT)
   string(REGEX REPLACE ".*VERSION [{=] \"([^\"]*)\".*" "\\1" VERSION "${VERSION_FILE_CONTENT}")
   message(STATUS "Version from plxsversion: ${VERSION}")
   set(${OUTPUT_VARIABLE} "${VERSION}" CACHE INTERNAL "${OUTPUT_VARIABLE}")
@@ -85,7 +86,8 @@ function(plxsversion_create_target)
   endif()
 
   _set_relative_out_file_path(${VER_LANG})
-  _create_version_file(${VER_LANG} ${VER_SOURCE} ${VER_INPUT} ADDITIONAL_OPTIONS ${OPTIONS})
+  set(OUT_FILE "${CMAKE_CURRENT_BINARY_DIR}/${REL_OUT_PATH}")
+  _create_version_file(${VER_LANG} ${VER_SOURCE} ${VER_INPUT} ${OUT_FILE} ADDITIONAL_OPTIONS ${OPTIONS})
 
   add_library(${VERSION_LIBRARY} INTERFACE)
   target_include_directories(${VERSION_LIBRARY} 
@@ -94,6 +96,6 @@ function(plxsversion_create_target)
       $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/plxs>)
   message(STATUS "${VERSION_LIBRARY} created.")
 
-  set_property(TARGET ${VERSION_LIBRARY} APPEND PROPERTY ADDITIONAL_CLEAN_FILES "${CMAKE_CURRENT_BINARY_DIR}/${REL_OUT_PATH}")
-  _set_version_cmake_variable(PLXSVERSION_STRING)
+  set_property(TARGET ${VERSION_LIBRARY} APPEND PROPERTY ADDITIONAL_CLEAN_FILES "${OUT_FILE}")
+  _set_version_cmake_variable(PLXSVERSION_STRING ${OUT_FILE})
 endfunction(plxsversion_create_target)
