@@ -60,7 +60,7 @@ class _Git(_VersionCollector):
 
             # Rule 2: check for multiple valid semver tags on current commit
             try:
-                tags_on_commit_raw = subprocess.check_output(
+                tags_on_commit_raw = subprocess.check_output(  # noqa: S603
                     ["git", "tag", "--points-at", commit_id_full], stderr=subprocess.PIPE
                 ).decode()
                 tags_on_commit = [tag for tag in tags_on_commit_raw.strip().split("\n") if tag]
@@ -86,7 +86,7 @@ class _Git(_VersionCollector):
 
             # Rule 1: No valid semver tag on current commit, search history.
             try:
-                all_tags_raw = subprocess.check_output(
+                all_tags_raw = subprocess.check_output(  # noqa: S603
                     ["git", "for-each-ref", "--sort=-creatordate", "--format", "%(refname:short)", "refs/tags"],
                     stderr=subprocess.PIPE,
                 ).decode()
@@ -97,16 +97,18 @@ class _Git(_VersionCollector):
             for tag_name in all_tags:
                 if self._is_valid_semver(tag_name):
                     # Check if it's an ancestor
-                    is_ancestor_proc = subprocess.run(
+                    is_ancestor_proc = subprocess.run(  # noqa: S603
                         ["git", "merge-base", "--is-ancestor", tag_name, "HEAD"], capture_output=True, check=False
                     )
                     if is_ancestor_proc.returncode == 0:
                         # Found the most recent valid semver tag in history.
 
                         # Check for ambiguity on the tagged ancestor commit
-                        tag_commit_id_full = subprocess.check_output(["git", "rev-parse", tag_name]).decode().strip()
+                        tag_commit_id_full = (
+                            subprocess.check_output(["git", "rev-parse", tag_name]).decode().strip()  # noqa: S603
+                        )
                         try:
-                            tags_on_commit_raw = subprocess.check_output(
+                            tags_on_commit_raw = subprocess.check_output(  # noqa: S603
                                 ["git", "tag", "--points-at", tag_commit_id_full], stderr=subprocess.PIPE
                             ).decode()
                             tags_on_commit = [tag for tag in tags_on_commit_raw.strip().split("\n") if tag]
@@ -117,12 +119,12 @@ class _Git(_VersionCollector):
 
                         if len(valid_semver_tags_on_ancestor) > 1:
                             short_tag_commit_id = (
-                                subprocess.check_output(["git", "rev-parse", "--short=7", tag_name]).decode().strip()
+                                subprocess.check_output(["git", "rev-parse", "--short=7", tag_name]).decode().strip()  # noqa: S603
                             )
-                            msg = f"multiple valid SemVer tags on ancestor commit {short_tag_commit_id}: {', '.join(valid_semver_tags_on_ancestor)}"
+                            msg = f"multiple valid SemVer tags on ancestor commit {short_tag_commit_id}: {', '.join(valid_semver_tags_on_ancestor)}"  # noqa: E501
                             raise VersionCollectError(msg)
 
-                        count_raw = subprocess.check_output(
+                        count_raw = subprocess.check_output(  # noqa: S603
                             ["git", "rev-list", "--count", f"{tag_name}..HEAD"]
                         ).decode()
                         commits_since_tag = int(count_raw.strip())
