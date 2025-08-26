@@ -31,9 +31,13 @@ class Git:
         # No user input is passed to subprocess calls
         return subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"]).strip().decode()  # noqa: S603
 
-    def get_commit_id() -> str:
+    def get_commit_id(short: bool = True) -> str:
         # No user input is passed to subprocess calls
-        return subprocess.check_output(["git", "rev-parse", "--short=7", "HEAD"]).strip().decode()  # noqa: S603
+        command = ["git", "rev-parse"]
+        if short:
+            command.append("--short=7")
+        command.append("HEAD")
+        return subprocess.check_output(command).strip().decode()  # noqa: S603
 
     def get_description() -> str:
         """Output format: <tag>-<commits_since_tag>-g<commit_hash_abbrev>."""

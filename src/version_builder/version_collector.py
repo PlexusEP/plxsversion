@@ -38,40 +38,115 @@ class _VersionCollector:
 
 
 class _Git(_VersionCollector):
+    # Official SemVer 2.0.0 regex from version_data.py
+    _SEMVER_REGEX = r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$"  # noqa: E501
+
+    def _is_valid_semver(self, tag: str) -> bool:
+        processed_tag = self._process_tag(tag)
+        return re.match(self._SEMVER_REGEX, processed_tag) is not None
+
     def compute_version(self, repo_path: str) -> VersionData:
         with utils.change_dir(repo_path):
             try:
-                repo_description = utils.Git.get_description()
-                # Example git describe output: "v1.2.3-alpha-2-g1234567" or "my-custom-tag-0-gabcdef0"
-                match = re.match(r"^(.*)-(\d+)-g([0-9a-fA-F]{7,})$", repo_description)
-                if match:  # The regex should match standard git describe --long output if a tag exists
-                    tag = self._process_tag(match.group(1))  # group(1) is the tag name part
-                    commits_since_tag = int(match.group(2))
-                    commit_id = match.group(3)
-                    return VersionData(
-                        tag=tag,
-                        commit_id=commit_id,
-                        branch_name=utils.Git.get_branch_name(),
-                        is_dirty=utils.Git.get_is_dirty(),
-                        commits_since_tag=commits_since_tag,
-                    )
-                msg = f'unexpected git describe output "{repo_description:s}"'
-                raise VersionCollectError(msg)  # This case should ideally not be hit with standard git describe output
+                if utils.Git.get_commit_count() == 0:
+                    msg = "no commits exist"
+                    raise VersionCollectError(msg)
             except subprocess.CalledProcessError as exc:
-                # no tag exists
-                total_number_commits = utils.Git.get_commit_count()
-                if total_number_commits > 0:
-                    # There is no git tag, but there are commits
-                    commit_id = utils.Git.get_commit_id()
-                    return VersionData(
-                        tag="0.0.0-UNTAGGED",  # This is a valid SemVer 2.0.0 pre-release
-                        commit_id=commit_id,
-                        branch_name=utils.Git.get_branch_name(),
-                        is_dirty=utils.Git.get_is_dirty(),
-                        commits_since_tag=total_number_commits,
-                    )
-                msg = "no commits exist"
+                msg = "not a git repository"
                 raise VersionCollectError(msg) from exc
+
+            commit_id = utils.Git.get_commit_id()
+            commit_id_full = utils.Git.get_commit_id(short=False)
+
+            # Rule 2: check for multiple valid semver tags on current commit
+            try:
+                tags_on_commit_raw = subprocess.check_output(
+                    ["git", "tag", "--points-at", commit_id_full], stderr=subprocess.PIPE
+                ).decode()
+                tags_on_commit = [tag for tag in tags_on_commit_raw.strip().split("\n") if tag]
+            except subprocess.CalledProcessError:
+                tags_on_commit = []
+
+            valid_semver_tags = [tag for tag in tags_on_commit if self._is_valid_semver(tag)]
+
+            if len(valid_semver_tags) > 1:
+                msg = f"multiple valid SemVer tags on commit {commit_id}: {', '.join(valid_semver_tags)}"
+                raise VersionCollectError(msg)
+
+            if len(valid_semver_tags) == 1:
+                # Exact match on current commit
+                tag = self._process_tag(valid_semver_tags[0])
+                return VersionData(
+                    tag=tag,
+                    commit_id=commit_id,
+                    branch_name=utils.Git.get_branch_name(),
+                    is_dirty=utils.Git.get_is_dirty(),
+                    commits_since_tag=0,
+                )
+
+            # Rule 1: No valid semver tag on current commit, search history.
+            try:
+                all_tags_raw = subprocess.check_output(
+                    ["git", "for-each-ref", "--sort=-creatordate", "--format", "%(refname:short)", "refs/tags"],
+                    stderr=subprocess.PIPE,
+                ).decode()
+                all_tags = [tag for tag in all_tags_raw.strip().split("\n") if tag]
+            except subprocess.CalledProcessError:
+                all_tags = []
+
+            for tag_name in all_tags:
+                if self._is_valid_semver(tag_name):
+                    # Check if it's an ancestor
+                    is_ancestor_proc = subprocess.run(
+                        ["git", "merge-base", "--is-ancestor", tag_name, "HEAD"], capture_output=True, check=False
+                    )
+                    if is_ancestor_proc.returncode == 0:
+                        # Found the most recent valid semver tag in history.
+
+                        # Check for ambiguity on the tagged ancestor commit
+                        tag_commit_id_full = subprocess.check_output(["git", "rev-parse", tag_name]).decode().strip()
+                        try:
+                            tags_on_commit_raw = subprocess.check_output(
+                                ["git", "tag", "--points-at", tag_commit_id_full], stderr=subprocess.PIPE
+                            ).decode()
+                            tags_on_commit = [tag for tag in tags_on_commit_raw.strip().split("\n") if tag]
+                        except subprocess.CalledProcessError:
+                            tags_on_commit = []
+
+                        valid_semver_tags_on_ancestor = [tag for tag in tags_on_commit if self._is_valid_semver(tag)]
+
+                        if len(valid_semver_tags_on_ancestor) > 1:
+                            short_tag_commit_id = (
+                                subprocess.check_output(["git", "rev-parse", "--short=7", tag_name]).decode().strip()
+                            )
+                            msg = f"multiple valid SemVer tags on ancestor commit {short_tag_commit_id}: {', '.join(valid_semver_tags_on_ancestor)}"
+                            raise VersionCollectError(msg)
+
+                        count_raw = subprocess.check_output(
+                            ["git", "rev-list", "--count", f"{tag_name}..HEAD"]
+                        ).decode()
+                        commits_since_tag = int(count_raw.strip())
+
+                        tag = self._process_tag(tag_name)
+                        return VersionData(
+                            tag=tag,
+                            commit_id=commit_id,
+                            branch_name=utils.Git.get_branch_name(),
+                            is_dirty=utils.Git.get_is_dirty(),
+                            commits_since_tag=commits_since_tag,
+                        )
+
+            # Rule 3: No valid semver tags found in ancestry.
+            # Intentional print for user status notification
+            print("No valid SemVer tags found in git history. Using '0.0.0-UNTAGGED'.")  # noqa: T201
+            total_number_commits = utils.Git.get_commit_count()
+            return VersionData(
+                tag="0.0.0-UNTAGGED",
+                commit_id=commit_id,
+                branch_name=utils.Git.get_branch_name(),
+                is_dirty=utils.Git.get_is_dirty(),
+                commits_since_tag=total_number_commits,
+            )
 
 
 class _File(_VersionCollector):
