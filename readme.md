@@ -151,8 +151,8 @@ The created file contains the following information:
 | MINOR                   | The semantic minor component of the tag |
 | PATCH                   | The semantic patch component of the tag |
 | PRE_RELEASE             | The pre-release component of the tag |
-| BUILD_METADATA          | The metadata component of the tag |
-| TAG                     | The raw tag before processing |
+| BUILD_METADATA          | The build metadata component of the tag |
+| TAG                     | The base semantic version tag, with any leading 'v' prefix removed |
 | COMMITS_SINCE_TAG       | Number of commits since the last tag (defaults to 0 if using file for semantic version) |
 | COMMIT_ID               | Commit ID of the git commit used to build |
 | BRANCH                  | Branch of the source used to build |
@@ -237,7 +237,7 @@ Here is a sample of CMake implementation that can help test the above cases:
 # plxsversion_create_target(LANG c)
 
 # version from git
-# plxsversion_create_target(SOURCE git VER_INPUT ${CMAKE_CURRENT_SOURCE_DIR})
+# plxsversion_create_target(SOURCE git INPUT ${CMAKE_CURRENT_SOURCE_DIR})
 
 # version from file
 # plxsversion_create_target(SOURCE file INPUT ${CMAKE_CURRENT_SOURCE_DIR}/version.txt)
