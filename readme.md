@@ -59,12 +59,40 @@ target_link_libraries(my_app PRIVATE plxsversion-my_app)
 
 ### Manual Usage
 
-This script should be ran as a python module. To do this:
+This script can be run as a Python module. To do this:
 
-1. Navigate to this repository's `src` directory or add this directory to the `PYTHONPATH` environment variable
-2. Invoke the tool: ```python -m version_builder --lang <output_language> --input <git_dir> <output_file>```
+1. Navigate to this repository's `src` directory or add this directory to your `PYTHONPATH` environment variable.
+2. Invoke the tool using the following command structure:
+   ```bash
+   python -m version_builder --source <source_type> --lang <language> --input <path_to_source> <output_file>
+   ```
 
-Other parameters can be found in the public interface for the module. 
+Here are the available arguments:
+
+| Argument | Short | Description | Required |
+|---|---|---|---|
+| `--source` | `-s` | Type of source for version info (`git` or `file`). | Yes |
+| `--lang` | `-l` | Language for the output file (`cpp`, `cpp11`, `c`). | Yes |
+| `--input` | `-i` | Path to the source of version information. | Yes |
+| `file` | | Path for the generated output file. | Yes |
+| `--print` | `-p` | Print the generated file's contents after creation. | No |
+| `--time` | `-t` | Include timestamp data in the version information. | No |
+
+**Example using `git` as a source:**
+
+This command generates a C++ header file (`version.hpp`) from the git history of the current directory (`.`) and prints its contents.
+
+```bash
+python -m version_builder --source git --lang cpp --input . --print version.hpp
+```
+
+**Example using `file` as a source:**
+
+This command generates a C header file (`version.h`) using a version tag from `./version.txt`.
+
+```bash
+python -m version_builder --source file --lang c --input ./version.txt version.h
+```
 
 ### Limitations
 
@@ -123,8 +151,8 @@ The created file contains the following information:
 | MINOR                   | The semantic minor component of the tag |
 | PATCH                   | The semantic patch component of the tag |
 | PRE_RELEASE             | The pre-release component of the tag |
-| BUILD_METADATA          | The metadata component of the tag |
-| TAG                     | The raw tag before processing |
+| BUILD_METADATA          | The build metadata component of the tag |
+| TAG                     | The base semantic version tag, with any leading 'v' prefix removed |
 | COMMITS_SINCE_TAG       | Number of commits since the last tag (defaults to 0 if using file for semantic version) |
 | COMMIT_ID               | Commit ID of the git commit used to build |
 | BRANCH                  | Branch of the source used to build |
@@ -209,7 +237,7 @@ Here is a sample of CMake implementation that can help test the above cases:
 # plxsversion_create_target(LANG c)
 
 # version from git
-# plxsversion_create_target(SOURCE git VER_INPUT ${CMAKE_CURRENT_SOURCE_DIR})
+# plxsversion_create_target(SOURCE git INPUT ${CMAKE_CURRENT_SOURCE_DIR})
 
 # version from file
 # plxsversion_create_target(SOURCE file INPUT ${CMAKE_CURRENT_SOURCE_DIR}/version.txt)

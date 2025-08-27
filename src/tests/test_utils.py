@@ -25,6 +25,24 @@ class TestGitWrapper:
                 git_dir.commit()
                 assert commit_num == utils.Git.get_commit_count()
 
+    def test_get_commit_id(self, tmp_path: Path) -> None:
+        git_dir = GitDir(tmp_path)
+        with utils.change_dir(git_dir.path):
+            short_id_from_helper = git_dir.commit()
+
+            # Test default (short=True)
+            short_id_from_util = utils.Git.get_commit_id()
+            assert short_id_from_util == short_id_from_helper
+            assert len(short_id_from_util) == 7
+
+            # Test short=False
+            full_id_from_util = utils.Git.get_commit_id(short=False)
+            assert len(full_id_from_util) == 40
+            assert full_id_from_util.startswith(short_id_from_util)
+
+            # Test short=True explicitly
+            assert utils.Git.get_commit_id(short=True) == short_id_from_util
+
     def test_cwd_not_empty(self, tmp_path):
         git_dir = GitDir(tmp_path)
         with utils.change_dir(git_dir.path):

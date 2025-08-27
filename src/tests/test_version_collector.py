@@ -4,7 +4,6 @@ import pytest
 
 from tests.utils import GitDir
 from version_builder.version_collector import VersionCollectError, from_file, from_git
-from version_builder.version_data import VersionParseError
 
 
 class TestVersionCollectorGit:
@@ -36,21 +35,26 @@ class TestVersionCollectorGit:
         git_dir.tag("v1.2.3-rc.1+build.123")  # Valid SemVer with 'v' prefix
         from_git(git_dir.path)
 
-    def test_invalid_tag(self, tmp_path: Path) -> None:
+    def test_invalid_tags_are_ignored(self, tmp_path: Path, capsys) -> None:
         git_dir = GitDir(tmp_path)
         git_dir.commit()
         git_dir.tag("1.2.3.4")  # Invalid: too many components
-        with pytest.raises(VersionParseError):
-            from_git(git_dir.path)
+        git_dir.commit()
         git_dir.tag("v1.2.3-Invalid_Tag")  # Invalid: underscore in prerelease
-        with pytest.raises(VersionParseError):
-            from_git(git_dir.path)
+        version_data = from_git(git_dir.path)
+        assert version_data.tag == "0.0.0-UNTAGGED"
+        assert version_data.commits_since_tag == 2
+        captured = capsys.readouterr()
+        assert "No valid SemVer tags found in git history. Using '0.0.0-UNTAGGED'." in captured.out
 
-    def test_no_tag(self, tmp_path):
+    def test_no_tag(self, tmp_path, capsys):
         git_dir = GitDir(tmp_path)
         git_dir.commit()
         version_data = from_git(git_dir.path)
         assert version_data.tag == "0.0.0-UNTAGGED"
+        assert version_data.commits_since_tag == 1
+        captured = capsys.readouterr()
+        assert "No valid SemVer tags found in git history. Using '0.0.0-UNTAGGED'." in captured.out
 
     def test_no_repo(self, tmp_path):
         with pytest.raises(VersionCollectError):
@@ -88,6 +92,43 @@ class TestVersionCollectorGit:
         git_dir.checkout(detached_commit)
         version_data = from_git(git_dir.path)
         assert version_data.branch_name == "HEAD"
+
+    def test_multiple_tags_on_commit(self, tmp_path: Path) -> None:
+        git_dir = GitDir(tmp_path)
+        git_dir.commit()
+        git_dir.tag("v1.0.0")
+        git_dir.tag("v1.0.1")
+        with pytest.raises(VersionCollectError, match="multiple valid SemVer tags on commit"):
+            from_git(git_dir.path)
+
+    def test_mixed_tags_on_commit(self, tmp_path: Path) -> None:
+        git_dir = GitDir(tmp_path)
+        git_dir.commit()
+        git_dir.tag("v1.2.3")
+        git_dir.tag("not-semver")
+        version_data = from_git(git_dir.path)
+        assert version_data.tag == "1.2.3"
+        assert version_data.commits_since_tag == 0
+
+    def test_ancestor_semver_tag(self, tmp_path: Path) -> None:
+        git_dir = GitDir(tmp_path)
+        first_commit = git_dir.commit()
+        git_dir.tag("v1.0.0", first_commit)
+        git_dir.commit()
+        git_dir.tag("not-a-semver-tag")
+        git_dir.commit()
+        version_data = from_git(git_dir.path)
+        assert version_data.tag == "1.0.0"
+        assert version_data.commits_since_tag == 2
+
+    def test_multiple_tags_on_ancestor(self, tmp_path: Path) -> None:
+        git_dir = GitDir(tmp_path)
+        ancestor_commit = git_dir.commit()
+        git_dir.tag("v1.0.0", ancestor_commit)
+        git_dir.tag("v1.0.1", ancestor_commit)
+        git_dir.commit()
+        with pytest.raises(VersionCollectError, match="multiple valid SemVer tags on ancestor commit"):
+            from_git(git_dir.path)
 
 
 class TestVersionCollectorFile:

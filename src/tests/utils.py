@@ -19,7 +19,7 @@ class GitDir:
         self.add_all()
         with change_dir(self.path):
             self._silent_call(["git", "commit", "--allow-empty", "-m", "message"])
-            return self._silent_call(["git", "rev-parse", "--short", "HEAD"]).strip()
+            return self._silent_call(["git", "rev-parse", "--short=7", "HEAD"]).strip()
 
     def add_all(self):
         with change_dir(self.path):
@@ -39,6 +39,9 @@ class GitDir:
         with change_dir(self.path):
             self._silent_call(["git", "checkout", branch_or_commit_id])
 
-    def tag(self, tag_name):
+    def tag(self, tag_name, commit_id=None):
         with change_dir(self.path):
-            self._silent_call(["git", "tag", tag_name])
+            command = ["git", "tag", tag_name]
+            if commit_id:
+                command.append(commit_id)
+            self._silent_call(command)
