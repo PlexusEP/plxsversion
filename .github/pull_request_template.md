@@ -16,4 +16,4 @@
 - [ ] I have commented my code, particularly in hard-to-understand areas.
 - [ ] I have made corresponding changes to the documentation.
 - [ ] My changes generate no new warnings
-- [ ] If planning to release this version, I have updated the pyproject version number appropriately. 
+- [ ] If planning to release this version, I have updated the `pyproject.toml` and `Cargo.toml` version numbers appropriately.

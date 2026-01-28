@@ -57,6 +57,20 @@ In CMakeLists.txt for `my_app`:
 target_link_libraries(my_app PRIVATE plxsversion-my_app)
 ```
 
+### Rust
+
+For rust projects, this repository functions as a crate. This crate generates a file with version information that can be used by your other crates. 
+
+To add this crate to your project, use this cargo command:
+```
+cargo add --build --git https://github.com/PlexusEP/plxsversion.git --tag <gitTag> plxsversion
+```
+
+This crate includes the following features:
+
+- `print_output` - Print generated files contents
+- `include_time` - Include timestamp data in the verison information
+
 ### Manual Usage
 
 This script can be run as a Python module. To do this:
@@ -72,7 +86,7 @@ Here are the available arguments:
 | Argument | Short | Description | Required |
 |---|---|---|---|
 | `--source` | `-s` | Type of source for version info (`git` or `file`). | Yes |
-| `--lang` | `-l` | Language for the output file (`cpp`, `cpp11`, `c`). | Yes |
+| `--lang` | `-l` | Language for the output file (`cpp`, `cpp11`, `c`, `rust`). | Yes |
 | `--input` | `-i` | Path to the source of version information. | Yes |
 | `file` | | Path for the generated output file. | Yes |
 | `--print` | `-p` | Print the generated file's contents after creation. | No |
@@ -139,6 +153,7 @@ plxsversion creates version files that support these languages:
 - C++ (cpp): The header produced requires C++17 or newer. No dynamic allocation is used. 
 - C++11 (cpp11): The header produced requires C++11 or newer. No dynamic allocation is used. 
 - C (c): The header produced with this option is compatible with both C and C++. No dynamic allocation is used. 
+- Rust (rust): The version file uses `no_std`, so it is suitable for both embedded and non-embedded projects. 
 
 ### Output Data
 
