@@ -71,4 +71,8 @@ fn main() {
     // Re-run if the environment changes
     println!("cargo:rerun-if-env-changed=CARGO_FEATURE_PRINT_OUTPUT");
     println!("cargo:rerun-if-env-changed=CARGO_FEATURE_INCLUDE_TIME");
+
+    // Always re-run using non-existent file
+    // This ensures version information is always up to date for a build
+    println!("cargo:rerun-if-changed=always_rerun_trigger");
 }
