@@ -53,6 +53,9 @@ def _output_version_file(
         case "c":
             output = formatter.to_c(version_info)
             expected_file_extension = ".h"
+        case "rust":
+            output = formatter.to_rust(version_info)
+            expected_file_extension = ".rs"
         case _:
             msg = "Unknown language"
             raise ValueError(msg)

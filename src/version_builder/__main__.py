@@ -6,7 +6,11 @@ from version_builder import main
 def execute() -> None:
     parser = argparse.ArgumentParser(description="Create a source file containing git version information.")
     parser.add_argument(
-        "--lang", "-l", choices=["cpp", "cpp11", "c"], required=True, help="language supported by the file output"
+        "--lang",
+        "-l",
+        choices=["cpp", "cpp11", "c", "rust"],
+        required=True,
+        help="language supported by the file output",
     )
     parser.add_argument(
         "--source",
