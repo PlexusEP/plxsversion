@@ -105,6 +105,7 @@ Here are the available arguments:
 | `file` | | Path for the generated output file. | Yes |
 | `--print` | `-p` | Print the generated file's contents after creation. | No |
 | `--time` | `-t` | Include timestamp data in the version information. | No |
+| `--cargo` | `-c` | Cargo version to include in the version infomation. Only valid when `lang` is `rust`. | No |
 
 **Example using `git` as a source:**
 

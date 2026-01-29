@@ -169,3 +169,11 @@ class TestTimeOutput(_CommonVersionData):
         _CommonVersionData.version_data.set_time()
         expected_pattern = r"pub const UTC_TIME: &str = \"[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}\";"
         assert re.search(expected_pattern, to_rust(_CommonVersionData.version_data))
+
+
+class TestCargoVersionOutput(_CommonVersionData):
+    def test_rust_formatter(self):
+        cargo_ver = "0.0.1"
+        _CommonVersionData.version_data.set_cargo_version(cargo_ver)
+        expected_pattern = f'pub const CARGO_VERSION: &str = "{cargo_ver:s}"'
+        assert re.search(expected_pattern, to_rust(_CommonVersionData.version_data))

@@ -193,4 +193,6 @@ pub mod plxsversion {{
         optional_output = ""
         if version_data.time:
             optional_output += f"""\tpub const UTC_TIME: &str = "{version_data.time:s}";\n"""
+        if version_data.cargo_version:
+            optional_output += f"""\tpub const CARGO_VERSION: &str = "{version_data.cargo_version:s}";\n"""
         return optional_output

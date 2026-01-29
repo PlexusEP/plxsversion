@@ -34,7 +34,9 @@ pub fn generate_version() {
         .arg("git")
         .arg("--input")
         // env::var syntax gets calling crate's location
-        .arg(PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap())); 
+        .arg(PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap()))
+        .arg("--cargo")
+        .arg(PathBuf::from(env::var("CARGO_PKG_VERSION").unwrap()));
 
     if print_output {
         cmd.arg("--print");

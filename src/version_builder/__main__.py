@@ -32,8 +32,17 @@ def execute() -> None:
         action=argparse.BooleanOptionalAction,
         help="include time data in the version infomation",
     )
+    parser.add_argument(
+        "--cargo",
+        "-c",
+        required=False,
+        help="cargo version of a crate",
+    )
     parser.add_argument("file")
     args = parser.parse_args()
+
+    if args.cargo and args.lang != "rust":
+        parser.error("The --cargo argument requires --lang to be set to 'rust'")
 
     # Intentional print for user status notification
     print(f"Creating version information using {args.source:s} from {args.input:s}")  # noqa: T201
@@ -43,7 +52,9 @@ def execute() -> None:
         source_input=args.input,
         output_file=args.file,
         lang=args.lang,
-        optional_config=main.OptionalConfiguration(print_created_file=args.print, include_time=args.time),
+        optional_config=main.OptionalConfiguration(
+            print_created_file=args.print, include_time=args.time, cargo_version=args.cargo
+        ),
     )
 
 
