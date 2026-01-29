@@ -33,7 +33,8 @@ pub fn generate_version() {
         .arg("--source")
         .arg("git")
         .arg("--input")
-        .arg(PathBuf::from(env!("CARGO_MANIFEST_DIR")));
+        // env::var syntax gets calling crate's location
+        .arg(PathBuf::from(env::var("CARGO_MANIFEST_DIR"))); 
 
     if print_output {
         cmd.arg("--print");
