@@ -25,12 +25,15 @@ class EqualityByValue:
     def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)
 
+    def __hash__(self) -> bool:
+        return hash(self.name)
+
 
 class Git:
     @staticmethod
     def get_branch_name() -> str:
         # No user input is passed to subprocess calls
-        return subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"]).strip().decode()  # noqa: S603
+        return subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"]).strip().decode()
 
     @staticmethod
     def get_commit_id(*, short: bool = True) -> str:
@@ -45,13 +48,13 @@ class Git:
     def get_description() -> str:
         """Output format: <tag>-<commits_since_tag>-g<commit_hash_abbrev>."""
         # No user input is passed to subprocess calls
-        return subprocess.check_output(["git", "describe", "--tags", "--abbrev=7", "--long"]).strip().decode()  # noqa: S603
+        return subprocess.check_output(["git", "describe", "--tags", "--abbrev=7", "--long"]).strip().decode()
 
     @staticmethod
     def get_commit_count() -> int:
         try:
             # No user input is passed to subprocess calls
-            return int(subprocess.check_output(["git", "rev-list", "HEAD", "--count"]))  # noqa: S603
+            return int(subprocess.check_output(["git", "rev-list", "HEAD", "--count"]))
         except subprocess.CalledProcessError:
             # HEAD likely does not exist, meaning no commits
             return 0
@@ -67,7 +70,7 @@ class Git:
     @staticmethod
     def get_is_dirty() -> bool:
         # No user input is passed to subprocess calls
-        staged_changes = subprocess.call(["git", "diff", "--quiet", "--cached", "--exit-code", "HEAD"]) != 0  # noqa: S603
-        unstaged_changes = subprocess.call(["git", "diff", "--quiet", "--exit-code", "HEAD"]) != 0  # noqa: S603
-        untracked_files = subprocess.check_output(["git", "ls-files", "--exclude-standard", "--others"]).decode() != ""  # noqa: S603
+        staged_changes = subprocess.call(["git", "diff", "--quiet", "--cached", "--exit-code", "HEAD"]) != 0
+        unstaged_changes = subprocess.call(["git", "diff", "--quiet", "--exit-code", "HEAD"]) != 0
+        untracked_files = subprocess.check_output(["git", "ls-files", "--exclude-standard", "--others"]).decode() != ""
         return staged_changes or unstaged_changes or untracked_files

@@ -104,7 +104,7 @@ class TestVersionDataSemVerParsing:
         ],
     )
     def test_invalid_semver_tags(self, invalid_tag):
-        with pytest.raises(VersionParseError, match="invalid SemVer 2.0.0 format"):
+        with pytest.raises(VersionParseError, match=r"invalid SemVer 2\.0\.0 format"):
             VersionData(tag=invalid_tag, commit_id="abcd1234", branch_name="test-branch")
 
 

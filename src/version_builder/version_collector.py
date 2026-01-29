@@ -63,7 +63,7 @@ class _Git(_VersionCollector):
         Returns (tag, commits_since) or None if no suitable tag is found.
         """
         try:
-            all_tags_raw = subprocess.check_output(  # noqa: S603
+            all_tags_raw = subprocess.check_output(
                 ["git", "for-each-ref", "--sort=-creatordate", "--format", "%(refname:short)", "refs/tags"],
                 stderr=subprocess.PIPE,
             ).decode()
