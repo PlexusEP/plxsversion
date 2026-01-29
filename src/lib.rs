@@ -2,7 +2,13 @@ use std::env;
 use std::path::PathBuf;
 use std::process::Command;
 
-pub fn generate_version() {
+/// Generates a rust file containing version information.
+///
+/// # Arguments
+///
+/// * `print_output` - Print version file contents to build log.
+/// * `include_time` - Include UTC timestamp in version information.
+pub fn generate_version(print_output: bool, include_time: bool) {
     let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
     let generated_file = out_dir.join("version.rs");
     // The path to the folder containing the python module
@@ -17,10 +23,6 @@ pub fn generate_version() {
     } else {
         panic!("Python was not found on the system path. Please install Python 3.");
     };
-
-    // Detect enabled features
-    let print_output = env::var("CARGO_FEATURE_PRINT_OUTPUT").is_ok();
-    let include_time = env::var("CARGO_FEATURE_INCLUDE_TIME").is_ok();
 
     // Configure command
     let mut binding = Command::new(python_exec);

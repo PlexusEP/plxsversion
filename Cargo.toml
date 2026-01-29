@@ -4,7 +4,3 @@ version = "2.2.0"
 edition = "2024"
 
 [dependencies]
-
-[features]
-print_output = []
-include_time = []

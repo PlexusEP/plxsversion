@@ -68,7 +68,7 @@ cargo add --build --git https://github.com/PlexusEP/plxsversion.git --tag <gitTa
 
 Then modify the `build.rs` for the crate you want version info to include the following:
 ```
-plxsversion::generate_version();
+plxsversion::generate_version(false, false);
 ```
 
 Lastly, in the `rs` file where you want to use the information, include the output file:
@@ -79,11 +79,6 @@ fn main() {
   println!("Version:\t\t{}", plxsversion::VERSION);
 }
 ```
-
-This crate includes the following features:
-
-- `print_output` - Print generated files contents
-- `include_time` - Include timestamp data in the verison information
 
 ### Manual Usage
 
