@@ -184,6 +184,7 @@ The created file contains the following information:
 | DIRTY_BUILD             | True if the git repo had uncommitted changes at build time |
 | DEVELOPMENT_BUILD       | True if DIRTY_BUILD or commits since last tag > 0 |
 | UTC_TIME                | UTC time of the latest CMake configuration in "YYYY-MM-DD HH:MM" format |
+| CARGO_VERSION           | (rust only) Version from Cargo.toml for the calling crate |
 
 > [!WARNING]  
 > Including time data will cause CMake targets relying on the version target to be re-build ANY time a CMake configure happens, even if your code doesn't change. 
@@ -232,11 +233,11 @@ This project uses VSCode devcontainers as the development environment. Upon open
 
 We use `ruff` to enforce formatting and execute lint of the code base. Formatting should be automatic, but can be checked by running `ruff format`. Linting must be ran manually using `ruff check` or the VSCode task. 
 
-### Unit testing
+### Unit Testing
 
 This project uses `pytest` for unit testing. Simply run `pytest` or the VSCode task to execute UTs. Unit tests can be debugged from the "Testing" tab in VSCode. 
 
-#### CMake Interface testing
+#### CMake Interface Testing
 
 There is no automated testing for CMake at this time. A developer should do manual testing of the following:
 
@@ -283,3 +284,9 @@ Here is a sample of CMake implementation that can help test the above cases:
 # test TIME
 # plxsversion_create_target(TIME)
 ```
+
+#### Rust Crate Testing
+There is no automated testing for the crate at this time. A developer should do manual testing of the following:
+
+- Another crate can include `plxsversion` as a build-dependency, resulting in the generated version file. This crate can print version information from the generated file. 
+- The `CARGO_VERSION` correct matches that of the calling crate, not `plxsversion`. 
