@@ -59,11 +59,25 @@ target_link_libraries(my_app PRIVATE plxsversion-my_app)
 
 ### Rust
 
-For rust projects, this repository functions as a crate. This crate generates a file with version information that can be used by your other crates. 
+For rust projects, this repository functions as a crate. This crate generates a file with version information that can be used by your other crates. The contents of the generated file are all primitive types, so it is `no_std` compliant. 
 
 To add this crate to your project, use this cargo command:
 ```
 cargo add --build --git https://github.com/PlexusEP/plxsversion.git --tag <gitTag> plxsversion
+```
+
+Then modify the `build.rs` for the crate you want version info to include the following:
+```
+plxsversion::generate_version();
+```
+
+Lastly, in the `rs` file where you want to use the information, include the output file:
+```
+include!(concat!(env!("OUT_DIR"), "/version.rs"));
+
+fn main() {
+  println!("Version:\t\t{}", plxsversion::VERSION);
+}
 ```
 
 This crate includes the following features:
@@ -153,7 +167,7 @@ plxsversion creates version files that support these languages:
 - C++ (cpp): The header produced requires C++17 or newer. No dynamic allocation is used. 
 - C++11 (cpp11): The header produced requires C++11 or newer. No dynamic allocation is used. 
 - C (c): The header produced with this option is compatible with both C and C++. No dynamic allocation is used. 
-- Rust (rust): The version file uses `no_std`, so it is suitable for both embedded and non-embedded projects. 
+- Rust (rust): The version file uses primitive types, so it is suitable for both embedded and non-embedded projects. 
 
 ### Output Data
 
