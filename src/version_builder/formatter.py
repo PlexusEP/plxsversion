@@ -161,7 +161,7 @@ static const char *BUILD_METADATA = "{version_data.full_build_metadata:s}";
 
 
 # ----------------------------------------
-# C++11 Formatter
+# Rust Formatter
 # ----------------------------------------
 class _RustFormatter(_Formatter):
     def main_formatter(self, version_data: VersionData) -> str:
