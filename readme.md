@@ -57,6 +57,29 @@ In CMakeLists.txt for `my_app`:
 target_link_libraries(my_app PRIVATE plxsversion-my_app)
 ```
 
+### Rust
+
+For rust projects, this repository functions as a crate. This crate generates a file with version information that can be used by your other crates. The contents of the generated file are all primitive types, so it is `no_std` compliant. 
+
+To add this crate to your project, use this cargo command:
+```
+cargo add --build --git https://github.com/PlexusEP/plxsversion.git --tag <gitTag> plxsversion
+```
+
+Then modify the `build.rs` for the crate you want version info to include the following:
+```
+plxsversion::generate_version(false, false);
+```
+
+Lastly, in the `rs` file where you want to use the information, include the output file:
+```
+include!(concat!(env!("OUT_DIR"), "/version.rs"));
+
+fn main() {
+  println!("Version:\t\t{}", plxsversion::VERSION);
+}
+```
+
 ### Manual Usage
 
 This script can be run as a Python module. To do this:
@@ -72,11 +95,12 @@ Here are the available arguments:
 | Argument | Short | Description | Required |
 |---|---|---|---|
 | `--source` | `-s` | Type of source for version info (`git` or `file`). | Yes |
-| `--lang` | `-l` | Language for the output file (`cpp`, `cpp11`, `c`). | Yes |
+| `--lang` | `-l` | Language for the output file (`cpp`, `cpp11`, `c`, `rust`). | Yes |
 | `--input` | `-i` | Path to the source of version information. | Yes |
 | `file` | | Path for the generated output file. | Yes |
 | `--print` | `-p` | Print the generated file's contents after creation. | No |
 | `--time` | `-t` | Include timestamp data in the version information. | No |
+| `--cargo` | `-c` | Cargo version to include in the version infomation. Only valid when `lang` is `rust`. | No |
 
 **Example using `git` as a source:**
 
@@ -139,6 +163,7 @@ plxsversion creates version files that support these languages:
 - C++ (cpp): The header produced requires C++17 or newer. No dynamic allocation is used. 
 - C++11 (cpp11): The header produced requires C++11 or newer. No dynamic allocation is used. 
 - C (c): The header produced with this option is compatible with both C and C++. No dynamic allocation is used. 
+- Rust (rust): The version file uses primitive types, so it is suitable for both embedded and non-embedded projects. 
 
 ### Output Data
 
@@ -159,6 +184,7 @@ The created file contains the following information:
 | DIRTY_BUILD             | True if the git repo had uncommitted changes at build time |
 | DEVELOPMENT_BUILD       | True if DIRTY_BUILD or commits since last tag > 0 |
 | UTC_TIME                | UTC time of the latest CMake configuration in "YYYY-MM-DD HH:MM" format |
+| CARGO_VERSION           | (rust only) Version from Cargo.toml for the calling crate |
 
 > [!WARNING]  
 > Including time data will cause CMake targets relying on the version target to be re-build ANY time a CMake configure happens, even if your code doesn't change. 
@@ -207,11 +233,11 @@ This project uses VSCode devcontainers as the development environment. Upon open
 
 We use `ruff` to enforce formatting and execute lint of the code base. Formatting should be automatic, but can be checked by running `ruff format`. Linting must be ran manually using `ruff check` or the VSCode task. 
 
-### Unit testing
+### Unit Testing
 
 This project uses `pytest` for unit testing. Simply run `pytest` or the VSCode task to execute UTs. Unit tests can be debugged from the "Testing" tab in VSCode. 
 
-#### CMake Interface testing
+#### CMake Interface Testing
 
 There is no automated testing for CMake at this time. A developer should do manual testing of the following:
 
@@ -258,3 +284,9 @@ Here is a sample of CMake implementation that can help test the above cases:
 # test TIME
 # plxsversion_create_target(TIME)
 ```
+
+#### Rust Crate Testing
+There is no automated testing for the crate at this time. A developer should do manual testing of the following:
+
+- Another crate can include `plxsversion` as a build-dependency, resulting in the generated version file. This crate can print version information from the generated file. 
+- The `CARGO_VERSION` correct matches that of the calling crate, not `plxsversion`. 

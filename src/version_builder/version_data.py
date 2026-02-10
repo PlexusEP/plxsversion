@@ -61,9 +61,13 @@ class VersionData(EqualityByValue):
         self.time = ""
         self._set_qualified_version()
         self.is_development_build = self.is_dirty or (commits_since_tag > 0)
+        self.cargo_version = ""
 
     def set_time(self) -> None:
         self.time = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M")
+
+    def set_cargo_version(self, cargo_version: str) -> None:
+        self.cargo_version = cargo_version
 
     def _set_qualified_version(self) -> None:
         core_version = f"{self.major}.{self.minor}.{self.patch}"

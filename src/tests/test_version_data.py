@@ -104,7 +104,7 @@ class TestVersionDataSemVerParsing:
         ],
     )
     def test_invalid_semver_tags(self, invalid_tag):
-        with pytest.raises(VersionParseError, match="invalid SemVer 2.0.0 format"):
+        with pytest.raises(VersionParseError, match=r"invalid SemVer 2\.0\.0 format"):
             VersionData(tag=invalid_tag, commit_id="abcd1234", branch_name="test-branch")
 
 
@@ -147,3 +147,19 @@ class TestVersionDataTime:
         )
         data.set_time()
         assert data.time != ""
+
+
+class TestVersionDataCargoVersion:
+    def test_never_set(self):
+        data = VersionData(
+            tag="1.2.3", commit_id="abcd1234", branch_name="myBranch", is_dirty=False, commits_since_tag=0
+        )
+        assert data.cargo_version == ""
+
+    def test_set_called(self):
+        data = VersionData(
+            tag="1.2.3", commit_id="abcd1234", branch_name="myBranch", is_dirty=False, commits_since_tag=0
+        )
+        cargo_ver = "0.0.1"
+        data.set_cargo_version(cargo_ver)
+        assert data.cargo_version == cargo_ver

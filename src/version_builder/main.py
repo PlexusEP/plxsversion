@@ -4,9 +4,12 @@ from version_builder import formatter, version_collector, version_data
 
 
 class OptionalConfiguration:
-    def __init__(self, *, print_created_file: bool = False, include_time: bool = False) -> None:
+    def __init__(
+        self, *, print_created_file: bool = False, include_time: bool = False, cargo_version: str = ""
+    ) -> None:
         self.print_created_file = print_created_file
         self.include_time = include_time
+        self.cargo_version = cargo_version
 
 
 def create_version_file(
@@ -18,6 +21,9 @@ def create_version_file(
     version_info = _get_version(source, source_input)
     if optional_config.include_time:
         version_info.set_time()
+
+    if optional_config.cargo_version:
+        version_info.set_cargo_version(optional_config.cargo_version)
 
     _output_version_file(
         version_info=version_info,
@@ -53,6 +59,9 @@ def _output_version_file(
         case "c":
             output = formatter.to_c(version_info)
             expected_file_extension = ".h"
+        case "rust":
+            output = formatter.to_rust(version_info)
+            expected_file_extension = ".rs"
         case _:
             msg = "Unknown language"
             raise ValueError(msg)

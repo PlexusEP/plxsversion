@@ -108,6 +108,27 @@ class TestMain:
         assert (git_dir.path / "version.hpp").exists()
         assert Path.stat(git_dir.path / "version.hpp").st_size != 0
 
+    def test_rust(self, tmp_path):
+        git_dir = GitDir(tmp_path)
+        git_dir.commit()
+        git_dir.tag("v1.0.0")
+        with pytest.raises(ValueError, match="Unexpected file ending for lang"):
+            # incorrect version file extension
+            main.create_version_file(
+                source="git",
+                source_input=git_dir.path,
+                output_file=git_dir.path / "version.hpp",
+                lang="rust",
+            )
+        main.create_version_file(
+            source="git",
+            source_input=git_dir.path,
+            output_file=git_dir.path / "version.rs",
+            lang="rust",
+        )
+        assert (git_dir.path / "version.rs").exists()
+        assert Path.stat(git_dir.path / "version.rs").st_size != 0
+
 
 class TestModuleInterface:
     def test_module_call(self, tmp_path):
@@ -133,3 +154,50 @@ class TestModuleInterface:
         )
         assert Path.exists(git_dir.path / "version.hpp")
         assert Path.stat(git_dir.path / "version.hpp").st_size != 0
+
+    def test_cargo_version_rust(self, tmp_path):
+        git_dir = GitDir(tmp_path)
+        git_dir.commit()
+        git_dir.tag("v2.0.0-final+build.123")
+        subprocess.check_call(
+            [
+                sys.executable,
+                "-m",
+                "version_builder",
+                "--lang",
+                "rust",
+                "--source",
+                "git",
+                "--input",
+                git_dir.path,
+                git_dir.path / "version.rs",
+                "--cargo",
+                "0.0.1",
+            ],
+            env={"PYTHONPATH": Path.cwd() / "src"},
+        )
+        assert Path.exists(git_dir.path / "version.rs")
+        assert Path.stat(git_dir.path / "version.rs").st_size != 0
+
+    def test_cargo_version_cpp(self, tmp_path):
+        git_dir = GitDir(tmp_path)
+        git_dir.commit()
+        git_dir.tag("v2.0.0-final+build.123")
+        with pytest.raises(subprocess.CalledProcessError):
+            subprocess.check_call(
+                [
+                    sys.executable,
+                    "-m",
+                    "version_builder",
+                    "--lang",
+                    "cpp",
+                    "--source",
+                    "git",
+                    "--input",
+                    git_dir.path,
+                    git_dir.path / "version.rs",
+                    "--cargo",
+                    "0.0.1",
+                ],
+                env={"PYTHONPATH": Path.cwd() / "src"},
+            )
