@@ -45,7 +45,7 @@ function(plxsversion_create_target)
   cmake_parse_arguments(
     VER
     "PRINT;TIME"
-    "LANG;SOURCE;INPUT;TARGET_SUFFIX"
+    "LANG;SOURCE;INPUT;TARGET_SUFFIX;NAMESPACE;INCLUDE_PREFIX"
     ""
     ${ARGN}
   )
@@ -57,6 +57,15 @@ function(plxsversion_create_target)
 
   if(VER_TIME)
     list(APPEND OPTIONS "--time")
+  endif()
+
+  if(VER_NAMESPACE)
+    list(APPEND OPTIONS "--namespace" ${VER_NAMESPACE})
+    
+  endif()
+
+  if(VER_INCLUDE_PREFIX)
+    list(APPEND OPTIONS "--include-prefix" ${VER_INCLUDE_PREFIX})
   endif()
 
   if(NOT VER_LANG)
@@ -85,17 +94,35 @@ function(plxsversion_create_target)
     set(VERSION_LIBRARY "plxsversion-${VER_TARGET_SUFFIX}")
   endif()
 
-  _set_relative_out_file_path(${VER_LANG})
+  if(VER_INCLUDE_PREFIX)
+    set(REL_OUT_PATH "version.hpp")
+    if(${VER_LANG} STREQUAL "c")
+      set(REL_OUT_PATH "version.h")
+    endif()
+    set(INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR})
+  else()
+    _set_relative_out_file_path(${VER_LANG})
+    set(INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/plxs)
+  endif()
+
   set(OUT_FILE "${CMAKE_CURRENT_BINARY_DIR}/${REL_OUT_PATH}")
   _create_version_file(${VER_LANG} ${VER_SOURCE} ${VER_INPUT} ${OUT_FILE} ADDITIONAL_OPTIONS ${OPTIONS})
 
   add_library(${VERSION_LIBRARY} INTERFACE)
-  target_include_directories(${VERSION_LIBRARY} 
-    INTERFACE 
-      $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/plxs>
-      $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/plxs>)
+  target_include_directories(${VERSION_LIBRARY}
+    INTERFACE
+      $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+      $<BUILD_INTERFACE:${INCLUDE_DIR}>)
   message(STATUS "${VERSION_LIBRARY} created.")
 
   set_property(TARGET ${VERSION_LIBRARY} APPEND PROPERTY ADDITIONAL_CLEAN_FILES "${OUT_FILE}")
-  _set_version_cmake_variable(PLXSVERSION_STRING ${OUT_FILE})
+  if(VER_INCLUDE_PREFIX)
+    set(VERSION_FILE "${CMAKE_CURRENT_BINARY_DIR}/${VER_INCLUDE_PREFIX}/version.hpp")
+    if(${VER_LANG} STREQUAL "c")
+      set(VERSION_FILE "${CMAKE_CURRENT_BINARY_DIR}/${VER_INCLUDE_PREFIX}/version.h")
+    endif()
+    _set_version_cmake_variable(PLXSVERSION_STRING ${VERSION_FILE})
+  else()
+    _set_version_cmake_variable(PLXSVERSION_STRING ${OUT_FILE})
+  endif()
 endfunction(plxsversion_create_target)

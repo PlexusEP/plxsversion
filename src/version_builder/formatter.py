@@ -1,12 +1,12 @@
 from version_builder.version_data import VersionData
 
 
-def to_cpp(version_data: VersionData) -> str:
-    return _CppFormatter().format(version_data)
+def to_cpp(version_data: VersionData, *, namespace: str, include_prefix: str) -> str:
+    return _CppFormatter(namespace=namespace, include_prefix=include_prefix).format(version_data)
 
 
-def to_cpp11(version_data: VersionData) -> str:
-    return _Cpp11Formatter().format(version_data)
+def to_cpp11(version_data: VersionData, *, namespace: str, include_prefix: str) -> str:
+    return _Cpp11Formatter(namespace=namespace, include_prefix=include_prefix).format(version_data)
 
 
 def to_c(version_data: VersionData) -> str:
@@ -25,10 +25,20 @@ class _Formatter:
         return self.main_formatter(version_data)
 
 
+def _get_include_guard(include_prefix: str, namespace: str) -> str:
+    guard = f"{include_prefix.replace('/', '_')}_{namespace.replace('::', '_')}_VERSION_HPP"
+    return guard.upper()
+
+
 # ----------------------------------------
 # C++ Formatter
 # ----------------------------------------
 class _CppFormatter(_Formatter):
+    def __init__(self, *, namespace: str, include_prefix: str) -> None:
+        super().__init__()
+        self.namespace = namespace
+        self.include_guard = _get_include_guard(include_prefix, namespace)
+
     def main_formatter(self, version_data: VersionData) -> str:
         return f"""
 // ---------------------------------------------------
@@ -36,13 +46,13 @@ class _CppFormatter(_Formatter):
 // DO NOT MODIFY!
 // ---------------------------------------------------
 
-#ifndef PLXSVERSION_VERSION_HPP
-#define PLXSVERSION_VERSION_HPP
+#ifndef {self.include_guard}
+#define {self.include_guard}
 
 #include <cstdint>
 #include <string_view>
 
-namespace plxsversion {{
+namespace {self.namespace} {{
 
 inline constexpr std::string_view VERSION {{ "{version_data.qualified_version:s}" }};
 inline constexpr unsigned int MAJOR {{ {version_data.major:d} }};
@@ -57,9 +67,9 @@ inline constexpr bool DIRTY_BUILD {{ {str(version_data.is_dirty).lower():s} }};
 inline constexpr bool DEVELOPMENT_BUILD {{ {str(version_data.is_development_build).lower():s} }};
 inline constexpr std::string_view BUILD_METADATA {{ "{version_data.full_build_metadata:s}" }};
 {self._optional_output(version_data):s}
-}} // namespace plxsversion
+}} // namespace {self.namespace}
 
-#endif // PLXSVERSION_VERSION_HPP
+#endif // {self.include_guard}
 """
 
     def _optional_output(self, version_data: VersionData) -> str:
@@ -73,6 +83,13 @@ inline constexpr std::string_view BUILD_METADATA {{ "{version_data.full_build_me
 # C++11 Formatter
 # ----------------------------------------
 class _Cpp11Formatter(_Formatter):
+    def __init__(self, *, namespace: str, include_prefix: str) -> None:
+        super().__init__()
+        self.namespace = namespace
+        self.include_guard = _get_include_guard(include_prefix, namespace)
+        self.open_namespace = "namespace " + " { namespace ".join(self.namespace.split("::")) + " {"
+        self.close_namespace = "} " * len(self.namespace.split("::")) + f"// namespace {self.namespace}"
+
     def main_formatter(self, version_data: VersionData) -> str:
         return f"""
 // ---------------------------------------------------
@@ -80,12 +97,12 @@ class _Cpp11Formatter(_Formatter):
 // DO NOT MODIFY!
 // ---------------------------------------------------
 
-#ifndef PLXSVERSION_VERSION_HPP
-#define PLXSVERSION_VERSION_HPP
+#ifndef {self.include_guard}
+#define {self.include_guard}
 
 #include <cstdint>
 
-namespace plxsversion {{
+{self.open_namespace}
 
 constexpr const char *VERSION {{ "{version_data.qualified_version:s}" }};
 constexpr unsigned int MAJOR {{ {version_data.major:d} }};
@@ -100,9 +117,9 @@ constexpr bool DIRTY_BUILD {{ {str(version_data.is_dirty).lower():s} }};
 constexpr bool DEVELOPMENT_BUILD {{ {str(version_data.is_development_build).lower():s} }};
 constexpr const char *BUILD_METADATA {{ "{version_data.full_build_metadata:s}" }};
 {self._optional_output(version_data):s}
-}} // namespace plxsversion
+{self.close_namespace}
 
-#endif // PLXSVERSION_VERSION_HPP
+#endif // {self.include_guard}
 """
 
     def _optional_output(self, version_data: VersionData) -> str:
@@ -153,7 +170,7 @@ static const char *BUILD_METADATA = "{version_data.full_build_metadata:s}";
 #endif // PLXSVERSION_VERSION_H
 """
 
-    def _optional_output(self, version_data: VersionData) -> str:
+    def _optional_output(self, version_data: VersionData) -> str:.
         optional_output = ""
         if version_data.time:
             optional_output += f"""static const char *UTC_TIME = "{version_data.time:s}";\n"""

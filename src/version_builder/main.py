@@ -13,7 +13,14 @@ class OptionalConfiguration:
 
 
 def create_version_file(
-    source: str, source_input: str, output_file: str, lang: str, *, optional_config: OptionalConfiguration = None
+    source: str,
+    source_input: str,
+    output_file: str,
+    lang: str,
+    *,
+    namespace: str,
+    include_prefix: str,
+    optional_config: OptionalConfiguration = None,
 ) -> None:
     if optional_config is None:
         optional_config = OptionalConfiguration()
@@ -29,6 +36,8 @@ def create_version_file(
         version_info=version_info,
         output_file=PosixPath(output_file),
         lang=lang,
+        namespace=namespace,
+        include_prefix=include_prefix,
         print_created_file=optional_config.print_created_file,
     )
 
@@ -46,15 +55,26 @@ def _get_version(source: str, source_input: str) -> version_data.VersionData:
 
 
 def _output_version_file(
-    version_info: version_data.VersionData, output_file: str, lang: str, *, print_created_file: bool
+    version_info: version_data.VersionData,
+    output_file: str,
+    lang: str,
+    *,
+    namespace: str,
+    include_prefix: str,
+    print_created_file: bool,
 ) -> None:
     """Convert version info into a requested format and outputs to a file."""
+    if include_prefix:
+        output_path = PosixPath(output_file).parent / include_prefix
+        output_path.mkdir(parents=True, exist_ok=True)
+        output_file = output_path / PosixPath(output_file).name
+
     match lang:
         case "cpp":
-            output = formatter.to_cpp(version_info)
+            output = formatter.to_cpp(version_info, namespace=namespace, include_prefix=include_prefix)
             expected_file_extension = ".hpp"
         case "cpp11":
-            output = formatter.to_cpp11(version_info)
+            output = formatter.to_cpp11(version_info, namespace=namespace, include_prefix=include_prefix)
             expected_file_extension = ".hpp"
         case "c":
             output = formatter.to_c(version_info)
