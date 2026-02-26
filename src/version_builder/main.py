@@ -12,7 +12,7 @@ class OptionalConfiguration:
         self.cargo_version = cargo_version
 
 
-def create_version_file(
+def create_version_file(  # noqa: PLR0913
     source: str,
     source_input: str,
     output_file: str,
@@ -54,7 +54,7 @@ def _get_version(source: str, source_input: str) -> version_data.VersionData:
             raise ValueError(msg)
 
 
-def _output_version_file(
+def _output_version_file(  # noqa: PLR0913
     version_info: version_data.VersionData,
     output_file: str,
     lang: str,
