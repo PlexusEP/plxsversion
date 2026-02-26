@@ -30,6 +30,7 @@ class TestBasicOutput(_CommonVersionData):
 
 namespace plxsversion {
 
+inline constexpr std::string_view BASE_VERSION { "1.2.3" };
 inline constexpr std::string_view VERSION { "1.2.3-rc.2+dev.3.sha.abcd1234" };
 inline constexpr unsigned int MAJOR { 1 };
 inline constexpr unsigned int MINOR { 2 };
@@ -63,6 +64,7 @@ inline constexpr std::string_view BUILD_METADATA { "dev.3.sha.abcd1234" };
 
 namespace plxsversion {
 
+constexpr const char *BASE_VERSION { "1.2.3" };
 constexpr const char *VERSION { "1.2.3-rc.2+dev.3.sha.abcd1234" };
 constexpr unsigned int MAJOR { 1 };
 constexpr unsigned int MINOR { 2 };
@@ -99,6 +101,7 @@ constexpr const char *BUILD_METADATA { "dev.3.sha.abcd1234" };
 extern "C" {
 #endif
 
+static const char *BASE_VERSION = "1.2.3";
 static const char *VERSION = "1.2.3-rc.2+dev.3.sha.abcd1234";
 static const unsigned int MAJOR = 1;
 static const unsigned int MINOR = 2;
@@ -129,6 +132,7 @@ static const char *BUILD_METADATA = "dev.3.sha.abcd1234";
 
 pub mod plxsversion {
 
+    pub const BASE_VERSION: &str = "1.2.3";
     pub const VERSION: &str = "1.2.3-rc.2+dev.3.sha.abcd1234";
     pub const MAJOR: u32 = 1;
     pub const MINOR: u32 = 2;
