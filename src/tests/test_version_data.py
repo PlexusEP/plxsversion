@@ -42,6 +42,7 @@ class TestVersionDataSemVerParsing:
         expected_prerelease = "alpha.1"
         expected_buildmetadata_from_tag = "build.original"
         expected_is_development_build = True
+        expected_base_version = "1.0.0"
         expected_full_build_metadata = "build.original.dev.5.sha.abcd1234.dirty"
         expected_qualified_version = f"1.0.0-alpha.1+{expected_full_build_metadata}"
 
@@ -62,6 +63,11 @@ class TestVersionDataSemVerParsing:
         assert expected_buildmetadata_from_tag == data.buildmetadata_from_tag
         assert expected_full_build_metadata == data.full_build_metadata
         assert expected_is_development_build == data.is_development_build
+        assert expected_base_version == data.base_version
+
+    def test_base_version(self):
+        data = VersionData(tag="1.2.3-alpha.1+build.original", commit_id="abcd1234", branch_name="myBranch")
+        assert data.base_version == "1.2.3"
 
     def test_tag_with_prerelease_only(self):
         data = VersionData(tag="2.0.1-beta.2", commit_id="abcd1234", branch_name="b")
