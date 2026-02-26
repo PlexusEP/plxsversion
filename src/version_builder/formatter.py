@@ -170,7 +170,7 @@ static const char *BUILD_METADATA = "{version_data.full_build_metadata:s}";
 #endif // PLXSVERSION_VERSION_H
 """
 
-    def _optional_output(self, version_data: VersionData) -> str:.
+    def _optional_output(self, version_data: VersionData) -> str:
         optional_output = ""
         if version_data.time:
             optional_output += f"""static const char *UTC_TIME = "{version_data.time:s}";\n"""
