@@ -54,6 +54,7 @@ class _CppFormatter(_Formatter):
 
 namespace {self.namespace} {{
 
+inline constexpr std::string_view BASE_VERSION {{ "{version_data.base_version:s}" }};
 inline constexpr std::string_view VERSION {{ "{version_data.qualified_version:s}" }};
 inline constexpr unsigned int MAJOR {{ {version_data.major:d} }};
 inline constexpr unsigned int MINOR {{ {version_data.minor:d} }};
@@ -104,6 +105,7 @@ class _Cpp11Formatter(_Formatter):
 
 {self.open_namespace}
 
+constexpr const char *BASE_VERSION {{ "{version_data.base_version:s}" }};
 constexpr const char *VERSION {{ "{version_data.qualified_version:s}" }};
 constexpr unsigned int MAJOR {{ {version_data.major:d} }};
 constexpr unsigned int MINOR {{ {version_data.minor:d} }};
@@ -150,6 +152,7 @@ class _CFormatter(_Formatter):
 extern "C" {{
 #endif
 
+static const char *BASE_VERSION "{version_data.base_version:s}";
 static const char *VERSION = "{version_data.qualified_version:s}";
 static const unsigned int MAJOR = {version_data.major:d};
 static const unsigned int MINOR = {version_data.minor:d};
@@ -190,6 +193,7 @@ class _RustFormatter(_Formatter):
 
 pub mod plxsversion {{
 
+    pub const BASE_VERSION: &str = "{version_data.base_version:s}";
     pub const VERSION: &str = "{version_data.qualified_version:s}";
     pub const MAJOR: u32 = {version_data.major:d};
     pub const MINOR: u32 = {version_data.minor:d};
