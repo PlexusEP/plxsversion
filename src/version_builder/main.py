@@ -57,7 +57,7 @@ def _get_version(source: str, source_input: str) -> version_data.VersionData:
             raise ValueError(msg)
 
 
-def _output_version_file(  # noqa: PLR0913
+def _output_version_file(
     version_info: version_data.VersionData,
     output_file: str,
     lang: str,
@@ -66,7 +66,6 @@ def _output_version_file(  # noqa: PLR0913
     print_created_file: bool,
 ) -> None:
     """Convert version info into a requested format and outputs to a file."""
-
     match lang:
         case "cpp":
             output = formatter.to_cpp(version_info, namespace=namespace)

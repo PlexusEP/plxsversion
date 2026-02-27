@@ -250,7 +250,7 @@ class TestModuleInterface:
         content = output_file.read_text()
         assert "namespace plxsversion {" in content
 
-        def test_cli_include_prefix_with_c(self, tmp_path):
+        def test_cli_include_prefix_with_c(tmp_path):
             git_dir = GitDir(tmp_path)
             git_dir.commit()
             git_dir.tag("v1.0.0")
@@ -277,7 +277,7 @@ class TestModuleInterface:
             assert output_file.exists()
             assert output_file.stat().st_size != 0
 
-        def test_cli_empty_namespace_fails(self, tmp_path):
+        def test_cli_empty_namespace_fails(tmp_path):
             git_dir = GitDir(tmp_path)
             git_dir.commit()
             git_dir.tag("v1.0.0")
