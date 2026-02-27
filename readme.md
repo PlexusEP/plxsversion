@@ -245,7 +245,8 @@ This project uses `pytest` for unit testing. Simply run `pytest` or the VSCode t
 
 #### CMake Interface Testing
 
-There is no automated testing for CMake at this time. A developer should do manual testing of the following:
+##### Manual Testing
+A developer should do manual testing of the following:
 
 - C++17 or newer project can leverage `lang=cpp`, `lang=cpp11`, and `lang=c`
 - C++11 or newer project can leverage `lang=cpp11` and `lang=c`
@@ -289,6 +290,29 @@ Here is a sample of CMake implementation that can help test the above cases:
 
 # test TIME
 # plxsversion_create_target(TIME)
+```
+
+##### Automated Testing
+
+This project uses CTest, CMake's built-in testing tool, to validate the `plxsversion.cmake` interface. The test suite is located in the `tests/cmake` directory and is composed of several small, independent CMake projects, each testing a specific feature.
+
+The automated tests provide coverage for the following scenarios:
+-   Successful compilation with C (`lang=c`).
+-   Successful compilation with C++11 (`lang=cpp11`).
+-   Successful compilation with C++17 (`lang=cpp`).
+-   Generating version info from a file (`SOURCE file`).
+-   Creating targets with a custom suffix (`TARGET_SUFFIX`).
+-   Verifying the `PRINT` option's output.
+-   Using advanced options together (`NAMESPACE`, `INCLUDE_PREFIX`).
+
+To run the automated CMake tests, execute the following commands from the root of the `plxsversion` repository:
+
+```bash
+# 1. Configure the test projects
+cmake -S tests/cmake -B build/cmake-tests
+
+# 2. Run the tests using CTest
+ctest --test-dir build/cmake-tests --verbose
 ```
 
 #### Rust Crate Testing

@@ -46,7 +46,7 @@ function(plxsversion_create_target)
   cmake_parse_arguments(
     VER
     "PRINT;TIME"
-    "LANG;SOURCE;INPUT;TARGET_SUFFIX;NAMESPACE;INCLUDE_PREFIX;VER_VAR_PREFIX"
+    "LANG;SOURCE;INPUT;TARGET_SUFFIX;NAMESPACE;INCLUDE_PREFIX"
     ""
     ${ARGN}
   )
