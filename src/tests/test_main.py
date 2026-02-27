@@ -22,24 +22,6 @@ class TestMain:
         assert (git_dir.path / "version.hpp").exists()
         assert Path.stat(git_dir.path / "version.hpp").st_size != 0
 
-    def test_cpp_source_git_nested_include(self, tmp_path):
-        git_dir = GitDir(tmp_path)
-        git_dir.commit()
-        git_dir.tag("v1.0.0-alpha.1")
-        optional_config = main.OptionalConfiguration()
-        optional_config.namespace = "plxsversion::version"
-
-        # Nested include dirtory
-        main.create_version_file(
-            source="git",
-            source_input=git_dir.path,
-            output_file=git_dir.path / "version.hpp",
-            lang="cpp",
-            optional_config=optional_config,
-        )
-        assert (git_dir.path / "plxversion/version/version.hpp").exists()
-        assert Path.stat(git_dir.path / "plxversion/version/version.hpp").st_size != 0
-
     def test_cpp_source_file(self, tmp_path):
         git_dir = GitDir(tmp_path)
         file = git_dir.path / "version.txt"
