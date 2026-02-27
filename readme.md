@@ -39,6 +39,8 @@ plxsversion_create_target(
   [TARGET_SUFFIX <suffix>]        suffix to append to `plxsversion-` if generating multiple version libraries in a single build
   [SOURCE <version_source>]       choose if version comes from git or file
   [INPUT <version_input_path>]    path to git repo or file to process version from
+  [NAMESPACE <namespace_string>]  (C++ only) C++ namespace for the version data. Defaults to 'plxsversion'.
+  [INCLUDE_PREFIX <path>]         Subdirectory to place the generated header into.
 )
 ```
 
@@ -100,6 +102,8 @@ Here are the available arguments:
 | `file` | | Path for the generated output file. | Yes |
 | `--print` | `-p` | Print the generated file's contents after creation. | No |
 | `--time` | `-t` | Include timestamp data in the version information. | No |
+| `--namespace` | `-n` | C++ namespace for the version info. Only for `cpp` or `cpp11`. | No |
+| `--include-prefix` | | Subdirectory to place the generated header file into. | No |
 | `--cargo` | `-c` | Cargo version to include in the version infomation. Only valid when `lang` is `rust`. | No |
 
 **Example using `git` as a source:**
@@ -171,6 +175,7 @@ The created file contains the following information:
 
 | Variable                | Description |
 | ----------------------- | ----------- |
+| BASE_VERSION            | The core semantic version string (X.Y.Z) from the tag. |
 | VERSION                 | Complete version including tag and commit specific data |
 | MAJOR                   | The semantic major component of the tag |
 | MINOR                   | The semantic minor component of the tag |
@@ -205,6 +210,7 @@ Here is an example output version.hpp file for a C++ application tagged `2.1.0` 
 
 namespace plxsversion {
 
+inline constexpr std::string_view BASE_VERSION { "2.1.0" };
 inline constexpr std::string_view VERSION { "2.1.0+dd4c559.dirty" };
 inline constexpr unsigned int MAJOR { 2 };
 inline constexpr unsigned int MINOR { 1 };
@@ -289,4 +295,5 @@ Here is a sample of CMake implementation that can help test the above cases:
 There is no automated testing for the crate at this time. A developer should do manual testing of the following:
 
 - Another crate can include `plxsversion` as a build-dependency, resulting in the generated version file. This crate can print version information from the generated file. 
-- The `CARGO_VERSION` correct matches that of the calling crate, not `plxsversion`. 
+- The `CARGO_VERSION` correct matches that of the calling crate, not `plxsversion`.
+ 
