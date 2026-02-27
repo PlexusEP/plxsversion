@@ -243,3 +243,78 @@ class TestModuleInterface:
                 ],
                 env={"PYTHONPATH": Path.cwd() / "src"},
             )
+
+    def test_cli_default_namespace(self, tmp_path):
+        git_dir = GitDir(tmp_path)
+        git_dir.commit()
+        git_dir.tag("v1.0.0")
+        output_file = git_dir.path / "version.hpp"
+        subprocess.check_call(
+            [
+                sys.executable,
+                "-m",
+                "version_builder",
+                "--lang",
+                "cpp",  # C++ lang
+                # No --namespace flag
+                "--source",
+                "git",
+                "--input",
+                str(git_dir.path),
+                str(output_file),
+            ],
+            env={"PYTHONPATH": str(Path.cwd() / "src")},
+        )
+        # Check that the default namespace was used
+        content = output_file.read_text()
+        assert "namespace plxsversion {" in content
+
+        def test_cli_include_prefix_with_c(self, tmp_path):
+            git_dir = GitDir(tmp_path)
+            git_dir.commit()
+            git_dir.tag("v1.0.0")
+            output_dir = git_dir.path / "generated" / "include"
+            output_file = output_dir / "version.h"
+            subprocess.check_call(
+                [
+                    sys.executable,
+                    "-m",
+                    "version_builder",
+                    "--lang",
+                    "c",  # C lang
+                    "--include-prefix",
+                    "generated/include",
+                    "--source",
+                    "git",
+                    "--input",
+                    str(git_dir.path),
+                    # The final arg is the output file path for the script to use
+                    str(output_file),
+                ],
+                env={"PYTHONPATH": str(Path.cwd() / "src")},
+            )
+            assert output_file.exists()
+            assert output_file.stat().st_size != 0
+
+        def test_cli_empty_namespace_fails(self, tmp_path):
+            git_dir = GitDir(tmp_path)
+            git_dir.commit()
+            git_dir.tag("v1.0.0")
+            with pytest.raises(subprocess.CalledProcessError):
+                subprocess.check_call(
+                    [
+                        sys.executable,
+                        "-m",
+                        "version_builder",
+                        "--lang",
+                        "cpp",
+                        "--namespace",
+                        "",  # Empty namespace
+                        "--source",
+                        "git",
+                        "--input",
+                        str(git_dir.path),
+                        str(git_dir.path / "version.hpp"),
+                    ],
+                    env={"PYTHONPATH": str(Path.cwd() / "src")},
+                )

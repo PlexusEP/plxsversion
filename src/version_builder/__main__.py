@@ -54,6 +54,9 @@ def execute() -> None:
     parser.add_argument("file")
     args = parser.parse_args()
 
+    if args.namespace == "":
+        parser.error("argument --namespace/-n: cannot be an empty string")
+
     if args.namespace and args.lang not in {"cpp", "cpp11"}:
         parser.error("The --namespace argument requires --lang to be set to 'cpp'")
 

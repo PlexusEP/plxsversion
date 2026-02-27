@@ -77,10 +77,10 @@ def _output_version_file(  # noqa: PLR0913
 
     match lang:
         case "cpp":
-            output = formatter.to_cpp(version_info, namespace)
+            output = formatter.to_cpp(version_info, namespace=namespace)
             expected_file_extension = ".hpp"
         case "cpp11":
-            output = formatter.to_cpp11(version_info, namespace)
+            output = formatter.to_cpp11(version_info, namespace=namespace)
             expected_file_extension = ".hpp"
         case "c":
             output = formatter.to_c(version_info)

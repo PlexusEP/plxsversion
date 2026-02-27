@@ -1,11 +1,11 @@
 from version_builder.version_data import VersionData
 
 
-def to_cpp(version_data: VersionData, namespace: str) -> str:
+def to_cpp(version_data: VersionData, *, namespace: str) -> str:
     return _CppFormatter(namespace=namespace).format(version_data)
 
 
-def to_cpp11(version_data: VersionData, namespace: str) -> str:
+def to_cpp11(version_data: VersionData, *, namespace: str) -> str:
     return _Cpp11Formatter(namespace=namespace).format(version_data)
 
 
