@@ -2,10 +2,10 @@ set(DIR_OF_PLXSVERSION "${CMAKE_CURRENT_LIST_DIR}" CACHE INTERNAL "DIR_OF_PLXSVE
 
 find_package(Python COMPONENTS Interpreter REQUIRED)
 
-macro(_set_relative_out_file_path LANG)
-  set(REL_OUT_PATH "plxs/plxsversion/version.hpp")
+macro(_set_relative_out_file_path LANG CUSTOM_PATH)
+  set(REL_OUT_PATH "plxs/${CUSTOM_PATH}/version.hpp")
   if(${LANG} STREQUAL "c")
-    set(REL_OUT_PATH "plxs/plxsversion/version.h")
+    set(REL_OUT_PATH "plxs/${CUSTOM_PATH}/version.h")
   endif()
 endmacro(_set_relative_out_file_path)
 
@@ -31,12 +31,13 @@ function(_create_version_file LANG SOURCE INPUT OUT_FILE)
   endif()
 endfunction(_create_version_file)
 
-# Load version string and write it to a cmake variable so it can be accessed from cmake.
-function(_set_version_cmake_variable OUTPUT_VARIABLE IN_FILE)
+# Generic function to load a specific variable from the version file and set it in CMake.
+function(_set_version_cmake_variable OUTPUT_VARIABLE IN_FILE VAR_NAME)
   file(READ "${IN_FILE}" VERSION_FILE_CONTENT)
-  string(REGEX REPLACE ".*VERSION [{=] \"([^\"]*)\".*" "\\1" VERSION "${VERSION_FILE_CONTENT}")
-  message(STATUS "Version from plxsversion: ${VERSION}")
-  set(${OUTPUT_VARIABLE} "${VERSION}" CACHE INTERNAL "${OUTPUT_VARIABLE}")
+  # This regex now uses VAR_NAME to find the right line
+  string(REGEX REPLACE ".*${VAR_NAME}[ {=]+ \"([^\"]*)\".*" "\\1" EXTRACTED_VALUE "${VERSION_FILE_CONTENT}")
+  message(STATUS "CMake ${OUTPUT_VARIABLE} variable set to: ${EXTRACTED_VALUE}")
+  set(${OUTPUT_VARIABLE} "${EXTRACTED_VALUE}" CACHE INTERNAL "${OUTPUT_VARIABLE}")
 endfunction(_set_version_cmake_variable)
 
 # This function should be called from the CMakeLists.txt file that defines a library target that will include 
@@ -45,7 +46,7 @@ function(plxsversion_create_target)
   cmake_parse_arguments(
     VER
     "PRINT;TIME"
-    "LANG;SOURCE;INPUT;TARGET_SUFFIX;NAMESPACE;INCLUDE_PREFIX"
+    "LANG;SOURCE;INPUT;TARGET_SUFFIX;NAMESPACE;INCLUDE_PREFIX;VER_VAR_PREFIX"
     ""
     ${ARGN}
   )
@@ -64,8 +65,8 @@ function(plxsversion_create_target)
     
   endif()
 
-  if(VER_INCLUDE_PREFIX)
-    list(APPEND OPTIONS "--include-prefix" ${VER_INCLUDE_PREFIX})
+  if(NOT VER_INCLUDE_PREFIX)
+    set(VER_INCLUDE_PREFIX "plxsversion")
   endif()
 
   if(NOT VER_LANG)
@@ -94,26 +95,15 @@ function(plxsversion_create_target)
     set(VERSION_LIBRARY "plxsversion-${VER_TARGET_SUFFIX}")
   endif()
 
-  if(VER_INCLUDE_PREFIX)
-    set(REL_OUT_PATH "version.hpp")
-    if(${VER_LANG} STREQUAL "c")
-      set(REL_OUT_PATH "version.h")
-    endif()
-    set(INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR})
-  else()
-    _set_relative_out_file_path(${VER_LANG})
-    set(INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/plxs)
-  endif()
-
+  _set_relative_out_file_path(${VER_LANG} ${VER_INCLUDE_PREFIX})
   set(OUT_FILE "${CMAKE_CURRENT_BINARY_DIR}/${REL_OUT_PATH}")
   _create_version_file(${VER_LANG} ${VER_SOURCE} ${VER_INPUT} ${OUT_FILE} ADDITIONAL_OPTIONS ${OPTIONS})
 
   add_library(${VERSION_LIBRARY} INTERFACE)
   target_include_directories(${VERSION_LIBRARY}
     INTERFACE
-      $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
-      $<BUILD_INTERFACE:${INCLUDE_DIR}>)
-  message(STATUS "${VERSION_LIBRARY} created.")
+      $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/plxs>
+      $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/plxs>)
 
   if(VER_INCLUDE_PREFIX)
     set(VERSION_FILE "${CMAKE_CURRENT_BINARY_DIR}/${VER_INCLUDE_PREFIX}/version.hpp")
@@ -126,5 +116,19 @@ function(plxsversion_create_target)
 
   set_property(TARGET ${VERSION_LIBRARY} APPEND PROPERTY ADDITIONAL_CLEAN_FILES "${VERSION_FILE}")
 
-  _set_version_cmake_variable(PLXSVERSION_STRING ${VERSION_FILE})
+  if(VER_TARGET_SUFFIX)
+    # If the user provided a suffix for the target, use it to set the VERSION and BASE_VERSION
+    string(TOUPPER ${VER_TARGET_SUFFIX} VER_PREFIX)
+    set(full_version_var ${VER_PREFIX}_VERSION)
+    set(base_version_var ${VER_PREFIX}_BASE_VERSION)
+
+    _set_version_cmake_variable(${full_version_var} ${OUT_FILE} "VERSION")
+    _set_version_cmake_variable(${base_version_var} ${OUT_FILE} "BASE_VERSION")
+  else()
+    # Otherwise, maintain the old behavior for backward compatibility
+    _set_version_cmake_variable(PLXSVERSION_STRING_VERSION ${OUT_FILE} "VERSION")
+    _set_version_cmake_variable(PLXSVERSION_STRING_BASE_VERSION ${OUT_FILE} "BASE_VERSION")
+  endif()
+
+  message(STATUS "${VERSION_LIBRARY} created.")
 endfunction(plxsversion_create_target)

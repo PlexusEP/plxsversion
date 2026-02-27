@@ -11,13 +11,11 @@ class OptionalConfiguration:
         include_time: bool = False,
         cargo_version: str = "",
         namespace: str = "plxsversion",
-        include_prefix: str = "",
     ) -> None:
         self.print_created_file = print_created_file
         self.include_time = include_time
         self.cargo_version = cargo_version
         self.namespace = namespace
-        self.include_prefix = include_prefix
 
 
 def create_version_file(
@@ -43,7 +41,6 @@ def create_version_file(
         output_file=PosixPath(output_file),
         lang=lang,
         namespace=optional_config.namespace,
-        include_prefix=optional_config.include_prefix,
         print_created_file=optional_config.print_created_file,
     )
 
@@ -66,14 +63,9 @@ def _output_version_file(  # noqa: PLR0913
     lang: str,
     *,
     namespace: str,
-    include_prefix: str,
     print_created_file: bool,
 ) -> None:
     """Convert version info into a requested format and outputs to a file."""
-    if include_prefix:
-        output_path = PosixPath(output_file).parent / include_prefix
-        output_path.mkdir(parents=True, exist_ok=True)
-        output_file = output_path / PosixPath(output_file).name
 
     match lang:
         case "cpp":

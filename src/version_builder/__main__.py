@@ -40,12 +40,6 @@ def execute() -> None:
         help="C++ namespace to put the version info into",
     )
     parser.add_argument(
-        "--include-prefix",
-        required=False,
-        default="",
-        help="subdirectory to put the generated file into",
-    )
-    parser.add_argument(
         "--cargo",
         "-c",
         required=False,
@@ -79,7 +73,6 @@ def execute() -> None:
             include_time=args.time,
             cargo_version=args.cargo,
             namespace=args.namespace,
-            include_prefix=args.include_prefix,
         ),
     )
 

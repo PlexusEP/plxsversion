@@ -28,7 +28,6 @@ class TestMain:
         git_dir.tag("v1.0.0-alpha.1")
         optional_config = main.OptionalConfiguration()
         optional_config.namespace = "plxsversion::version"
-        optional_config.include_prefix = "plxversion/version/"
 
         # Nested include dirtory
         main.create_version_file(
