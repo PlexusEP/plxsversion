@@ -1,12 +1,12 @@
 from version_builder.version_data import VersionData
 
 
-def to_cpp(version_data: VersionData, *, namespace: str, include_prefix: str) -> str:
-    return _CppFormatter(namespace=namespace, include_prefix=include_prefix).format(version_data)
+def to_cpp(version_data: VersionData, namespace: str) -> str:
+    return _CppFormatter(namespace=namespace).format(version_data)
 
 
-def to_cpp11(version_data: VersionData, *, namespace: str, include_prefix: str) -> str:
-    return _Cpp11Formatter(namespace=namespace, include_prefix=include_prefix).format(version_data)
+def to_cpp11(version_data: VersionData, namespace: str) -> str:
+    return _Cpp11Formatter(namespace=namespace).format(version_data)
 
 
 def to_c(version_data: VersionData) -> str:
@@ -25,8 +25,8 @@ class _Formatter:
         return self.main_formatter(version_data)
 
 
-def _get_include_guard(include_prefix: str, namespace: str) -> str:
-    guard = f"{include_prefix.replace('/', '_')}_{namespace.replace('::', '_')}_VERSION_HPP"
+def _get_include_guard(namespace: str) -> str:
+    guard = f"{namespace.replace('::', '_')}_VERSION_HPP"
     return guard.upper()
 
 
@@ -34,10 +34,10 @@ def _get_include_guard(include_prefix: str, namespace: str) -> str:
 # C++ Formatter
 # ----------------------------------------
 class _CppFormatter(_Formatter):
-    def __init__(self, *, namespace: str, include_prefix: str) -> None:
+    def __init__(self, namespace: str) -> None:
         super().__init__()
         self.namespace = namespace
-        self.include_guard = _get_include_guard(include_prefix, namespace)
+        self.include_guard = _get_include_guard(namespace)
 
     def main_formatter(self, version_data: VersionData) -> str:
         return f"""
@@ -84,10 +84,10 @@ inline constexpr std::string_view BUILD_METADATA {{ "{version_data.full_build_me
 # C++11 Formatter
 # ----------------------------------------
 class _Cpp11Formatter(_Formatter):
-    def __init__(self, *, namespace: str, include_prefix: str) -> None:
+    def __init__(self, namespace: str) -> None:
         super().__init__()
         self.namespace = namespace
-        self.include_guard = _get_include_guard(include_prefix, namespace)
+        self.include_guard = _get_include_guard(namespace)
         self.open_namespace = "namespace " + " { namespace ".join(self.namespace.split("::")) + " {"
         self.close_namespace = "} " * len(self.namespace.split("::")) + f"// namespace {self.namespace}"
 
@@ -152,7 +152,7 @@ class _CFormatter(_Formatter):
 extern "C" {{
 #endif
 
-static const char *BASE_VERSION "{version_data.base_version:s}";
+static const char *BASE_VERSION = "{version_data.base_version:s}";
 static const char *VERSION = "{version_data.qualified_version:s}";
 static const unsigned int MAJOR = {version_data.major:d};
 static const unsigned int MINOR = {version_data.minor:d};
