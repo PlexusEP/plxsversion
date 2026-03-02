@@ -103,7 +103,6 @@ Here are the available arguments:
 | `--print` | `-p` | Print the generated file's contents after creation. | No |
 | `--time` | `-t` | Include timestamp data in the version information. | No |
 | `--namespace` | `-n` | C++ namespace for the version info. Only for `cpp` or `cpp11`. | No |
-| `--include-prefix` | | Subdirectory to place the generated header file into. | No |
 | `--cargo` | `-c` | Cargo version to include in the version infomation. Only valid when `lang` is `rust`. | No |
 
 **Example using `git` as a source:**
