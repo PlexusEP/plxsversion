@@ -97,6 +97,7 @@ function(plxsversion_create_target)
 
   _set_relative_out_file_path(${VER_LANG} ${VER_INCLUDE_PREFIX})
   set(OUT_FILE "${CMAKE_CURRENT_BINARY_DIR}/${REL_OUT_PATH}")
+
   _create_version_file(${VER_LANG} ${VER_SOURCE} ${VER_INPUT} ${OUT_FILE} ADDITIONAL_OPTIONS ${OPTIONS})
 
   add_library(${VERSION_LIBRARY} INTERFACE)
@@ -105,16 +106,7 @@ function(plxsversion_create_target)
       $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/plxs>
       $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/plxs>)
 
-  if(VER_INCLUDE_PREFIX)
-    set(VERSION_FILE "${CMAKE_CURRENT_BINARY_DIR}/${VER_INCLUDE_PREFIX}/version.hpp")
-    if(${VER_LANG} STREQUAL "c")
-      set(VERSION_FILE "${CMAKE_CURRENT_BINARY_DIR}/${VER_INCLUDE_PREFIX}/version.h")
-    endif()
-  else()
-    set(VERSION_FILE "${OUT_FILE}")
-  endif()
-
-  set_property(TARGET ${VERSION_LIBRARY} APPEND PROPERTY ADDITIONAL_CLEAN_FILES "${VERSION_FILE}")
+  set_property(TARGET ${VERSION_LIBRARY} APPEND PROPERTY ADDITIONAL_CLEAN_FILES "${OUT_FILE}")
 
   if(VER_TARGET_SUFFIX)
     # If the user provided a suffix for the target, use it to set the VERSION and BASE_VERSION
