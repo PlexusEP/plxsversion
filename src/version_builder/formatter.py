@@ -1,12 +1,12 @@
 from version_builder.version_data import VersionData
 
 
-def to_cpp(version_data: VersionData) -> str:
-    return _CppFormatter().format(version_data)
+def to_cpp(version_data: VersionData, *, namespace: str) -> str:
+    return _CppFormatter(namespace=namespace).format(version_data)
 
 
-def to_cpp11(version_data: VersionData) -> str:
-    return _Cpp11Formatter().format(version_data)
+def to_cpp11(version_data: VersionData, *, namespace: str) -> str:
+    return _Cpp11Formatter(namespace=namespace).format(version_data)
 
 
 def to_c(version_data: VersionData) -> str:
@@ -25,10 +25,20 @@ class _Formatter:
         return self.main_formatter(version_data)
 
 
+def _get_include_guard(namespace: str) -> str:
+    guard = f"{namespace.replace('::', '_')}_VERSION_HPP"
+    return guard.upper()
+
+
 # ----------------------------------------
 # C++ Formatter
 # ----------------------------------------
 class _CppFormatter(_Formatter):
+    def __init__(self, namespace: str) -> None:
+        super().__init__()
+        self.namespace = namespace
+        self.include_guard = _get_include_guard(namespace)
+
     def main_formatter(self, version_data: VersionData) -> str:
         return f"""
 // ---------------------------------------------------
@@ -36,14 +46,15 @@ class _CppFormatter(_Formatter):
 // DO NOT MODIFY!
 // ---------------------------------------------------
 
-#ifndef PLXSVERSION_VERSION_HPP
-#define PLXSVERSION_VERSION_HPP
+#ifndef {self.include_guard}
+#define {self.include_guard}
 
 #include <cstdint>
 #include <string_view>
 
-namespace plxsversion {{
+namespace {self.namespace} {{
 
+inline constexpr std::string_view BASE_VERSION {{ "{version_data.base_version:s}" }};
 inline constexpr std::string_view VERSION {{ "{version_data.qualified_version:s}" }};
 inline constexpr unsigned int MAJOR {{ {version_data.major:d} }};
 inline constexpr unsigned int MINOR {{ {version_data.minor:d} }};
@@ -57,9 +68,9 @@ inline constexpr bool DIRTY_BUILD {{ {str(version_data.is_dirty).lower():s} }};
 inline constexpr bool DEVELOPMENT_BUILD {{ {str(version_data.is_development_build).lower():s} }};
 inline constexpr std::string_view BUILD_METADATA {{ "{version_data.full_build_metadata:s}" }};
 {self._optional_output(version_data):s}
-}} // namespace plxsversion
+}} // namespace {self.namespace}
 
-#endif // PLXSVERSION_VERSION_HPP
+#endif // {self.include_guard}
 """
 
     def _optional_output(self, version_data: VersionData) -> str:
@@ -73,6 +84,13 @@ inline constexpr std::string_view BUILD_METADATA {{ "{version_data.full_build_me
 # C++11 Formatter
 # ----------------------------------------
 class _Cpp11Formatter(_Formatter):
+    def __init__(self, namespace: str) -> None:
+        super().__init__()
+        self.namespace = namespace
+        self.include_guard = _get_include_guard(namespace)
+        self.open_namespace = "namespace " + " { namespace ".join(self.namespace.split("::")) + " {"
+        self.close_namespace = "} " * len(self.namespace.split("::")) + f"// namespace {self.namespace}"
+
     def main_formatter(self, version_data: VersionData) -> str:
         return f"""
 // ---------------------------------------------------
@@ -80,13 +98,14 @@ class _Cpp11Formatter(_Formatter):
 // DO NOT MODIFY!
 // ---------------------------------------------------
 
-#ifndef PLXSVERSION_VERSION_HPP
-#define PLXSVERSION_VERSION_HPP
+#ifndef {self.include_guard}
+#define {self.include_guard}
 
 #include <cstdint>
 
-namespace plxsversion {{
+{self.open_namespace}
 
+constexpr const char *BASE_VERSION {{ "{version_data.base_version:s}" }};
 constexpr const char *VERSION {{ "{version_data.qualified_version:s}" }};
 constexpr unsigned int MAJOR {{ {version_data.major:d} }};
 constexpr unsigned int MINOR {{ {version_data.minor:d} }};
@@ -100,9 +119,9 @@ constexpr bool DIRTY_BUILD {{ {str(version_data.is_dirty).lower():s} }};
 constexpr bool DEVELOPMENT_BUILD {{ {str(version_data.is_development_build).lower():s} }};
 constexpr const char *BUILD_METADATA {{ "{version_data.full_build_metadata:s}" }};
 {self._optional_output(version_data):s}
-}} // namespace plxsversion
+{self.close_namespace}
 
-#endif // PLXSVERSION_VERSION_HPP
+#endif // {self.include_guard}
 """
 
     def _optional_output(self, version_data: VersionData) -> str:
@@ -133,6 +152,7 @@ class _CFormatter(_Formatter):
 extern "C" {{
 #endif
 
+static const char *BASE_VERSION = "{version_data.base_version:s}";
 static const char *VERSION = "{version_data.qualified_version:s}";
 static const unsigned int MAJOR = {version_data.major:d};
 static const unsigned int MINOR = {version_data.minor:d};
@@ -173,6 +193,7 @@ class _RustFormatter(_Formatter):
 
 pub mod plxsversion {{
 
+    pub const BASE_VERSION: &str = "{version_data.base_version:s}";
     pub const VERSION: &str = "{version_data.qualified_version:s}";
     pub const MAJOR: u32 = {version_data.major:d};
     pub const MINOR: u32 = {version_data.minor:d};

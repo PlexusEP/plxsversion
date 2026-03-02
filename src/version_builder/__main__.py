@@ -33,6 +33,13 @@ def execute() -> None:
         help="include time data in the version infomation",
     )
     parser.add_argument(
+        "--namespace",
+        "-n",
+        required=False,
+        default=None,
+        help="C++ namespace to put the version info into",
+    )
+    parser.add_argument(
         "--cargo",
         "-c",
         required=False,
@@ -40,6 +47,15 @@ def execute() -> None:
     )
     parser.add_argument("file")
     args = parser.parse_args()
+
+    if args.namespace == "":
+        parser.error("argument --namespace/-n: cannot be an empty string")
+
+    if args.namespace and args.lang not in {"cpp", "cpp11"}:
+        parser.error("The --namespace argument requires --lang to be set to 'cpp'")
+
+    if args.lang in {"cpp", "cpp11"} and args.namespace is None:
+        args.namespace = "plxsversion"
 
     if args.cargo and args.lang != "rust":
         parser.error("The --cargo argument requires --lang to be set to 'rust'")
@@ -53,7 +69,10 @@ def execute() -> None:
         output_file=args.file,
         lang=args.lang,
         optional_config=main.OptionalConfiguration(
-            print_created_file=args.print, include_time=args.time, cargo_version=args.cargo
+            print_created_file=args.print,
+            include_time=args.time,
+            cargo_version=args.cargo,
+            namespace=args.namespace,
         ),
     )
 

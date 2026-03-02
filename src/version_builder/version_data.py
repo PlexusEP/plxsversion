@@ -70,8 +70,8 @@ class VersionData(EqualityByValue):
         self.cargo_version = cargo_version
 
     def _set_qualified_version(self) -> None:
-        core_version = f"{self.major}.{self.minor}.{self.patch}"
-        version_parts = [core_version]
+        self.base_version = f"{self.major}.{self.minor}.{self.patch}"
+        version_parts = [self.base_version]
         if self.prerelease:
             version_parts.append(f"-{self.prerelease}")
 
