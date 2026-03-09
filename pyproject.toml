@@ -1,8 +1,9 @@
 [project]
 name = "plxsversion"
-version = "2.3.0"
+version = "2.3.1"
 requires-python = ">=3.10"
-license = { file = "LICENSE" }
+license = "MIT"
+license-files = [ "LICENSE" ]
 
 [project.scripts]
 plxs-version = "version_builder.__main__:execute"
