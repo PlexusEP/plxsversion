@@ -99,7 +99,7 @@ Here are the available arguments:
 | `--source` | `-s` | Type of source for version info (`git` or `file`). | Yes |
 | `--lang` | `-l` | Language for the output file (`cpp`, `cpp11`, `c`, `rust`). | Yes |
 | `--input` | `-i` | Path to the source of version information. | Yes |
-| `file` | | Path for the generated output file. | Yes |
+| `file` | | Path for the generated output file. | No |
 | `--print` | `-p` | Print the generated file's contents after creation. | No |
 | `--time` | `-t` | Include timestamp data in the version information. | No |
 | `--namespace` | `-n` | C++ namespace for the version info. Only for `cpp` or `cpp11`. | No |

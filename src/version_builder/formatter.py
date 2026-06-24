@@ -1,3 +1,5 @@
+import json
+
 from version_builder.version_data import VersionData
 
 
@@ -15,6 +17,10 @@ def to_c(version_data: VersionData) -> str:
 
 def to_rust(version_data: VersionData) -> str:
     return _RustFormatter().format(version_data)
+
+
+def to_json(version_data: VersionData) -> str:
+    return _JsonFormatter().format(version_data)
 
 
 class _Formatter:
@@ -216,4 +222,41 @@ pub mod plxsversion {{
             optional_output += f"""\tpub const UTC_TIME: &str = "{version_data.time:s}";\n"""
         if version_data.cargo_version:
             optional_output += f"""\tpub const CARGO_VERSION: &str = "{version_data.cargo_version:s}";\n"""
+        return optional_output
+
+
+# ----------------------------------------
+# JSON Formatter
+# ----------------------------------------
+
+
+class _JsonFormatter(_Formatter):
+    def main_formatter(self, version_data: VersionData) -> str:
+
+        json_structure = {
+            "BASE_VERSION": version_data.base_version,
+            "VERSION": version_data.qualified_version,
+            "MAJOR": version_data.major,
+            "MINOR": version_data.minor,
+            "PATCH": version_data.patch,
+            "PRE_RELEASE": version_data.prerelease,
+            "TAG": version_data.tag,
+            "COMMITS_SINCE_TAG": version_data.commits_since_tag,
+            "COMMIT_ID": version_data.commit_id,
+            "BRANCH": version_data.branch_name,
+            "DIRTY_BUILD": version_data.is_dirty,
+            "DEVELOPMENT_BUILD": version_data.is_development_build,
+            "BUILD_METADATA": version_data.full_build_metadata,
+        }
+
+        json_structure.update(self._optional_output(version_data))
+
+        return json.dumps(json_structure)
+
+    def _optional_output(self, version_data: VersionData) -> str:
+        optional_output = {}
+        if version_data.time:
+            optional_output["UTC_TIME"] = version_data.time
+        if version_data.cargo_version:
+            optional_output["CARGO_VERSION"] = version_data.cargo_version
         return optional_output

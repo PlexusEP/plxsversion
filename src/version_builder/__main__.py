@@ -1,4 +1,5 @@
 import argparse
+import sys
 
 from version_builder import main
 
@@ -8,7 +9,7 @@ def execute() -> None:
     parser.add_argument(
         "--lang",
         "-l",
-        choices=["cpp", "cpp11", "c", "rust"],
+        choices=["cpp", "cpp11", "c", "rust", "json"],
         required=True,
         help="language supported by the file output",
     )
@@ -45,7 +46,7 @@ def execute() -> None:
         required=False,
         help="cargo version of a crate",
     )
-    parser.add_argument("file")
+    parser.add_argument("file", nargs="?", help="output file to create (stdout if not supplied)")
     args = parser.parse_args()
 
     if args.namespace == "":
@@ -61,7 +62,7 @@ def execute() -> None:
         parser.error("The --cargo argument requires --lang to be set to 'rust'")
 
     # Intentional print for user status notification
-    print(f"Creating version information using {args.source:s} from {args.input:s}")  # noqa: T201
+    print(f"Creating version information using {args.source:s} from {args.input:s}", file=sys.stderr)  # noqa: T201
 
     main.create_version_file(
         source=args.source,

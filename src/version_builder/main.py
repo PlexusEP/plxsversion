@@ -38,7 +38,7 @@ def create_version_file(
 
     _output_version_file(
         version_info=version_info,
-        output_file=PosixPath(output_file),
+        output_file=PosixPath(output_file) if output_file is not None else None,
         lang=lang,
         namespace=optional_config.namespace,
         print_created_file=optional_config.print_created_file,
@@ -79,9 +79,17 @@ def _output_version_file(
         case "rust":
             output = formatter.to_rust(version_info)
             expected_file_extension = ".rs"
+        case "json":
+            output = formatter.to_json(version_info)
+            expected_file_extension = ".json"
         case _:
             msg = "Unknown language"
             raise ValueError(msg)
+
+    if output_file is None:
+        # Intentional print to put the output object on stdout
+        print(f"{output}")  # noqa: T201
+        return
 
     if output_file.suffix != expected_file_extension:
         msg = (
